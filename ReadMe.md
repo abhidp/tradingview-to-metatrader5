@@ -34,6 +34,24 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+## Environment Setup
+
+1. Copy the environment template:
+```bash
+cp .env.template .env
+```
+
+2. Update `.env` with your credentials:
+```env
+# MT5 settings
+MT5_ACCOUNT=12345678
+MT5_PASSWORD=your_actual_password
+MT5_SERVER=ICMarkets-Live
+```
+
+⚠️ IMPORTANT: Never commit your `.env` file to version control!
+
+
 ## Usage
 
 1. Start the proxy server:

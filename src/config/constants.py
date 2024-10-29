@@ -1,13 +1,5 @@
-# URL Configuration
-BASE_URL = 'icmarkets.tv.ctrader.com/accounts/40807470/orders'
-
-# Required trade fields
-REQUIRED_TRADE_FIELDS = {'instrument', 'side', 'qty'}
-
-# Console messages
-STARTUP_MESSAGE = "\n🚀 Trade capture proxy server started"
-MONITORING_MESSAGE = "Monitoring for trade executions...\n"
-TRADE_EXECUTED_MESSAGE = "\n📊 Trade Executed:"
+# URLs to track
+TRADE_URL_PATTERN = "icmarkets.tv.ctrader.com/accounts/40807470/orders"
 
 # Trade field labels
 TRADE_FIELDS = {
@@ -17,5 +9,18 @@ TRADE_FIELDS = {
     'type': 'Type'
 }
 
-# File operations
-SEPARATOR_LINE = "-" * 40
+# Separator for console output
+SEPARATOR_LINE = "=" * 50
+
+# Trade Types
+TRADE_TYPES = {
+    'MARKET': 'market',
+    'LIMIT': 'limit',
+    'STOP': 'stop'
+}
+
+# Trade Sides
+TRADE_SIDES = {
+    'BUY': 'buy',
+    'SELL': 'sell'
+}
