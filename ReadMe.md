@@ -92,16 +92,53 @@ Each trade is logged in JSON format with the following structure:
 
 ## Project Structure
 ```
-tradingview-trade-capture/
-├── src/
-│   └── proxy_server.py
-├── logs/
-│   └── trades/
-├── venv/
-├── requirements.txt
-├── start_proxy.bat
-├── README.md
-└── .gitignore
+tradingview-trade-capture/      # Root directory
+├── logs/                       # Log files directory (git ignored)
+│   └── trades/                 # Trade execution logs
+│
+├── src/                        # Source code
+│   ├── config/                 # Configuration
+│   │   ├── constants.py        # Constants and URL patterns
+│   │   ├── database.py         # Database configuration
+│   │   └── mt5_config.py       # MT5 credentials and settings
+│   │
+│   ├── core/                   # Core functionality
+│   │   ├── interceptor.py      # Proxy interceptor
+│   │   └── trade_handler.py    # Trade processing logic
+│   │
+│   ├── models/                 # Database models
+│   │   ├── database.py         # SQLAlchemy models
+│   │   └── trade.py            # Trade entity definition
+│   │
+│   ├── scripts/                # Utility scripts
+│   │   ├── check_db.py         # Database status check
+│   │   └── reset_db.py         # Database initialization
+│   │
+│   ├── services/               # External services
+│   │   ├── mt5_service.py      # MT5 connection
+│   │   └── trade_executor.py   # Trade execution logic
+│   │
+│   ├── utils/                  # Utilities
+│   │   ├── database_handler.py # Database operations
+│   │   ├── queue_handler.py    # Redis queue operations
+│   │   └── symbol_mapper.py    # Symbol mapping TV->MT5
+│   │
+│   ├── workers/                # Background workers
+│   │   └── mt5_worker.py       # MT5 trade execution worker
+│   │
+│   ├── main.py                 # Proxy server entry point
+│   └── start_worker.py         # Worker entry point
+│
+├── .env                        # Environment variables (git ignored)
+├── .env.template               # Environment variables template
+├── .gitignore                  # Git ignore rules
+├── docker-compose.yml          # Docker services configuration
+├── init.sql                    # Database initialization script
+├── LICENSE                     # Project license
+├── ReadMe.md                   # Project documentation
+├── requirements.txt            # Python dependencies
+├── start_proxy.ps1             # Proxy server startup script
+└── start_worker.ps1            # Worker startup script
 ```
 
 ## License
