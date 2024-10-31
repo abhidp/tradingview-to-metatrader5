@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16
+    container_name: tradingview_db
+    environment:
+      POSTGRES_DB: tradingview
+      POSTGRES_USER: tvuser
+      POSTGRES_PASSWORD: tvpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tvuser -d tradingview"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: tradingview_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    name: tradingview_postgres_data
+  redis_data:
+    name: tradingview_redis_data

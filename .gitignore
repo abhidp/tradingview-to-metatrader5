@@ -26,11 +26,15 @@ wheels/
 logs/
 *.log
 
+# Environment variables
+.env
+
 # VS Code
 .vscode/
 
-# Environment variables
-.env
+# Database
+*.db
+*.sqlite3
 
 # Certificate files
 *.pem
