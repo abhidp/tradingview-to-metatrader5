@@ -1,7 +1,7 @@
 import redis
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, Any, Optional, Tuple
 
 class RedisQueue:
@@ -43,37 +43,66 @@ class RedisQueue:
         except Exception as e:
             self.logger.error(f"Error initializing queues: {e}")
     
+    def _clear_old_trades(self, trade_id: str) -> None:
+        """Clear any old instances of this trade from queues."""
+        try:
+            for queue_key in [self.pending_key, self.processing_key]:
+                all_items = self.redis.lrange(queue_key, 0, -1)
+                for item in all_items:
+                    try:
+                        trade_data = json.loads(item)
+                        if trade_data.get('data', {}).get('trade_id') == trade_id:
+                            self.redis.lrem(queue_key, 0, item)
+                    except:
+                        continue
+        except Exception as e:
+            self.logger.error(f"Error clearing old trades: {e}")
+    
     def push_trade(self, trade_data: Dict[str, Any]) -> str:
         """Push trade to queue."""
         try:
             trade_id = f"trade_{datetime.now().timestamp()}"
+            
+            # Clear any old trades with the same trade_id
+            if 'trade_id' in trade_data:
+                self._clear_old_trades(trade_data['trade_id'])
+            
             trade_item = json.dumps({
                 'id': trade_id,
                 'data': trade_data,
                 'timestamp': datetime.now().isoformat()
             })
+            
             self.redis.lpush(self.pending_key, trade_item)
             self.logger.info(f"Trade {trade_id} pushed to queue")
             return trade_id
+            
         except Exception as e:
             self.logger.error(f"Error pushing trade to queue: {e}")
             raise
     
     def get_trade(self) -> Optional[Tuple[str, Dict[str, Any]]]:
-        """Get next trade from queue."""
+        """Get next trade from queue and remove it."""
         try:
-            # Move from pending to processing
-            trade_item = self.redis.rpoplpush(self.pending_key, self.processing_key)
+            # Get most recent trade
+            trade_item = self.redis.rpop(self.pending_key)
             if not trade_item:
                 return None
             
             trade = json.loads(trade_item)
+            
+            # Check trade age
+            trade_timestamp = datetime.fromisoformat(trade['timestamp'])
+            if datetime.now() - trade_timestamp > timedelta(seconds=5):
+                self.logger.info(f"Skipping old trade from {trade_timestamp}")
+                return None
+            
             return trade['id'], trade['data']
             
         except Exception as e:
             self.logger.error(f"Error getting trade from queue: {e}")
             return None
-    
+            
     def complete_trade(self, trade_id: str, result: Dict[str, Any]) -> None:
         """Mark trade as complete."""
         try:

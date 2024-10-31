@@ -1,5 +1,20 @@
 Write-Host "Starting TradingView Proxy Server..." -ForegroundColor Green
 
+# Kill any existing proxy processes
+Write-Host "`nChecking for existing processes..." -ForegroundColor Yellow
+Get-Process | Where-Object { $_.ProcessName -like "*mitm*" } | ForEach-Object {
+    Write-Host "Stopping process: $($_.ProcessName) (PID: $($_.Id))"
+    Stop-Process -Id $_.Id -Force
+}
+
+# Free up port 8080
+$netstatOutput = netstat -ano | Select-String ":8080"
+$netstatOutput | ForEach-Object {
+    $processId = ($_ -split ' +')[-1]
+    Write-Host "Freeing port 8080 (PID: $processId)"
+    Stop-Process -Id $processId -Force -ErrorAction SilentlyContinue
+}
+
 # Activate virtual environment
 & .\venv\Scripts\Activate.ps1
 

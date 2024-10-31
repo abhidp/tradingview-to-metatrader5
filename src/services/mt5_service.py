@@ -1,160 +1,284 @@
-import time
+import MetaTrader5 as mt5
 import logging
 from datetime import datetime
 from typing import Dict, Any, Optional
-from pathlib import Path
+import time
+import json
+
+logger = logging.getLogger('MT5Service')
 
 class MT5Service:
-    """Service to handle MT5 operations."""
-    
     def __init__(self, account: int, password: str, server: str):
         self.account = account
         self.password = password
         self.server = server
         self.initialized = False
-        self.setup_logging()
+        self.last_init_time = 0
+        self.init_cooldown = 1  # seconds between initialization attempts
         
-    def setup_logging(self):
-        """Setup service logging."""
-        self.logger = logging.getLogger('MT5Service')
-        self.logger.setLevel(logging.INFO)
-        if not self.logger.handlers:
-            handler = logging.FileHandler('logs/mt5_service.log')
-            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-            handler.setFormatter(formatter)
-            self.logger.addHandler(handler)
+        # Symbol mapping
+        self.symbol_map = {
+            'BTCUSD': 'BTCUSD.a',
+            'ETHUSD': 'ETHUSD.a',
+            'XAUUSD': 'XAUUSD.a'
+        }
     
     def initialize(self) -> bool:
-        """Initialize MT5 connection."""
+        """Initialize MT5 connection with cooldown."""
         try:
-            import MetaTrader5 as mt5
-            self.mt5 = mt5
-        except ImportError as e:
-            self.logger.error(f"Failed to import MetaTrader5: {e}")
-            return False
+            # Check if we've tried initialization recently
+            current_time = time.time()
+            if current_time - self.last_init_time < self.init_cooldown:
+                time.sleep(self.init_cooldown)
             
-        if self.initialized:
-            return True
+            # If already initialized, check connection
+            if self.initialized:
+                if mt5.account_info() is not None:
+                    return True
+                self.initialized = False
             
-        try:
-            # Check if MT5 terminal is installed
-            terminal_path = self.find_mt5_terminal()
-            if not terminal_path:
-                self.logger.error("MT5 terminal not found")
-                return False
-                
             # Initialize MT5
-            if not self.mt5.initialize(
-                path=str(terminal_path),
-                login=self.account,
-                password=self.password,
-                server=self.server
-            ):
-                error = self.mt5.last_error()
-                self.logger.error(f"MT5 initialization failed: {error}")
+            if not mt5.initialize():
+                logger.error(f"MT5 initialization failed: {mt5.last_error()}")
                 return False
-                
+            
+            # Login to account
+            if not mt5.login(self.account, password=self.password, server=self.server):
+                logger.error(f"MT5 login failed: {mt5.last_error()}")
+                mt5.shutdown()
+                return False
+            
+            # Verify connection
+            account_info = mt5.account_info()
+            if not account_info:
+                logger.error("Could not get account info")
+                mt5.shutdown()
+                return False
+            
             self.initialized = True
-            self.logger.info("MT5 initialized successfully")
+            self.last_init_time = current_time
             
-            # Log account info
-            account_info = self.mt5.account_info()
-            if account_info is not None:
-                self.logger.info(f"Connected to account: {account_info.login} ({account_info.server})")
-            
+            logger.info(f"MT5 initialized successfully (Account: {account_info.login})")
+            print(f"\n✅ Connected to MT5:")
+            print(f"Account: {account_info.login}")
+            print(f"Balance: {account_info.balance} {account_info.currency}")
+            print(f"Leverage: 1:{account_info.leverage}")
             return True
             
         except Exception as e:
-            self.logger.error(f"Error initializing MT5: {e}")
+            logger.error(f"Error initializing MT5: {e}")
+            self.initialized = False
             return False
-
-    def find_mt5_terminal(self) -> Optional[Path]:
-        """Find MT5 terminal installation path."""
-        possible_paths = [
-            Path("C:/Program Files/ICMarkets - MetaTrader 5/terminal64.exe"),
-            Path("C:/Program Files (x86)/ICMarkets - MetaTrader 5/terminal.exe"),
-            # Add other possible paths if needed
-        ]
-        
-        for path in possible_paths:
-            if path.exists():
-                self.logger.info(f"Found MT5 terminal at: {path}")
-                return path
-                
-        return None
     
-    def execute_market_order(self, symbol: str, volume: float, order_type: str, 
-                           deviation: int = 20) -> Dict[str, Any]:
+    def map_symbol(self, tv_symbol: str) -> str:
+        """Map TradingView symbol to MT5 symbol."""
+        return self.symbol_map.get(tv_symbol, f"{tv_symbol}.a")
+    
+    def execute_market_order(self, trade_data: Dict[str, Any]) -> Dict[str, Any]:
         """Execute market order on MT5."""
-        if not self.initialize():
-            return {"error": "MT5 initialization failed"}
-            
         try:
-            # Normalize order type
-            action = self.mt5.TRADE_ACTION_DEAL
-            order_type = order_type.lower()
-            type = self.mt5.ORDER_TYPE_BUY if order_type == "buy" else self.mt5.ORDER_TYPE_SELL
+            if not self.initialize():
+                return {"error": "MT5 initialization failed"}
             
-            # Get current price
-            tick = self.mt5.symbol_info_tick(symbol)
-            if not tick:
-                return {"error": f"Failed to get price for {symbol}"}
-                
-            price = tick.ask if type == self.mt5.ORDER_TYPE_BUY else tick.bid
+            # Extract trade details
+            print("\n🔍 Trade data received:")
+            print(json.dumps(trade_data, indent=2))
+
+            # Get required fields from either direct fields or execution_data
+            execution_data = trade_data.get('execution_data', {})
             
-            # Enable symbol for trading if needed
-            if not self.mt5.symbol_select(symbol, True):
-                return {"error": f"Failed to select symbol {symbol}"}
+            instrument = trade_data.get('instrument') or execution_data.get('instrument')
+            side = trade_data.get('side') or execution_data.get('side')
+            qty = trade_data.get('qty') or execution_data.get('qty')
+            
+            if not all([instrument, side, qty]):
+                return {"error": f"Missing required fields. Got: instrument={instrument}, side={side}, qty={qty}"}
+
+            # Map symbol
+            mt5_symbol = self.map_symbol(instrument)
+            
+            # Enable symbol for trading
+            retries = 3
+            for attempt in range(retries):
+                if mt5.symbol_select(mt5_symbol, True):
+                    break
+                if attempt == retries - 1:
+                    return {"error": f"Failed to select symbol {mt5_symbol}"}
+                time.sleep(1)  # Wait before retry
             
             # Get symbol info
-            symbol_info = self.mt5.symbol_info(symbol)
-            if symbol_info is None:
-                return {"error": f"Failed to get symbol info for {symbol}"}
+            symbol_info = mt5.symbol_info(mt5_symbol)
+            if not symbol_info:
+                return {"error": f"Failed to get symbol info for {mt5_symbol}"}
             
-            # Prepare the request
+            # Determine order type and price
+            is_buy = side.lower() == 'buy'
+            order_type = mt5.ORDER_TYPE_BUY if is_buy else mt5.ORDER_TYPE_SELL
+            price = symbol_info.ask if is_buy else symbol_info.bid
+            
+            # Remove 'TV_' prefix if it exists
+            comment = trade_data.get('trade_id', 'trade')
+            if comment.startswith('TV_'):
+                comment = comment[3:]
+            
+            # Prepare request
             request = {
-                "action": action,
-                "symbol": symbol,
-                "volume": volume,
-                "type": type,
+                "action": mt5.TRADE_ACTION_DEAL,
+                "symbol": mt5_symbol,
+                "volume": float(qty),
+                "type": order_type,
                 "price": price,
-                "deviation": deviation,
+                "deviation": 20,
                 "magic": 234000,
-                "comment": "python-trade",
-                "type_time": self.mt5.ORDER_TIME_GTC,
-                "type_filling": self.mt5.ORDER_FILLING_IOC,
+                "comment": comment,
+                "type_time": mt5.ORDER_TIME_GTC,
+                "type_filling": mt5.ORDER_FILLING_IOC,
             }
             
-            # Send the order
-            result = self.mt5.order_send(request)
-            if result.retcode != self.mt5.TRADE_RETCODE_DONE:
-                error_msg = f"Order failed: {result.comment}"
-                self.logger.error(error_msg)
-                return {"error": error_msg}
+            logger.info(f"Sending order: {request}")
             
-            # Return success response
+            # Execute trade
+            result = mt5.order_send(request)
+            if not result:
+                return {"error": f"Order failed: {mt5.last_error()}"}
+            
+            if result.retcode != mt5.TRADE_RETCODE_DONE:
+                return {
+                    "error": f"Order failed: {result.comment}",
+                    "retcode": result.retcode
+                }
+            
+            # Format response
             response = {
-                "ticket": result.order,
+                "mt5_ticket": str(result.order),
+                "mt5_position": str(result.order),  # In MT5, the position ticket is same as the order ticket
                 "volume": result.volume,
                 "price": result.price,
+                "symbol": mt5_symbol,
+                "side": side,
                 "comment": result.comment,
-                "request": request,
                 "timestamp": datetime.now().isoformat()
             }
-            self.logger.info(f"Order executed successfully: {response}")
+            
+            logger.info(f"Order executed successfully: {response}")
             return response
             
         except Exception as e:
-            error_msg = f"Error executing order: {e}"
-            self.logger.error(error_msg)
-            return {"error": error_msg}
-    
-    def shutdown(self):
-        """Shutdown MT5 connection."""
+            logger.error(f"Error executing order: {e}")
+            return {"error": str(e)}
+
+    def close_position(self, trade_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Close an existing position."""
+        try:
+            print("\n🔍 Close position data received:")
+            print(json.dumps(trade_data, indent=2))
+            
+            if not self.initialize():
+                return {"error": "MT5 initialization failed"}
+
+            # Extract required fields
+            mt5_ticket = trade_data.get('mt5_ticket')
+            if not mt5_ticket:
+                return {"error": "MT5 ticket not provided"}
+
+            # Get instrument from either direct fields or execution_data
+            execution_data = trade_data.get('execution_data', {})
+            instrument = trade_data.get('instrument') or execution_data.get('instrument')
+            qty = trade_data.get('qty') or execution_data.get('qty')
+
+            if not instrument:
+                return {"error": "Instrument not provided"}
+            if not qty:
+                return {"error": "Quantity not provided"}
+
+            # Map symbol
+            mt5_symbol = self.map_symbol(instrument)
+            
+            print(f"\n📊 Close request details:")
+            print(f"MT5 Ticket: {mt5_ticket}")
+            print(f"Symbol: {mt5_symbol}")
+            print(f"Quantity: {qty}")
+            
+            # Enable symbol for trading
+            retries = 3
+            for attempt in range(retries):
+                if mt5.symbol_select(mt5_symbol, True):
+                    break
+                if attempt == retries - 1:
+                    return {"error": f"Failed to select symbol {mt5_symbol}"}
+                time.sleep(1)
+
+            # Get symbol info
+            symbol_info = mt5.symbol_info(mt5_symbol)
+            if not symbol_info:
+                return {"error": f"Failed to get symbol info for {mt5_symbol}"}
+
+            # Find position to close
+            positions = mt5.positions_get(ticket=int(mt5_ticket))
+            if not positions:
+                return {"error": f"No position found with ticket {mt5_ticket}"}
+
+            position = positions[0]
+
+            # Determine closing details
+            is_buy = position.type == mt5.POSITION_TYPE_SELL  # Reverse for closing
+            order_type = mt5.ORDER_TYPE_BUY if is_buy else mt5.ORDER_TYPE_SELL
+            price = symbol_info.ask if is_buy else symbol_info.bid
+
+            # Prepare comment (remove TV_ prefix if present)
+            comment = trade_data.get('trade_id', 'trade')
+            if comment.startswith('TV_'):
+                comment = comment[3:]
+
+            # Prepare close request
+            request = {
+                "action": mt5.TRADE_ACTION_DEAL,
+                "symbol": mt5_symbol,
+                "volume": float(qty),
+                "type": order_type,
+                "position": int(mt5_ticket),
+                "price": price,
+                "deviation": 20,
+                "magic": 234000,
+                "comment": comment,  # Using cleaned comment
+                "type_time": mt5.ORDER_TIME_GTC,
+                "type_filling": mt5.ORDER_FILLING_IOC,
+            }
+
+            logger.info(f"Sending close request: {request}")
+
+            # Execute close
+            result = mt5.order_send(request)
+            if not result:
+                return {"error": f"Close order failed: {mt5.last_error()}"}
+
+            if result.retcode != mt5.TRADE_RETCODE_DONE:
+                return {
+                    "error": f"Close order failed: {result.comment}",
+                    "retcode": result.retcode
+                }
+
+            # Format response
+            response = {
+                "mt5_ticket": str(result.order),
+                "volume": result.volume,
+                "price": result.price,
+                "symbol": mt5_symbol,
+                "side": "buy" if is_buy else "sell",
+                "comment": result.comment,
+                "closed_position": str(position.ticket),
+                "timestamp": datetime.now().isoformat()
+            }
+
+            logger.info(f"Position closed successfully: {response}")
+            return response
+
+        except Exception as e:
+            logger.error(f"Error closing position: {e}")
+            return {"error": str(e)}
+        
+    def cleanup(self):
+        """Cleanup connection."""
         if self.initialized:
-            try:
-                self.mt5.shutdown()
-                self.initialized = False
-                self.logger.info("MT5 connection shutdown")
-            except Exception as e:
-                self.logger.error(f"Error shutting down MT5: {e}")
+            mt5.shutdown()
+            self.initialized = False

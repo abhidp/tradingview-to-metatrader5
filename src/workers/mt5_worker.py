@@ -1,64 +1,102 @@
 import logging
 import time
 import json
-import signal
-import sys
-from typing import Optional, Dict, Any
+from typing import Dict, Any
+from datetime import datetime
 from src.utils.queue_handler import RedisQueue
-from src.services.trade_executor import TradeExecutor
-from src.utils.symbol_mapper import SymbolMapper
+from src.services.mt5_service import MT5Service
+from src.utils.database_handler import DatabaseHandler
+from src.config.mt5_config import MT5_CONFIG
 
 logger = logging.getLogger('MT5Worker')
 
 class MT5Worker:
     def __init__(self):
         self.queue = RedisQueue()
-        self.executor = TradeExecutor(SymbolMapper())
+        self.db = DatabaseHandler()
+        self.mt5 = MT5Service(
+            account=MT5_CONFIG['account'],
+            password=MT5_CONFIG['password'],
+            server=MT5_CONFIG['server']
+        )
         self.running = True
-        
-        # Set up signal handlers
-        signal.signal(signal.SIGINT, self.handle_shutdown)
-        signal.signal(signal.SIGTERM, self.handle_shutdown)
-    
-    def handle_shutdown(self, signum, frame):
-        """Handle shutdown signal."""
-        print("\n🛑 Shutdown signal received...")
-        self.running = False
-        sys.exit(0)
-    
+
     def process_trade(self, trade_data: Dict[str, Any]) -> None:
         """Process a single trade."""
         try:
-            execution_data = trade_data['execution_data']
-            trade_type = trade_data['trade_type']
+            execution = trade_data['execution_data']
+            trade_id = trade_data['trade_id']
+            mt5_ticket = trade_data.get('mt5_ticket')
             
-            logger.info(f"Processing {trade_type} trade for {execution_data['instrument']}")
+            print("\nProcessing trade data:")
+            print(f"Trade ID: {trade_id}")
+            print(f"MT5 Ticket: {mt5_ticket}")
+            print(f"Is Close: {execution.get('isClose', False)}")
             
-            # Format trade request
-            trade_request = {
-                'instrument': execution_data['instrument'],
-                'side': execution_data['side'],
-                'qty': execution_data['qty'],
-                'type': 'market',
-                'position_id': execution_data.get('position_id'),
-                'is_close': execution_data.get('is_close', False)
-            }
-            
-            # Execute trade
-            result = self.executor.execute_market_order(trade_request)
+            # If this is a close request
+            if execution.get('isClose', False):
+                if not mt5_ticket:
+                    logger.error(f"Cannot close trade without MT5 ticket")
+                    return
+                
+                logger.info(f"Closing position with MT5 ticket: {mt5_ticket}")
+                result = self.mt5.close_position(trade_data)
+            else:
+                # New trade
+                logger.info("Opening new position")
+                mt5_request = {
+                    'trade_id': trade_id,
+                    'instrument': execution['instrument'],
+                    'side': execution['side'],
+                    'qty': execution['qty'],
+                    'type': 'market'
+                }
+                result = self.mt5.execute_market_order(mt5_request)
             
             if 'error' in result:
                 logger.error(f"Trade execution failed: {result['error']}")
-                self.queue.fail_trade(trade_data['id'], result['error'])
-            else:
-                logger.info(f"Trade executed successfully: {result}")
-                self.queue.complete_trade(trade_data['id'], result)
-                
+                self.db.update_trade_status(trade_id, 'failed', {
+                    'error_message': result['error'],
+                    'mt5_response': result
+                })
+                return
+            
+            # Update database with MT5 ticket
+            status = 'closed' if execution.get('isClose', False) else 'completed'
+            update_data = {
+                'status': status,
+                'mt5_ticket': result['mt5_ticket'],
+                'mt5_position': result['mt5_position'],  # This should match the ticket for new trades
+                'mt5_response': result
+            }
+            
+            # Add closing-specific data
+            if status == 'closed':
+                update_data.update({
+                    'closed_at': datetime.utcnow().isoformat(),
+                    'is_closed': True
+                })
+            
+            logger.info(f"Updating trade {trade_id} with MT5 data")
+            self.db.update_trade_status(trade_id, status, update_data)
+            
+            # Log success
+            logger.info(f"Trade {trade_id} {status} successfully on MT5")
+            print(f"\n✅ MT5 Trade {'Closed' if status == 'closed' else 'Executed'}:")
+            print(f"Symbol: {result['symbol']}")
+            print(f"Side: {result['side']}")
+            print(f"Volume: {result['volume']}")
+            print(f"Price: {result['price']}")
+            print(f"Ticket: {result['mt5_ticket']}")
+            if status == 'closed':
+                print(f"Closed Position: {result.get('closed_position')}")
+            
         except Exception as e:
             logger.error(f"Error processing trade: {e}")
-            if 'id' in trade_data:
-                self.queue.fail_trade(trade_data['id'], str(e))
-    
+            self.db.update_trade_status(trade_id, 'failed', {
+                'error_message': str(e)
+            })
+
     def run(self):
         """Run the worker process."""
         print("\n🚀 MT5 Worker Started")
@@ -66,34 +104,23 @@ class MT5Worker:
         
         while self.running:
             try:
-                if not self.running:
-                    break
-                    
-                # Check queue
+                # Get trade from queue
                 trade = self.queue.get_trade()
                 if trade:
                     trade_id, trade_data = trade
                     print(f"\n📥 Received trade: {trade_id}")
-                    print(f"Trade details: {json.dumps(trade_data, indent=2)}")
-                    
                     self.process_trade(trade_data)
-                    
-                    # Print queue status
-                    status = self.queue.get_queue_status()
-                    print(f"\nQueue Status: {status}")
                 
-                time.sleep(0.1)
+                time.sleep(0.1)  # Small delay to prevent CPU overload
                 
             except KeyboardInterrupt:
-                break
+                print("\nShutdown requested...")
+                self.running = False
             except Exception as e:
                 logger.error(f"Error in worker loop: {e}")
-                time.sleep(1)
-        
-        print("\n✅ Worker stopped gracefully")
-        sys.exit(0)
+                time.sleep(1)  # Longer delay on error
     
     def cleanup(self):
-        """Clean up resources."""
-        if hasattr(self.executor, 'cleanup'):
-            self.executor.cleanup()
+        """Cleanup resources."""
+        logger.info("Cleaning up...")
+        self.mt5.cleanup()
