@@ -1,4 +1,3 @@
-import os
 import sys
 from pathlib import Path
 import logging
@@ -29,6 +28,8 @@ print("Watching for trades...\n")
 
 # Don't silence mitmproxy
 ctx.log.silent = False
-ctx.options.flow_detail = 3
+ctx.options.flow_detail = 0
+ctx.options.termlog_verbosity  = 'error'
+
 
 addons = [TradingViewInterceptor()]

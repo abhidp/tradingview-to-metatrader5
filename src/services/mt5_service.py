@@ -135,7 +135,7 @@ class MT5Service:
                 "type_filling": mt5.ORDER_FILLING_IOC,
             }
             
-            logger.info(f"Sending order: {request}")
+            # logger.info(f"Sending order: {request}")
             
             # Execute trade
             result = mt5.order_send(request)
@@ -160,7 +160,7 @@ class MT5Service:
                 "timestamp": datetime.now().isoformat()
             }
             
-            logger.info(f"Order executed successfully: {response}")
+            # logger.info(f"Order executed successfully: {response}")
             return response
             
         except Exception as e:
@@ -170,9 +170,6 @@ class MT5Service:
     def close_position(self, trade_data: Dict[str, Any]) -> Dict[str, Any]:
         """Close an existing position."""
         try:
-            print("\n🔍 Close position data received:")
-            print(json.dumps(trade_data, indent=2))
-            
             if not self.initialize():
                 return {"error": "MT5 initialization failed"}
 
@@ -193,11 +190,6 @@ class MT5Service:
 
             # Map symbol
             mt5_symbol = self.map_symbol(instrument)
-            
-            print(f"\n📊 Close request details:")
-            print(f"MT5 Ticket: {mt5_ticket}")
-            print(f"Symbol: {mt5_symbol}")
-            print(f"Quantity: {qty}")
             
             # Enable symbol for trading
             retries = 3

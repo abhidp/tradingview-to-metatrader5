@@ -52,6 +52,7 @@ class Trade(Base):
     created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
     updated_at = Column(DateTime(timezone=True), onupdate=datetime.utcnow)
     executed_at = Column(DateTime(timezone=True))
+    closed_at = Column(DateTime(timezone=True))
     
 # Create all tables
 Base.metadata.create_all(bind=engine)

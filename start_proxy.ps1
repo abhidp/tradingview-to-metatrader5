@@ -15,6 +15,7 @@ $netstatOutput | ForEach-Object {
     Stop-Process -Id $processId -Force -ErrorAction SilentlyContinue
 }
 
+
 # Activate virtual environment
 & .\venv\Scripts\Activate.ps1
 
@@ -31,15 +32,8 @@ Write-Host "Listening for trades..."
 Write-Host "Press Ctrl+C to stop`n"
 
 try {
-    # Start mitmproxy with filter as last argument
-    mitmdump `
-        --listen-host 127.0.0.1 `
-        --listen-port 8080 `
-        --mode regular `
-        --ssl-insecure `
-        --flow-detail 3 `
-        -s src/main.py `
-        '~u "orders\?locale=\w+&requestId=\w+" | ~u "executions\?locale=\w+&instrument=\w+"'
+    # Start mitmproxy with minimal output
+    mitmdump --quiet --listen-host 127.0.0.1 --listen-port 8080 --mode regular --ssl-insecure --set console_output_level=error --set flow_detail=0 -s src/main.py "~u orders\?locale=\w+&requestId=\w+ | ~u executions\?locale=\w+&instrument=\w+"
 }
 catch {
     Write-Host "`nError: $_" -ForegroundColor Red

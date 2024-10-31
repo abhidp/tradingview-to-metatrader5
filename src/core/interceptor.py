@@ -2,18 +2,22 @@ from mitmproxy import ctx, http
 import json
 from datetime import datetime
 from src.core.trade_handler import TradeHandler
+from src.utils.token_manager import TokenManager
 
 # Disable mitmproxy's default logging
-ctx.log.silent = True
-ctx.options.flow_detail = 0
+# ctx.log.silent = True
+# ctx.options.flow_detail = 0
+
+# Create a global token manager instance
+GLOBAL_TOKEN_MANAGER = TokenManager()
 
 class TradingViewInterceptor:
     def __init__(self):
         self.base_path = "icmarkets.tv.ctrader.com/accounts/40807470"
-        self.trade_handler = TradeHandler()  # Use TradeHandler instead of direct DB and Queue
+        self.trade_handler = TradeHandler()
+        self.token_manager = GLOBAL_TOKEN_MANAGER  # Use global instance
         print("\n🚀 Trade interceptor initialized")
         print("Watching for trades...\n")
-
     def should_log_request(self, flow: http.HTTPFlow) -> bool:
         """Strictly check if we should log this request."""
         url = flow.request.pretty_url
@@ -137,11 +141,14 @@ class TradingViewInterceptor:
 
     def request(self, flow: http.HTTPFlow) -> None:
         """Handle requests."""
+        # Capture auth token from all TradingView requests
+        if self.base_path in flow.request.pretty_url:
+            auth_header = flow.request.headers.get('authorization')
+            if auth_header:
+                self.token_manager.update_token(auth_header)
+        
         if not self.should_log_request(flow):
             return
-            
-        print(f"\n{'='*50}")
-        print(f"📡 Intercepted Request: {flow.request.method} {flow.request.pretty_url}")
         
         if flow.request.method == "POST" and flow.request.urlencoded_form:
             print("\n📤 Trade Data:")
@@ -161,10 +168,6 @@ class TradingViewInterceptor:
         if flow.response and flow.response.content:
             try:
                 response_data = json.loads(flow.response.content.decode('utf-8'))
-                # print("\n📥 Response Data:")
-                # print(json.dumps(response_data, indent=2))
-                # print(f"{'='*50}\n")
-                
                 # Handle order and execution responses
                 if '/orders?' in flow.request.pretty_url and flow.request.method == "POST":
                     self.trade_handler.process_order(
