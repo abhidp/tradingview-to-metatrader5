@@ -23,7 +23,6 @@ class DatabaseHandler:
     
     def save_trade(self, trade_data: Dict[str, Any]) -> None:
         """Save trade to database."""
-        print(f"\n💾 DatabaseHandler: Saving trade {trade_data.get('trade_id')}")
         
         with self.get_db() as db:
             try:
@@ -44,7 +43,6 @@ class DatabaseHandler:
                 
                 db.add(trade)
                 db.commit()
-                print("✅ Trade saved successfully")
                 
             except Exception as e:
                 db.rollback()
@@ -53,9 +51,7 @@ class DatabaseHandler:
                 raise
     
     def update_trade_status(self, trade_id: str, status: str, update_data: Dict[str, Any]) -> None:
-        """Update trade status and details."""
-        print(f"\n💾 DatabaseHandler: Updating trade {trade_id}")
-        
+        """Update trade status and details."""        
         with self.get_db() as db:
             try:
                 # Prepare update data with status
@@ -74,7 +70,6 @@ class DatabaseHandler:
                     raise Exception(f"Trade not found: {trade_id}")
                 
                 db.commit()
-                print("✅ Trade updated successfully")
                 
             except Exception as e:
                 db.rollback()
@@ -103,11 +98,6 @@ class DatabaseHandler:
             try:
                 trade = db.query(Trade).filter(Trade.position_id == position_id).first()
                 if trade:
-                    print(f"\n📋 Found trade for position {position_id}:")
-                    print(f"Trade ID: {trade.trade_id}")
-                    print(f"MT5 Ticket: {trade.mt5_ticket}")
-                    print(f"Status: {trade.status}")
-                    
                     return {
                         'trade_id': trade.trade_id,
                         'order_id': trade.order_id,
@@ -128,3 +118,19 @@ class DatabaseHandler:
                 logger.error(f"Error getting trade by position: {e}")
                 print(f"❌ Database error: {e}")
                 return None
+            
+    def get_trade_by_mt5_ticket(self, mt5_ticket: str) -> Optional[Dict[str, Any]]:
+        """Get trade by MT5 ticket."""
+        with self.get_db() as db:
+            trade = db.query(Trade).filter(Trade.mt5_ticket == mt5_ticket).first()
+            if trade:
+                return {
+                    'trade_id': trade.trade_id,
+                    'position_id': trade.position_id,
+                    'mt5_ticket': trade.mt5_ticket,
+                    'instrument': trade.instrument,
+                    'side': trade.side,
+                    'quantity': str(trade.quantity),
+                    'status': trade.status
+                }
+            return None

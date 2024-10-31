@@ -66,9 +66,7 @@ class TradeHandler:
                         'is_closed': execution.get('isClose', False)
                     }
                     
-                    print("\n💾 Updating trade execution data...")
                     self.db.update_trade_status(trade_id, 'executed', update_data)
-                    print("✅ Trade updated successfully")
                     
                     # Then push to queue for MT5
                     queue_data = {
@@ -81,7 +79,6 @@ class TradeHandler:
                     }
                     print(f"\n📤 Pushing trade to queue...")
                     self.queue.push_trade(queue_data)
-                    print("✅ Trade pushed to queue")
                     
                     # Remove from pending orders
                     del self.pending_orders[order_id]
