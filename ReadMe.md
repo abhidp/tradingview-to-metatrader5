@@ -1,19 +1,21 @@
-# TradingView Trade Capture
+# TradingView to MT5 Trade Copier
 
-A proxy server that captures trade executions from TradingView to ICMarkets.
+Automatically copy trades from TradingView to MetaTrader 5 using a proxy server.
 
 ## Features
-
-- Captures trade executions in real-time
-- Logs trade details including instrument, side, quantity, and type
-- Stores trades in a structured JSON format
-- Minimal console output - only shows actual trade executions
+- Intercepts TradingView trades
+- Copies trades to MT5 in real-time
+- Supports market orders (buy/sell)
+- Position tracking and management
+- Trade status monitoring
+- Persistent storage in PostgreSQL
+- Message queueing with Redis
 
 ## Prerequisites
 
-- Python 3.8+
-- mitmproxy
-- Windows OS (for batch script)
+  - Python 3.11
+  - Docker Desktop
+  - MetaTrader 5 Terminal
 
 ## Installation
 
@@ -42,103 +44,80 @@ cp .env.template .env
 ```
 
 2. Update `.env` with your credentials:
-```env
-# MT5 settings
-MT5_ACCOUNT=12345678
-MT5_PASSWORD=your_actual_password
-MT5_SERVER=ICMarkets-Live
-```
+  ```ini
+  # Database
+  DB_HOST=localhost
+  DB_PORT=5432
+  DB_NAME=tradingview
+  DB_USER=tvuser
+  DB_PASSWORD=tvpassword
+
+  # Redis
+  REDIS_HOST=localhost
+  REDIS_PORT=6379
+
+  # MT5
+  MT5_ACCOUNT=your_account_number
+  MT5_PASSWORD=your_mt5_password
+  MT5_SERVER=ICMarkets-Demo
+  ```
 
 ⚠️ IMPORTANT: Never commit your `.env` file to version control!
 
-
-## Usage
+3. Start services
+  `docker-compose up -d`## Usage
 
 1. Start the proxy server:
-```bash
-start_proxy.bat
-```
+   ```powershell
+   .\start_proxy.ps1
+   ```
 
-2. Configure your TradingView to use the proxy:
-   - Set proxy address to: localhost
-   - Set proxy port to: 8080
+2. Start the MT5 worker:
+   ```powershell
+   .\start_worker.ps1
+   ```
 
-3. Execute trades on TradingView as normal. The proxy will capture and log all trade executions.
+3. Configure your system proxy to `127.0.0.1:8080`
 
-4. Trade data will be stored in: `logs/trades/trades_YYYYMMDD_HHMMSS.json`
+4. Symbol Mapping:
+   - Edit `src/utils/symbol_mapper.py` to add/modify symbol mappings between TradingView and MT5.
 
-## Output Format
-
-Each trade is logged in JSON format with the following structure:
-```json
-{
-  "timestamp": "2024-10-28T01:32:13.974520",
-  "request_data": {
-    "currentAsk": "67559.49",
-    "currentBid": "67544.49",
-    "instrument": "BTCUSD",
-    "qty": "0.03",
-    "side": "buy",
-    "type": "market"
-  },
-  "response": {
-    "s": "ok",
-    "d": {
-      "orderId": "764986466"
-    }
-  }
-}
-```
+5. Place trades in TradingView - they will automatically be copied to MT5.
 
 ## Project Structure
 ```
-tradingview-trade-capture/      # Root directory
-├── logs/                       # Log files directory (git ignored)
-│   └── trades/                 # Trade execution logs
-│
-├── src/                        # Source code
-│   ├── config/                 # Configuration
-│   │   ├── constants.py        # Constants and URL patterns
-│   │   ├── database.py         # Database configuration
-│   │   └── mt5_config.py       # MT5 credentials and settings
-│   │
-│   ├── core/                   # Core functionality
-│   │   ├── interceptor.py      # Proxy interceptor
-│   │   └── trade_handler.py    # Trade processing logic
-│   │
-│   ├── models/                 # Database models
-│   │   ├── database.py         # SQLAlchemy models
-│   │   └── trade.py            # Trade entity definition
-│   │
-│   ├── scripts/                # Utility scripts
-│   │   ├── check_db.py         # Database status check
-│   │   └── reset_db.py         # Database initialization
-│   │
-│   ├── services/               # External services
-│   │   ├── mt5_service.py      # MT5 connection
-│   │   └── trade_executor.py   # Trade execution logic
-│   │
-│   ├── utils/                  # Utilities
+tradingview-trade-capture/
+├── logs/                  # Log files (git ignored)
+│   └── trades/           # Trade execution logs
+├── src/                  # Source code
+│   ├── config/          # Configuration
+│   │   ├── constants.py # Constants and URL patterns
+│   │   ├── database.py # Database configuration
+│   │   └── mt5_config.py # MT5 credentials
+│   ├── core/           # Core functionality
+│   │   ├── interceptor.py # Proxy interceptor
+│   │   └── trade_handler.py # Trade processing
+│   ├── models/         # Database models
+│   │   └── database.py # SQLAlchemy models
+│   ├── services/       # External services
+│   │   └── mt5_service.py # MT5 operations
+│   ├── utils/          # Utilities
 │   │   ├── database_handler.py # Database operations
-│   │   ├── queue_handler.py    # Redis queue operations
-│   │   └── symbol_mapper.py    # Symbol mapping TV->MT5
-│   │
-│   ├── workers/                # Background workers
-│   │   └── mt5_worker.py       # MT5 trade execution worker
-│   │
-│   ├── main.py                 # Proxy server entry point
-│   └── start_worker.py         # Worker entry point
-│
-├── .env                        # Environment variables (git ignored)
-├── .env.template               # Environment variables template
-├── .gitignore                  # Git ignore rules
-├── docker-compose.yml          # Docker services configuration
-├── init.sql                    # Database initialization script
-├── LICENSE                     # Project license
-├── ReadMe.md                   # Project documentation
-├── requirements.txt            # Python dependencies
-├── start_proxy.ps1             # Proxy server startup script
-└── start_worker.ps1            # Worker startup script
+│   │   ├── queue_handler.py # Redis operations
+│   │   └── symbol_mapper.py # Symbol mapping
+│   ├── workers/        # Workers
+│   │   └── mt5_worker.py # MT5 trade executor
+│   ├── main.py        # Proxy entry point
+│   └── start_worker.py # Worker entry point
+├── .env               # Environment variables (git ignored)
+├── .env.template      # Environment template
+├── .gitignore        # Git ignore rules
+├── docker-compose.yml # Docker services config
+├── init.sql          # Database initialization
+├── LICENSE           # Project license
+├── requirements.txt  # Python dependencies
+├── start_proxy.ps1   # Proxy starter script
+└── start_worker.ps1  # Worker starter script
 ```
 
 ## License
