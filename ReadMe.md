@@ -79,45 +79,50 @@ cp .env.template .env
 
 3. Configure your system proxy to `127.0.0.1:8080`
 
-4. Symbol Mapping:
-   - Edit `src/utils/symbol_mapper.py` to add/modify symbol mappings between TradingView and MT5.
+4. Symbol Mappings
+    The system uses a mapping file to convert between TradingView and MT5 symbols. 
+    A template is provided in `data/symbol_mappings.template.json`.
+
+    To initialize your mappings:
+    1. Copy template: `copy data\symbol_mappings.template.json data\symbol_mappings.json`
+    2. Run the management script: `python src/scripts/manage_symbols.py -r`
 
 5. Place trades in TradingView - they will automatically be copied to MT5.
 
 ## Project Structure
 ```
 tradingview-trade-capture/
-├── logs/                  # Log files (git ignored)
-│   └── trades/           # Trade execution logs
-├── src/                  # Source code
-│   ├── config/          # Configuration
-│   │   ├── constants.py # Constants and URL patterns
-│   │   ├── database.py # Database configuration
-│   │   └── mt5_config.py # MT5 credentials
-│   ├── core/           # Core functionality
-│   │   ├── interceptor.py # Proxy interceptor
-│   │   └── trade_handler.py # Trade processing
-│   ├── models/         # Database models
-│   │   └── database.py # SQLAlchemy models
-│   ├── services/       # External services
-│   │   └── mt5_service.py # MT5 operations
-│   ├── utils/          # Utilities
-│   │   ├── database_handler.py # Database operations
-│   │   ├── queue_handler.py # Redis operations
-│   │   └── symbol_mapper.py # Symbol mapping
-│   ├── workers/        # Workers
-│   │   └── mt5_worker.py # MT5 trade executor
-│   ├── main.py        # Proxy entry point
-│   └── start_worker.py # Worker entry point
-├── .env               # Environment variables (git ignored)
-├── .env.template      # Environment template
-├── .gitignore        # Git ignore rules
-├── docker-compose.yml # Docker services config
-├── init.sql          # Database initialization
-├── LICENSE           # Project license
-├── requirements.txt  # Python dependencies
-├── start_proxy.ps1   # Proxy starter script
-└── start_worker.ps1  # Worker starter script
+├── logs/                         # Log files (git ignored)
+│   └── trades/                   # Trade execution logs
+├── src/                          # Source code
+│   ├── config/                   # Configuration
+│   │   ├── constants.py          # Constants and URL patterns
+│   │   ├── database.py           # Database configuration
+│   │   └── mt5_config.py         # MT5 credentials
+│   ├── core/                     # Core functionality
+│   │   ├── interceptor.py        # Proxy interceptor
+│   │   └── trade_handler.py      # Trade processing
+│   ├── models/                   # Database models
+│   │   └── database.py           # SQLAlchemy models
+│   ├── services/                 # External services
+│   │   └── mt5_service.py        # MT5 operations
+│   ├── utils/                    # Utilities
+│   │   ├── database_handler.py   # Database operations
+│   │   ├── queue_handler.py      # Redis operations
+│   │   └── symbol_mapper.py      # Symbol mapping
+│   ├── workers/                  # Workers
+│   │   └── mt5_worker.py         # MT5 trade executor
+│   ├── main.py                   # Proxy entry point
+│   └── start_worker.py           # Worker entry point
+├── .env                          # Environment variables (git ignored)
+├── .env.template                 # Environment template
+├── .gitignore                    # Git ignore rules
+├── docker-compose.yml            # Docker services config
+├── init.sql                      # Database initialization
+├── LICENSE                       # Project license
+├── requirements.txt              # Python dependencies
+├── start_proxy.ps1               # Proxy starter script
+└── start_worker.ps1              # Worker starter script
 ```
 
 ## License

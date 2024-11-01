@@ -45,3 +45,7 @@ token.json
 # System files
 .DS_Store
 Thumbs.db
+
+# Data files
+symbol_mappings.json
+token.json
