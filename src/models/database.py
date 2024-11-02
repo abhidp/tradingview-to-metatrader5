@@ -35,6 +35,9 @@ class Trade(Base):
     ask_price = Column(Numeric)
     bid_price = Column(Numeric)
     execution_price = Column(Numeric)
+    take_profit = Column(Numeric)
+    stop_loss = Column(Numeric)
+
     
     # Status
     status = Column(String(20), nullable=False, default='new')
@@ -55,4 +58,4 @@ class Trade(Base):
     closed_at = Column(DateTime(timezone=True))
     
 # Create all tables
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
