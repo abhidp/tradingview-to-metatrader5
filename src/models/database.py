@@ -58,4 +58,4 @@ class Trade(Base):
     closed_at = Column(DateTime(timezone=True))
     
 # Create all tables
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
