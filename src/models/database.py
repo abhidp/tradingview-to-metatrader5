@@ -35,6 +35,9 @@ class Trade(Base):
     ask_price = Column(Numeric)
     bid_price = Column(Numeric)
     execution_price = Column(Numeric)
+    take_profit = Column(Numeric)
+    stop_loss = Column(Numeric)
+
     
     # Status
     status = Column(String(20), nullable=False, default='new')
