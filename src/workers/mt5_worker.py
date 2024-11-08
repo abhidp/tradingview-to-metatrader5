@@ -22,7 +22,6 @@ class MT5Worker:
             server=MT5_CONFIG['server']
         )
         self.tv_service = TradingViewService(
-            account_id="40807470",
             token_manager=GLOBAL_TOKEN_MANAGER
         )
         self.running = True
@@ -89,6 +88,12 @@ class MT5Worker:
     def process_trade(self, trade_data: Dict[str, Any]) -> None:
         """Process a single trade."""
         try:
+            trade_id = trade_data['trade_id']
+            # Get start time from Redis
+            start_time = int(self.queue.redis.hget('trade_times', trade_id) or 0)
+            if not start_time:
+                logger.warning(f"No start time found for trade {trade_id}")
+
             # Execute or close based on isClose flag
             if trade_data.get('execution_data', {}).get('isClose', False):
                 logger.info("Processing close request")
@@ -97,6 +102,13 @@ class MT5Worker:
                 logger.info("Processing new position")
                 result = self.mt5.execute_market_order(trade_data)
             
+            # Calculate execution time
+            end_time = int(time.time() * 1000)
+            execution_time = end_time - start_time if start_time else None
+            
+            if execution_time:
+                print(f"⚡ Position executed in {execution_time}ms")
+
             if 'error' in result:
                 logger.error(f"Trade execution failed: {result['error']}")
                 self.db.update_trade_status(trade_data['trade_id'], 'failed', {
@@ -110,8 +122,12 @@ class MT5Worker:
             self.db.update_trade_status(trade_data['trade_id'], status, {
                 'mt5_ticket': result['mt5_ticket'],
                 'mt5_position': result['mt5_position'],
-                'mt5_response': result
+                'mt5_response': result,
+                'execution_time_ms': execution_time
             })
+
+            # Clean up timing data
+            self.queue.redis.hdel('trade_times', trade_id)
             
         except Exception as e:
             logger.error(f"Error processing trade: {e}")

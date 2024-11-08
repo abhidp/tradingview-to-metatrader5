@@ -1,17 +1,22 @@
 import requests
 import logging
+import os
+from dotenv import load_dotenv
 from typing import Dict, Any, Optional
 from src.utils.token_manager import TokenManager
 
 logger = logging.getLogger('TradingViewService')
 
+load_dotenv()
+TV_BROKER_URL = os.getenv('TV_BROKER_URL')
+TV_ACCOUNT_ID = os.getenv('TV_ACCOUNT_ID')
+
 class TradingViewService:
     """Service to interact with TradingView API."""
     
-    def __init__(self, account_id: str, token_manager: TokenManager):
-        self.account_id = account_id
+    def __init__(self, token_manager: TokenManager):
         self.token_manager = token_manager
-        self.base_url = f"https://icmarkets.tv.ctrader.com/accounts/{account_id}"
+        self.base_url = f"https://{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
     
     def close_position(self, position_id: str) -> Dict[str, Any]:
         """Close a position on TradingView."""

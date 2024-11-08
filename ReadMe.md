@@ -125,6 +125,18 @@ tradingview-trade-capture/
 └── start_worker.ps1              # Worker starter script
 ```
 
+
+## Maintainence
+
+- View execution statistics:
+`python src/scripts/execution_stats.py`
+
+- Check database status:
+`python src/scripts/check_db.py`
+
+- Clean Redis queues:
+`python src/scripts/clean_redis.py`
+
 ## License
 
 MIT License - see LICENSE file for details.

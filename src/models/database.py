@@ -43,7 +43,8 @@ class Trade(Base):
     status = Column(String(20), nullable=False, default='new')
     error_message = Column(Text)
     is_closed = Column(Boolean, default=False)
-    close_requested_at = Column(DateTime(timezone=True))  # New column
+    close_requested_at = Column(DateTime(timezone=True))
+    execution_time_ms = Column(Integer)
     
     # JSON data
     tv_request = Column(JSON)

@@ -1,6 +1,8 @@
-from mitmproxy import ctx, http
+import os
 import json
+from mitmproxy import ctx, http
 from datetime import datetime
+from dotenv import load_dotenv
 from src.core.trade_handler import TradeHandler
 from src.utils.token_manager import TokenManager
 
@@ -8,16 +10,22 @@ from src.utils.token_manager import TokenManager
 # ctx.log.silent = True
 # ctx.options.flow_detail = 0
 
+load_dotenv()
+TV_BROKER_URL = os.getenv('TV_BROKER_URL')
+TV_ACCOUNT_ID = os.getenv('TV_ACCOUNT_ID')
+
 # Create a global token manager instance
 GLOBAL_TOKEN_MANAGER = TokenManager()
 
 class TradingViewInterceptor:
     def __init__(self):
-        self.base_path = "icmarkets.tv.ctrader.com/accounts/40807470"
+        self.base_path = f"{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
         self.trade_handler = TradeHandler()
         self.token_manager = GLOBAL_TOKEN_MANAGER  # Use global instance
         print("\n🚀 Trade interceptor initialized")
         print("Watching for trades...\n")
+
+
     def should_log_request(self, flow: http.HTTPFlow) -> bool:
         """Strictly check if we should log this request."""
         url = flow.request.pretty_url
