@@ -14,9 +14,9 @@ class SymbolMapper:
     def __init__(self):
         # Core symbols that are always mapped
         self.mappings = {
-            'BTCUSD': 'BTCUSD.a',
-            'ETHUSD': 'ETHUSD.a',
-            'XAUUSD': 'XAUUSD.a'
+            'BTCUSD': 'BTCUSD.r',
+            'ETHUSD': 'ETHUSD.r',
+            'XAUUSD': 'XAUUSD.r'
         }
         
         # Set up file path for mappings

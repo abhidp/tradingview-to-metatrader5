@@ -1,7 +1,7 @@
 from typing import Dict, Any, Optional
 from contextlib import contextmanager
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import update
 from sqlalchemy.orm import Session
 from src.models.database import Base, Trade, SessionLocal
@@ -127,3 +127,34 @@ class DatabaseHandler:
                     'status': trade.status
                 }
             return None
+        
+    def get_execution_stats(self, limit: Optional[int] = None, days: Optional[int] = None) -> Dict[str, Any]:
+        """Get execution time statistics."""
+        with self.get_db() as db:
+            query = db.query(Trade).filter(Trade.execution_time_ms.isnot(None))
+            
+            if days:
+                cutoff = datetime.utcnow() - timedelta(days=days)
+                query = query.filter(Trade.created_at >= cutoff)
+                
+            if limit:
+                query = query.order_by(Trade.created_at.desc()).limit(limit)
+                
+            trades = query.all()
+            
+            if not trades:
+                return {
+                    "count": 0,
+                    "avg_ms": 0,
+                    "min_ms": 0,
+                    "max_ms": 0
+                }
+                
+            execution_times = [t.execution_time_ms for t in trades]
+            
+            return {
+                "count": len(trades),
+                "avg_ms": sum(execution_times) / len(execution_times),
+                "min_ms": min(execution_times),
+                "max_ms": max(execution_times)
+            }

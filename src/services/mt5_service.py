@@ -17,9 +17,9 @@ class MT5Service:
         
         # Symbol mapping
         self.symbol_map = {
-            'BTCUSD': 'BTCUSD.a',
-            'ETHUSD': 'ETHUSD.a',
-            'XAUUSD': 'XAUUSD.a'
+            'BTCUSD': 'BTCUSD.r',
+            'ETHUSD': 'ETHUSD.r',
+            'XAUUSD': 'XAUUSD.r'
         }
     
     def initialize(self) -> bool:

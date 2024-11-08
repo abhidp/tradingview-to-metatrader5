@@ -1,5 +1,6 @@
 import logging
 import json
+import time
 from datetime import datetime
 from typing import Dict, Any
 from src.utils.database_handler import DatabaseHandler
@@ -17,7 +18,9 @@ class TradeHandler:
         """Process new order from TradingView."""
         try:
             trade_id = f"TV_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{response_data['d']['orderId']}"
-        
+            start_time = int(time.time() * 1000)  # Milliseconds
+            self.queue.redis.hset('trade_times', trade_id, str(start_time))
+
             # Convert TP/SL to float if present
             take_profit = float(request_data['takeProfit']) if 'takeProfit' in request_data else None
             stop_loss = float(request_data['stopLoss']) if 'stopLoss' in request_data else None
