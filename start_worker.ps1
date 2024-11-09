@@ -6,6 +6,9 @@ Write-Host "Starting MT5 Worker..." -ForegroundColor Green
 # Set PYTHONPATH
 $env:PYTHONPATH = $PWD
 
+# Set worker mode environment variable
+$env:RUNNING_MODE = "worker"
+
 # Clear screen
 Clear-Host
 

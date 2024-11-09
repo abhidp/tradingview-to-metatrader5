@@ -1,14 +1,18 @@
 import redis
 import json
 import logging
-from datetime import datetime, timedelta
-from typing import Dict, Any, Optional, Tuple
+from datetime import datetime
+from typing import Dict, Any, Optional, Tuple, Callable
+
+logger = logging.getLogger('RedisQueue')
 
 class RedisQueue:
-    """Handles Redis queue operations."""
+    """Handles Redis queue operations with Pub/Sub support."""
     
     def __init__(self, host='localhost', port=6379, db=0):
         self.logger = logging.getLogger('RedisQueue')
+        
+        # Main Redis connection for operations
         self.redis = redis.Redis(
             host=host, 
             port=port, 
@@ -16,147 +20,179 @@ class RedisQueue:
             decode_responses=True,
             socket_timeout=5
         )
-        # Queue keys
-        self.pending_key = 'trades:pending'
-        self.processing_key = 'trades:processing'
-        self.completed_key = 'trades:completed'
-        self.failed_key = 'trades:failed'
         
-        # Initialize queues if needed
-        self._init_queues()
+        # Channel names for pub/sub
+        self.channels = {
+            'trades': 'trades:channel',      # Main trade execution channel
+            'status': 'trades:status',       # Status updates channel
+            'errors': 'trades:errors'        # Error notifications channel
+        }
+        
+        # Control flag for graceful shutdown
+        self._stop = False
+        self._pubsub = None
+        
+        # Initialize Redis silently (will send status after subscription)
+        self._init_redis(send_status=False)
     
-    def _init_queues(self):
-        """Initialize Redis queues if they don't exist."""
+    def _init_redis(self, send_status=True) -> None:
+        """Initialize Redis and clean up any stale data."""
         try:
-            # Clear any existing incorrect data structures
-            for key in [self.pending_key, self.processing_key, self.completed_key, self.failed_key]:
-                if self.redis.exists(key) and not self.redis.type(key) == b'list':
-                    self.redis.delete(key)
+            # Clear any old data
+            self.redis.delete(
+                'trades:pending',
+                'trades:processing',
+                'trades:completed',
+                'trades:failed'
+            )
             
-            # Initialize empty lists if they don't exist
-            pipeline = self.redis.pipeline()
-            for key in [self.pending_key, self.processing_key, self.completed_key, self.failed_key]:
-                pipeline.lpush(key, '') if not self.redis.exists(key) else None
-                pipeline.lrem(key, 0, '')  # Remove empty string placeholder
-            pipeline.execute()
+            # Publish system startup message only if requested
+            if send_status:
+                self.publish_status("Queue system initialized")
             
         except Exception as e:
-            self.logger.error(f"Error initializing queues: {e}")
+            self.logger.error(f"Error initializing Redis: {e}")
     
-    def _clear_old_trades(self, trade_id: str) -> None:
-        """Clear any old instances of this trade from queues."""
+    def publish_status(self, message: str) -> None:
+        """Publish status update."""
         try:
-            for queue_key in [self.pending_key, self.processing_key]:
-                all_items = self.redis.lrange(queue_key, 0, -1)
-                for item in all_items:
-                    try:
-                        trade_data = json.loads(item)
-                        if trade_data.get('data', {}).get('trade_id') == trade_id:
-                            self.redis.lrem(queue_key, 0, item)
-                    except:
-                        continue
+            self.redis.publish(self.channels['status'], 
+                             json.dumps({
+                                 'type': 'status',
+                                 'message': message,
+                                 'timestamp': datetime.now().isoformat()
+                             }))
         except Exception as e:
-            self.logger.error(f"Error clearing old trades: {e}")
+            self.logger.error(f"Error publishing status: {e}")
     
     def push_trade(self, trade_data: Dict[str, Any]) -> str:
-        """Push trade to queue."""
+        """Publish trade data to channel."""
         try:
+            # Generate trade ID
             trade_id = f"trade_{datetime.now().timestamp()}"
             
-            # Clear any old trades with the same trade_id
-            if 'trade_id' in trade_data:
-                self._clear_old_trades(trade_data['trade_id'])
-            
-            trade_item = json.dumps({
+            # Prepare message
+            message = {
                 'id': trade_id,
                 'data': trade_data,
                 'timestamp': datetime.now().isoformat()
-            })
+            }
             
-            self.redis.lpush(self.pending_key, trade_item)
-            self.logger.info(f"Trade {trade_id} pushed to queue")
+            # Publish to trades channel
+            self.redis.publish(
+                self.channels['trades'],
+                json.dumps(message)
+            )
+            
+            self.logger.info(f"Trade {trade_id} published to channel")
             return trade_id
             
         except Exception as e:
-            self.logger.error(f"Error pushing trade to queue: {e}")
+            self.logger.error(f"Error publishing trade: {e}")
+            # Publish error
+            self.redis.publish(
+                self.channels['errors'],
+                json.dumps({
+                    'error': str(e),
+                    'timestamp': datetime.now().isoformat()
+                })
+            )
             raise
     
-    def get_trade(self) -> Optional[Tuple[str, Dict[str, Any]]]:
-        """Get next trade from queue and remove it."""
+    def subscribe(self, callback: Callable[[str, Dict], None]) -> None:
+        """Subscribe to trade channel with callback."""
         try:
-            # Get most recent trade
-            trade_item = self.redis.rpop(self.pending_key)
-            if not trade_item:
-                return None
+            # Create new connection for subscription
+            self._pubsub = self.redis.pubsub()
             
-            trade = json.loads(trade_item)
+            # Subscribe to all channels with message handlers
+            channel_handlers = {
+                self.channels['trades']: self._handle_message(callback, 'trade'),
+                self.channels['status']: self._handle_message(callback, 'status'),
+                self.channels['errors']: self._handle_message(callback, 'error')
+            }
             
-            # Check trade age
-            trade_timestamp = datetime.fromisoformat(trade['timestamp'])
-            if datetime.now() - trade_timestamp > timedelta(seconds=5):
-                self.logger.info(f"Skipping old trade from {trade_timestamp}")
-                return None
+            self._pubsub.subscribe(**channel_handlers)
+            self.logger.info("Subscribed to trade channels")
             
-            return trade['id'], trade['data']
+            # Now that we're subscribed, send the initialization status
+            self._init_redis(send_status=True)
             
+            # Start listening loop with timeout
+            while not self._stop:
+                message = self._pubsub.get_message(timeout=1.0)
+                if message and message['type'] == 'message':
+                    try:
+                        data = json.loads(message['data'])
+                        msg_type = self._get_message_type(message['channel'])
+                        callback(msg_type, data)
+                    except json.JSONDecodeError:
+                        self.logger.error("Invalid JSON message received")
+                    except Exception as e:
+                        self.logger.error(f"Error processing message: {e}")
+                        
         except Exception as e:
-            self.logger.error(f"Error getting trade from queue: {e}")
-            return None
-            
-    def complete_trade(self, trade_id: str, result: Dict[str, Any]) -> None:
-        """Mark trade as complete."""
-        try:
-            # Find trade in processing queue
-            trade_item = self._find_and_remove_from_list(self.processing_key, trade_id)
-            if trade_item:
-                trade = json.loads(trade_item)
-                trade['result'] = result
-                trade['completed_at'] = datetime.now().isoformat()
-                self.redis.lpush(self.completed_key, json.dumps(trade))
-                self.logger.info(f"Trade {trade_id} marked as complete")
-                
-        except Exception as e:
-            self.logger.error(f"Error completing trade {trade_id}: {e}")
+            if not self._stop:  # Only log if not stopping intentionally
+                self.logger.error(f"Error in subscription loop: {e}")
+        finally:
+            self._cleanup_subscription()
     
-    def fail_trade(self, trade_id: str, error: str) -> None:
-        """Mark trade as failed."""
-        try:
-            # Find trade in processing queue
-            trade_item = self._find_and_remove_from_list(self.processing_key, trade_id)
-            if trade_item:
-                trade = json.loads(trade_item)
-                trade['error'] = error
-                trade['failed_at'] = datetime.now().isoformat()
-                self.redis.lpush(self.failed_key, json.dumps(trade))
-                self.logger.info(f"Trade {trade_id} marked as failed: {error}")
-                
-        except Exception as e:
-            self.logger.error(f"Error failing trade {trade_id}: {e}")
+    def _get_message_type(self, channel: bytes) -> str:
+        """Get message type from channel name."""
+        channel_str = channel.decode('utf-8')
+        for msg_type, chan in self.channels.items():
+            if chan == channel_str:
+                return msg_type
+        return 'unknown'
     
-    def _find_and_remove_from_list(self, key: str, trade_id: str) -> Optional[str]:
-        """Find and remove a trade from a list by ID."""
-        list_length = self.redis.llen(key)
-        for i in range(list_length):
-            item = self.redis.lindex(key, i)
-            if not item:
-                continue
-            
-            trade = json.loads(item)
-            if trade['id'] == trade_id:
-                # Remove this item
-                self.redis.lrem(key, 1, item)
-                return item
-        return None
+    def _handle_message(self, callback: Callable, msg_type: str) -> Callable:
+        """Create message handler for type."""
+        def handler(message):
+            try:
+                if message['type'] == 'message':
+                    data = json.loads(message['data'])
+                    callback(msg_type, data)
+            except Exception as e:
+                self.logger.error(f"Error handling {msg_type} message: {e}")
+        return handler
+    
+    def _cleanup_subscription(self):
+        """Clean up Redis subscription."""
+        try:
+            if self._pubsub:
+                self._pubsub.unsubscribe()
+                self._pubsub.close()
+                self._pubsub = None
+        except Exception as e:
+            self.logger.error(f"Error cleaning up subscription: {e}")
     
     def get_queue_status(self) -> Dict[str, int]:
         """Get current queue status."""
         try:
             return {
-                'pending': self.redis.llen(self.pending_key),
-                'processing': self.redis.llen(self.processing_key),
-                'completed': self.redis.llen(self.completed_key),
-                'failed': self.redis.llen(self.failed_key)
+                'trades_channel': self.redis.pubsub_numsub(self.channels['trades'])[0][1],
+                'status_channel': self.redis.pubsub_numsub(self.channels['status'])[0][1],
+                'errors_channel': self.redis.pubsub_numsub(self.channels['errors'])[0][1]
             }
         except Exception as e:
             self.logger.error(f"Error getting queue status: {e}")
             return {'error': str(e)}
+        
+    def close(self):
+        """Close the Redis connection."""
+        try:
+            # Signal subscription loop to stop
+            self._stop = True
+            
+            # Send shutdown message before closing
+            self.publish_status("Queue system shutting down")
+            
+            # Clean up subscription
+            self._cleanup_subscription()
+            
+            # Close Redis connection
+            if hasattr(self, 'redis'):
+                self.redis.close()
+                
+        except Exception as e:
+            logger.error(f"Error closing Redis connection: {e}")
