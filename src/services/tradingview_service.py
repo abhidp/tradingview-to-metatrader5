@@ -1,6 +1,7 @@
 import requests
 import logging
 import os
+import sys
 from dotenv import load_dotenv
 from typing import Dict, Any, Optional
 from src.utils.token_manager import TokenManager
@@ -13,10 +14,36 @@ TV_ACCOUNT_ID = os.getenv('TV_ACCOUNT_ID')
 
 class TradingViewService:
     """Service to interact with TradingView API."""
+    _instance = None
+    _initialized = False
     
-    def __init__(self, token_manager: TokenManager):
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(TradingViewService, cls).__new__(cls)
+        return cls._instance
+    
+    def __init__(self, token_manager: TokenManager, print_status: bool = True):
+        """Initialize TradingView service."""
+        # Skip if already initialized
+        if self._initialized:
+            return
+            
         self.token_manager = token_manager
         self.base_url = f"https://{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
+        
+        # Check if we're in worker mode via environment variable
+        is_worker = os.getenv('RUNNING_MODE') == 'worker'
+        
+        # Only print status if:
+        # 1. Not in worker mode AND
+        # 2. Print status is requested AND
+        # 3. Not initialized before
+        if not is_worker and print_status and not self._initialized:
+            print("\n🚀 Trade interceptor initialized")
+            print(f"Connected to: {TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}")
+            print("Watching for trades...\n")
+        
+        self._initialized = True
     
     def close_position(self, position_id: str) -> Dict[str, Any]:
         """Close a position on TradingView."""

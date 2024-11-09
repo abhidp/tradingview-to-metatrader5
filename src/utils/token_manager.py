@@ -7,11 +7,10 @@ from datetime import datetime, timedelta
 logger = logging.getLogger('TokenManager')
 
 class TokenManager:
-    """Manages TradingView authorization token."""
-    
     def __init__(self):
         self._token = None
-        self._token_file = Path('token.json')
+        self._token_file = Path('data/auth_token.json')
+        self._token_file.parent.mkdir(exist_ok=True)
         self._load_token()
     
     def _load_token(self) -> None:
@@ -24,6 +23,7 @@ class TokenManager:
                     logger.info("Token loaded from file")
                 else:
                     logger.info("Stored token expired")
+                    self._token_file.unlink(missing_ok=True)
         except Exception as e:
             logger.error(f"Error loading token: {e}")
     
@@ -35,6 +35,7 @@ class TokenManager:
                 'timestamp': datetime.now().isoformat()
             }
             self._token_file.write_text(json.dumps(data))
+            logger.info("Token saved to file")
         except Exception as e:
             logger.error(f"Error saving token: {e}")
     
@@ -45,7 +46,8 @@ class TokenManager:
         else:
             self._token = f"Bearer {token}"
         self._save_token()
-        
+        logger.info("Authorization token updated")
+    
     def get_token(self) -> Optional[str]:
         """Get the current token."""
         if not self._token:

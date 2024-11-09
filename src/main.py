@@ -1,4 +1,5 @@
 import sys
+import os
 from pathlib import Path
 import logging
 
@@ -23,13 +24,14 @@ logging.basicConfig(
 logger = logging.getLogger('ProxyServer')
 logger.setLevel(logging.INFO)
 
-print("\n🚀 Proxy Server Started")
-print("Watching for trades...\n")
-
 # Don't silence mitmproxy
 ctx.log.silent = False
 ctx.options.flow_detail = 0
-ctx.options.termlog_verbosity  = 'error'
+ctx.options.termlog_verbosity = 'error'
 
+def get_interceptor():
+    """Get singleton instance of TradingViewInterceptor."""
+    return TradingViewInterceptor()
 
-addons = [TradingViewInterceptor()]
+# Initialize addons once
+addons = [get_interceptor()]

@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 from mitmproxy import ctx, http
 from datetime import datetime
 from dotenv import load_dotenv
@@ -9,6 +10,7 @@ from src.utils.token_manager import TokenManager
 # Disable mitmproxy's default logging
 # ctx.log.silent = True
 # ctx.options.flow_detail = 0
+logger = logging.getLogger('TradingViewInterceptor')
 
 load_dotenv()
 TV_BROKER_URL = os.getenv('TV_BROKER_URL')
@@ -18,13 +20,27 @@ TV_ACCOUNT_ID = os.getenv('TV_ACCOUNT_ID')
 GLOBAL_TOKEN_MANAGER = TokenManager()
 
 class TradingViewInterceptor:
+    _instance = None
+    _initialized = False
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(TradingViewInterceptor, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self):
+        if self._initialized:
+            return
+            
         self.base_path = f"{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
         self.trade_handler = TradeHandler()
-        self.token_manager = GLOBAL_TOKEN_MANAGER  # Use global instance
-        print("\n🚀 Trade interceptor initialized")
-        print("Watching for trades...\n")
+        self.token_manager = GLOBAL_TOKEN_MANAGER
 
+        print("\n🚀 Trade interceptor initialized")
+        print(f"Connected to: {self.base_path}")
+        print("Watching for trades...\n")
+        
+        self._initialized = True
 
     def should_log_request(self, flow: http.HTTPFlow) -> bool:
         """Strictly check if we should log this request."""
@@ -42,7 +58,7 @@ class TradingViewInterceptor:
             return True
             
         return False
-
+    
     def handle_order(self, flow: http.HTTPFlow, response_data: dict) -> None:
         """Handle new order request."""
         try:
@@ -149,24 +165,26 @@ class TradingViewInterceptor:
 
     def request(self, flow: http.HTTPFlow) -> None:
         """Handle requests."""
-        # Capture auth token from all TradingView requests
-        if self.base_path in flow.request.pretty_url:
-            auth_header = flow.request.headers.get('authorization')
-            if auth_header:
-                self.token_manager.update_token(auth_header)
-        
-        if not self.should_log_request(flow):
-            return
-        
-        if flow.request.method == "POST" and flow.request.urlencoded_form:
-            print("\n📤 Trade Data:")
-            print(json.dumps(dict(flow.request.urlencoded_form), indent=2))
-        elif flow.request.method == "DELETE":
-            # Extract position ID from URL
-            url_parts = flow.request.pretty_url.split('/')
-            position_id = url_parts[-1].split('?')[0]
-            self.trade_handler.process_position_close(position_id)
-
+        try:
+            # Capture auth token from any successful requests to the broker
+            if self.base_path in flow.request.pretty_url:
+                auth_header = flow.request.headers.get('authorization')
+                if auth_header:
+                    self.token_manager.update_token(auth_header)
+                    
+            if not self.should_log_request(flow):
+                return
+            
+            if flow.request.method == "POST" and flow.request.urlencoded_form:
+                print("\n📤 Trade Data:")
+                print(json.dumps(dict(flow.request.urlencoded_form), indent=2))
+            elif flow.request.method == "DELETE":
+                # Extract position ID from URL
+                url_parts = flow.request.pretty_url.split('/')
+                position_id = url_parts[-1].split('?')[0]
+                self.trade_handler.process_position_close(position_id)
+        except Exception as e:
+            logger.error(f"Error in request handler: {e}")
 
     def response(self, flow: http.HTTPFlow) -> None:
         """Handle responses."""
