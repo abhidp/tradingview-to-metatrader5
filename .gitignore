@@ -41,7 +41,6 @@ logs/
 *.crt
 *.key
 token.json
-auth_token.json
 
 # System files
 .DS_Store
