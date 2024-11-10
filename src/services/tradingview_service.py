@@ -30,6 +30,12 @@ class TradingViewService:
                 print("Tip: Make sure to open TradingView interface first")
                 return {"error": error_msg}
                         
+            # Validate position_id
+            if not position_id:
+                error_msg = "Invalid position ID"
+                logger.error(error_msg)
+                return {"error": error_msg}
+
             # Prepare request
             url = f"{self.base_url}/positions/{position_id}"
             params = {"locale": "en"}
@@ -44,10 +50,14 @@ class TradingViewService:
             )
             
             if response.status_code == 200:
-                logger.info(f"Position {position_id} closed successfully")
+                # logger.info(f"Position {position_id} closed successfully")
                 return {"status": "success", "data": response.json()}
+            elif response.status_code == 404:
+                # Position might already be closed
+                logger.info(f"Position {position_id} not found (might already be closed)")
+                return {"status": "success", "data": {"message": "Position not found"}}
             else:
-                error_msg = f"Failed to close position: {response.status_code} - {response.text}"
+                error_msg = f"Failed to close position: {response.status_code}"
                 logger.error(error_msg)
                 print(f"❌ {error_msg}")
                 return {"error": error_msg}
