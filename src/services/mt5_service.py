@@ -120,7 +120,7 @@ class MT5Service:
             if stop_loss is not None:
                 request["sl"] = float(stop_loss)
             
-            logger.info(f"Sending order: {mt5_symbol} {side} x {quantity}")
+            # logger.info(f"Sending order: {mt5_symbol} {side} x {quantity}")
             
             # Execute trade
             result = mt5.order_send(request)
@@ -147,7 +147,7 @@ class MT5Service:
                 "timestamp": datetime.now().isoformat()
             }
             
-            print(f"✅ Order executed: {mt5_symbol} {side} x {quantity} @ {price}")
+            # print(f"✔ Position OPENED: {mt5_symbol} {side} x {quantity} @ {price}")
             if take_profit or stop_loss:
                 print(f"   TP: {take_profit} | SL: {stop_loss}")
             
@@ -226,7 +226,6 @@ class MT5Service:
                 "timestamp": datetime.now().isoformat()
             }
 
-            print(f"✅ Position closed: {mt5_symbol} {qty} @ {price}")
             return response
 
         except Exception as e:

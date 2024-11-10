@@ -1,6 +1,5 @@
 import logging
 import json
-import time
 from datetime import datetime
 from typing import Dict, Any
 from src.utils.database_handler import DatabaseHandler
@@ -18,9 +17,7 @@ class TradeHandler:
         """Process new order from TradingView."""
         try:
             trade_id = f"TV_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{response_data['d']['orderId']}"
-            start_time = int(time.time() * 1000)  # Milliseconds
-            self.queue.redis.hset('trade_times', trade_id, str(start_time))
-
+            
             # Convert TP/SL to float if present
             take_profit = float(request_data['takeProfit']) if 'takeProfit' in request_data else None
             stop_loss = float(request_data['stopLoss']) if 'stopLoss' in request_data else None
@@ -42,10 +39,12 @@ class TradeHandler:
                 'created_at': datetime.utcnow()
             }
             
+            # Log new order
             print(f"\n📝 New {request_data['side'].upper()} order: {request_data['instrument']} x {request_data['qty']}")
             if take_profit or stop_loss:
                 print(f"TP: {take_profit} | SL: {stop_loss}")
             
+            # Store in database and track order
             self.db.save_trade(trade_data)
             self.pending_orders[response_data['d']['orderId']] = trade_id
             
@@ -67,36 +66,33 @@ class TradeHandler:
                     if not original_trade:
                         logger.error(f"Trade not found: {trade_id}")
                         continue
-
-                    # Get TP/SL from trade record
-                    take_profit = original_trade.get('take_profit')
-                    stop_loss = original_trade.get('stop_loss')
-
-                    update_data = {
-                        'position_id': execution.get('positionId'),
-                        'execution_price': execution.get('price'),
-                        'execution_data': execution,
-                        'executed_at': datetime.utcnow(),
-                        'is_closed': execution.get('isClose', False),
-                        'take_profit': take_profit,
-                        'stop_loss': stop_loss
-                    }
                     
-                    self.db.update_trade_status(trade_id, 'executed', update_data)
-                    
-                    queue_data = {
+                    # Prepare trade data with TP/SL
+                    trade_data = {
                         'trade_id': trade_id,
                         'execution_data': execution,
                         'instrument': original_trade.get('instrument'),
                         'side': original_trade.get('side'),
                         'qty': original_trade.get('quantity'),
                         'type': original_trade.get('type'),
-                        'take_profit': take_profit,
-                        'stop_loss': stop_loss
+                        'take_profit': original_trade.get('take_profit'),
+                        'stop_loss': original_trade.get('stop_loss')
+                    }
+
+                    # Update database
+                    update_data = {
+                        'position_id': execution.get('positionId'),
+                        'execution_price': execution.get('price'),
+                        'execution_data': execution,
+                        'executed_at': datetime.utcnow(),
+                        'is_closed': execution.get('isClose', False)
                     }
                     
-                    self.queue.push_trade(queue_data)
-                    print(f"✅ Trade executed: {original_trade['instrument']} {original_trade['side']} x {original_trade['quantity']}")
+                    self.db.update_trade_status(trade_id, 'executed', update_data)
+                    
+                    # Publish trade for execution
+                    self.queue.push_trade(trade_data)
+                    print(f"📤 Trade published: {original_trade['instrument']} {original_trade['side']} x {original_trade['quantity']}")
                     
                     del self.pending_orders[order_id]
                     
@@ -106,7 +102,7 @@ class TradeHandler:
     def process_position_close(self, position_id: str) -> None:
         """Process position close request from TradingView."""
         try:
-            print(f"\n🔄 Closing position: {position_id}")
+            print(f"\n📍 Closing position: {position_id}")
             
             trade = self.db.get_trade_by_position(position_id)
             if not trade:
@@ -118,6 +114,7 @@ class TradeHandler:
                 logger.error(f"No MT5 ticket found for trade {trade['trade_id']}")
                 return
             
+            # Prepare close data
             close_data = {
                 'trade_id': trade['trade_id'],
                 'mt5_ticket': mt5_ticket,
@@ -134,9 +131,11 @@ class TradeHandler:
                 }
             }
             
+            # Publish close request
             self.queue.push_trade(close_data)
-            print(f"✅ Close request sent: {trade['instrument']} {close_data['side']} x {trade['quantity']}")
+            print(f"📤 Close request sent: {trade['instrument']} {close_data['side']} x {trade['quantity']}")
             
+            # Update status
             self.db.update_trade_status(trade['trade_id'], 'closing', {
                 'close_requested_at': datetime.utcnow().isoformat()
             })

@@ -53,6 +53,7 @@ def reset_database():
             error_message TEXT,
             is_closed BOOLEAN DEFAULT FALSE,
             close_requested_at TIMESTAMP WITH TIME ZONE,
+            execution_time_ms INTEGER,
             
             tv_request JSONB,
             tv_response JSONB,
