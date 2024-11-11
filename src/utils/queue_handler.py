@@ -9,8 +9,6 @@ from functools import partial
 logger = logging.getLogger('RedisQueue')
 
 class RedisQueue:
-    """Handles Redis queue operations with Pub/Sub support."""
-    
     def __init__(self, host='localhost', port=6379, db=0):
         self.logger = logging.getLogger('RedisQueue')
         
@@ -22,16 +20,18 @@ class RedisQueue:
             decode_responses=True,
             socket_timeout=5
         )
-        
+
         # Channel names for pub/sub
         self.channels = {
             'trades': 'trades:channel',      # Main trade execution channel
             'status': 'trades:status',       # Status updates channel
             'errors': 'trades:errors'        # Error notifications channel
         }
-        
+
         # Initialize event loop for async operations
         self.loop = asyncio.get_event_loop()
+        self.pubsub = None
+        self.pubsub_thread = None
         
         # Initialize Redis
         self._init_redis()
@@ -146,17 +146,14 @@ class RedisQueue:
                 self.logger.error(f"Error handling {msg_type} message: {e}")
         return handler
     
-    def subscribe(self, callback: Union[Callable, Awaitable]) -> None:
-        """
-        Subscribe to trade channels with callback.
-        Supports both synchronous and asynchronous callbacks.
-        """
+    def subscribe(self, callback: Callable[[str, Dict], None]) -> None:
+        """Subscribe to trade channel with callback."""
         try:
             # Create new connection for subscription
-            pubsub = self.redis.pubsub()
+            self.pubsub = self.redis.pubsub()
             
             # Subscribe to all channels
-            pubsub.subscribe(**{
+            self.pubsub.subscribe(**{
                 self.channels['trades']: self._handle_message(callback, 'trade'),
                 self.channels['status']: self._handle_message(callback, 'status'),
                 self.channels['errors']: self._handle_message(callback, 'error')
@@ -164,7 +161,7 @@ class RedisQueue:
             
             # Start listening
             self.logger.info("Subscribed to trade channels")
-            pubsub.run_in_thread(sleep_time=0.001)
+            self.pubsub_thread = self.pubsub.run_in_thread(sleep_time=0.001)
             
         except Exception as e:
             self.logger.error(f"Error subscribing: {e}")
@@ -206,9 +203,28 @@ class RedisQueue:
             return {'error': str(e)}
     
     def cleanup(self) -> None:
-        """Cleanup Redis connections."""
+        """Cleanup Redis connections with proper thread shutdown."""
         try:
-            self.redis.close()
+            # Stop pubsub thread if running
+            if self.pubsub_thread is not None:
+                self.logger.info("Stopping pubsub thread...")
+                self.pubsub_thread.stop()
+                self.pubsub_thread.join(timeout=1.0)  # Wait for thread to finish
+                self.pubsub_thread = None
+            
+            # Unsubscribe and close pubsub connection
+            if self.pubsub is not None:
+                self.logger.info("Closing pubsub connection...")
+                self.pubsub.unsubscribe()
+                self.pubsub.close()
+                self.pubsub = None
+            
+            # Close main Redis connection
+            if self.redis is not None:
+                self.logger.info("Closing main Redis connection...")
+                self.redis.close()
+                self.redis = None
+            
             self.logger.info("Redis connections cleaned up")
         except Exception as e:
-            self.logger.error(f"Error during cleanup: {e}")
+            self.logger.error(f"Error during Redis cleanup: {e}")

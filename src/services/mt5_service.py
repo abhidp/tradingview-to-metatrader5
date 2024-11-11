@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 import time
 from functools import partial
+from src.config.mt5_symbol_config import SymbolMapper
 
 logger = logging.getLogger('MT5Service')
 
@@ -17,13 +18,7 @@ class MT5Service:
         self.last_init_time = 0
         self.init_cooldown = 1  # seconds between initialization attempts
         self.loop = None
-        
-        # Symbol mapping
-        self.symbol_map = {
-            'BTCUSD': 'BTCUSD.r',
-            'ETHUSD': 'ETHUSD.r',
-            'XAUUSD': 'XAUUSD.r'
-        }
+        self.symbol_mapper = SymbolMapper()
     
     def set_loop(self, loop: asyncio.AbstractEventLoop):
         """Set the event loop for this service."""
@@ -78,7 +73,7 @@ class MT5Service:
     
     def map_symbol(self, tv_symbol: str) -> str:
         """Map TradingView symbol to MT5 symbol."""
-        return self.symbol_map.get(tv_symbol, f"{tv_symbol}.a")
+        return self.symbol_mapper.map_symbol(tv_symbol)
 
     async def async_execute_market_order(self, trade_data: Dict[str, Any]) -> Dict[str, Any]:
         """Execute market order on MT5 asynchronously."""

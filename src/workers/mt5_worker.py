@@ -1,4 +1,5 @@
 import logging
+import signal
 import time
 import asyncio
 from typing import Dict, Any, Set
@@ -16,6 +17,7 @@ logger = logging.getLogger('MT5Worker')
 class MT5Worker:
     def __init__(self):
         self.running = True
+        self.shutdown_event = asyncio.Event()
         self.open_positions: Set[str] = set()
         self.loop = None
         self.queue = None
@@ -78,6 +80,11 @@ class MT5Worker:
             # Different emojis for new trade vs close
             operation = "CLOSE" if trade_data.get('execution_data', {}).get('isClose', False) else "NEW"
             trade_emoji = "📤" if operation == "CLOSE" else "📥"
+            
+            # Get position ID from execution data
+            position_id = trade_data.get('execution_data', {}).get('positionId', 'N/A')
+            mt5_ticket = trade_data.get('mt5_ticket', 'Pending')
+            
             print(f"\n{trade_emoji} Processing {operation} trade: {trade_id}")
             
             # Execute or close based on isClose flag
@@ -110,6 +117,7 @@ class MT5Worker:
                     direction = trade_data.get('execution_data', {}).get('side', '').lower()
                     direction_emoji = "SHORT🔻" if direction == 'buy' else "LONG🔼"
                     print(f"📍 Position CLOSED: {direction_emoji} {result.get('symbol')} {result.get('volume')} @ {result.get('price')}")
+                    print(f"🔗 References: TV #{position_id} --> MT5 #{mt5_ticket}")
                     print(f"⚡ Execution time: {update_data['execution_time_ms']}ms")
                     return
                     
@@ -120,7 +128,7 @@ class MT5Worker:
                         'mt5_response': result,
                         'execution_time_ms': int(time.time() * 1000) - start_time
                     }
-                    print(f"❌ Close Failed: {result['error']}")
+                    print(f"❌ Close Failed: {result['error']} (TV #{position_id} --> MT5 #{mt5_ticket})")
             else:
                 result = await self.mt5.async_execute_market_order(trade_data)
                 
@@ -131,10 +139,12 @@ class MT5Worker:
                         'mt5_response': result,
                         'execution_time_ms': int(time.time() * 1000) - start_time
                     }
-                    self.open_positions.add(str(result['mt5_ticket']))
+                    mt5_ticket = str(result['mt5_ticket'])
+                    self.open_positions.add(mt5_ticket)
                     direction = trade_data.get('execution_data', {}).get('side', '').lower()
                     direction_emoji = "LONG🔼" if direction == 'buy' else "SHORT🔻"
                     print(f"✔  Position OPENED: {direction_emoji} {result.get('symbol')} x {result.get('volume')} @ {result.get('price')}")
+                    print(f"🔗 References: TV #{position_id} --> MT5 #{mt5_ticket}")
                 else:
                     status = 'failed'
                     update_data = {
@@ -142,7 +152,7 @@ class MT5Worker:
                         'mt5_response': result,
                         'execution_time_ms': int(time.time() * 1000) - start_time
                     }
-                    print(f"❌ Open Failed: {result['error']}")
+                    print(f"❌ Open Failed: {result['error']} (TV #{position_id})")
             
             await self.db.async_update_trade_status(trade_id, status, update_data)
             
@@ -188,11 +198,14 @@ class MT5Worker:
     async def handle_mt5_close(self, mt5_ticket: str) -> None:
         """Handle position closed in MT5 asynchronously."""
         try:            
+            # Add initial logging
+            print(f"\n📤 Processing MT5-initiated close for ticket: {mt5_ticket}")
+                
             trade = await self.db.async_get_trade_by_mt5_ticket(mt5_ticket)
             if not trade:
                 logger.info(f"ℹ️ No trade found for MT5 ticket {mt5_ticket}")
                 return
-                
+                    
             if trade.get('is_closed'):
                 return
 
@@ -201,6 +214,11 @@ class MT5Worker:
                 logger.error(f"❌ No position ID for trade {trade['trade_id']}")
                 return
 
+            # Log position details
+            direction = trade.get('side', '').lower()
+            direction_emoji = "LONG🔼" if direction == 'buy' else "SHORT🔻"
+            
+            # Close in TradingView
             result = await self.tv_service.async_close_position(position_id)
             
             if result.get('error'):
@@ -213,14 +231,16 @@ class MT5Worker:
                     logger.error(f"❌ Failed to close TV position: {result['error']}")
                 return
 
-            direction = trade.get('side', '').lower()
-            direction_emoji = "LONG🔼" if direction == 'buy' else "SHORT🔻"
-            print(f"\n📍 Position CLOSED in TV: {direction_emoji} {trade['instrument']} {trade['quantity']}") 
+            print(f"📍 Position CLOSED in TV: {direction_emoji} {trade['instrument']} {trade['quantity']}")
+            print(f"🔗 References: TV #{position_id} <-- MT5 #{mt5_ticket}" )
 
             await self.db.async_update_trade_status(trade['trade_id'], 'closed', {
                 'is_closed': True,
                 'closed_at': datetime.now(timezone.utc).isoformat()
             })
+
+            # Add summary log
+            # print(f"💱 Close sync completed: {direction_emoji} {trade['instrument']} {trade['quantity']}")
 
         except Exception as e:
             logger.error(f"❌ Error handling MT5 close: {e}")
@@ -254,11 +274,35 @@ class MT5Worker:
             self.running = False
             print("\n🛑 Worker stopped")
 
+    def handle_shutdown(self, signum, frame):
+        """Handle shutdown signals gracefully."""
+        logger.info("\n⛔ Shutdown requested...")
+        self.running = False
+        if self.loop:
+            self.loop.call_soon_threadsafe(self.shutdown_event.set)
+
+    async def shutdown(self):
+        """Perform async shutdown tasks."""
+        logger.info("🛑 Initiating shutdown sequence...")
+        self.running = False
+        
+        # Wait a bit for ongoing operations to complete
+        await asyncio.sleep(0.5)
+        
+        # Cleanup resources
+        self.cleanup()
+        logger.info("✅ Shutdown completed")
+
+
     def run(self):
-        """Run the worker service."""
+        """Run the worker service with proper signal handling."""
         try:
             # Initialize services
             self.initialize()
+            
+            # Set up signal handlers
+            signal.signal(signal.SIGINT, self.handle_shutdown)
+            signal.signal(signal.SIGTERM, self.handle_shutdown)
             
             # Subscribe to Redis channels
             self.queue.subscribe(self.handle_message)
@@ -267,20 +311,28 @@ class MT5Worker:
             self.loop.run_until_complete(self.run_async())
             
         except KeyboardInterrupt:
-            print("\n⛔ Shutdown requested...")
+            logger.info("\n⛔ Keyboard interrupt received...")
         except Exception as e:
             logger.error(f"❌ Fatal error: {e}")
         finally:
-            self.cleanup()
+            # Run shutdown sequence
+            self.loop.run_until_complete(self.shutdown())
+            self.loop.close()
     
     def cleanup(self):
-        """Cleanup resources."""
+        """Cleanup resources in correct order."""
         logger.info("🧹 Cleaning up resources...")
+        
+        # Clean up MT5 first
         if self.mt5:
             self.mt5.cleanup()
+        
+        # Then database
         if self.db:
             self.db.cleanup()
+        
+        # Redis cleanup last (after all other operations are done)
         if self.queue:
             self.queue.cleanup()
-        if self.loop:
-            self.loop.close()
+        
+        logger.info("✨ All resources cleaned up")
