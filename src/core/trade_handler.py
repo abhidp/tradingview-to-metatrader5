@@ -6,6 +6,12 @@ from typing import Dict, Any
 from src.utils.database_handler import DatabaseHandler
 from src.utils.queue_handler import RedisQueue
 
+import logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
 logger = logging.getLogger('TradeHandler')
 
 class TradeHandler:
@@ -53,7 +59,7 @@ class TradeHandler:
             await self.db.async_save_trade(trade_data)
             self.pending_orders[response_data['d']['orderId']] = trade_id
             
-            print(f"📤 Trade sent to queue - TradeId#: {trade_id}")
+            # print(f"📤 Trade sent to queue - TradeId#: {trade_id}")
             
         except Exception as e:
             logger.error(f"Error processing order: {e}")
@@ -102,6 +108,8 @@ class TradeHandler:
                     # Publish trade for execution asynchronously
                     await self.queue.async_push_trade(trade_data)
                     print(f"✔  Trade executed - TV PositionID#: {position_id}")
+                    print(f"💲 Average Fill Price - {update_data['execution_price']}")
+
                     
                     del self.pending_orders[order_id]
                     
@@ -159,6 +167,59 @@ class TradeHandler:
             
         except Exception as e:
             logger.error(f"Error processing position close: {e}")
+
+    async def process_position_update(self, position_id: str, update_data: Dict[str, Any]) -> None:
+        """Process position update from TradingView asynchronously."""
+        try:
+            # Get trade data asynchronously
+            trade = await self.db.async_get_trade_by_position(position_id)
+            if not trade:
+                logger.error(f"No trade found for position {position_id}")
+                return
+            
+            # Convert TP/SL to float if present
+            take_profit = float(update_data.get('takeProfit')) if 'takeProfit' in update_data else None
+            stop_loss = float(update_data.get('stopLoss')) if 'stopLoss' in update_data else None
+            
+            if not take_profit and not stop_loss:
+                logger.error(f"No TP/SL update found in request data")
+                return
+                    
+            # Get current TP/SL values from trade
+            current_tp = trade.get('take_profit')
+            current_sl = trade.get('stop_loss')
+                    
+            # Prepare update data for queue
+            update_trade_data = {
+                'trade_id': trade['trade_id'],
+                'mt5_ticket': trade.get('mt5_ticket'),
+                'instrument': trade['instrument'],
+                'position_id': position_id,
+                'take_profit': take_profit if take_profit is not None else current_tp,
+                'stop_loss': stop_loss if stop_loss is not None else current_sl,
+                'type': 'update'
+            }
+            
+            # Log the update request with previous and new values
+            print(f"\n🔄 Updating TP/SL for PositionID#: {position_id}")
+            if take_profit is not None:
+                print(f"🟢 TP: {current_tp} → {take_profit}")
+            if stop_loss is not None:
+                print(f"🟠 SL: {current_sl} → {stop_loss}")
+                
+            # Publish update request asynchronously
+            await self.queue.async_push_trade(update_trade_data)
+            
+            # Update database with new TP/SL values
+            update_data = {
+                'take_profit': take_profit if take_profit is not None else current_tp,
+                'stop_loss': stop_loss if stop_loss is not None else current_sl,
+                'updated_at': datetime.utcnow()
+            }
+            await self.db.async_update_trade_status(trade['trade_id'], 'updated', update_data)
+            
+        except Exception as e:
+            logger.error(f"Error processing position update: {e}")
 
     def cleanup(self):
         """Cleanup resources."""

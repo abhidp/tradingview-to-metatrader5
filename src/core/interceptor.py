@@ -15,15 +15,6 @@ TV_ACCOUNT_ID = os.getenv('TV_ACCOUNT_ID')
 # Create a global token manager instance
 GLOBAL_TOKEN_MANAGER = TokenManager()
 
-# class TradingViewInterceptor:
-#     def __init__(self):
-#         self.base_path = f"{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
-#         self.trade_handler = TradeHandler()
-#         self.token_manager = GLOBAL_TOKEN_MANAGER  # Use global instance
-#         self.loop = asyncio.get_event_loop()
-#         print("\n🚀 Trade interceptor initialized")
-#         print("Watching for trades...\n")
-
 class TradingViewInterceptor:
     """Intercepts and handles TradingView requests."""
     
@@ -51,19 +42,24 @@ class TradingViewInterceptor:
         if self.base_path not in url:
             return False
         
-        # Match orders, executions, and position closures
+        # Match orders, executions, position closures, and position updates
         if '/orders?locale=' in url and 'requestId=' in url:
             return True
         if '/executions?locale=' in url and 'instrument=' in url:
             return True
-        if '/positions/' in url and flow.request.method == "DELETE":
-            return True
-            
+        if '/positions/' in url:
+            # Match both DELETE and PUT methods
+            return flow.request.method in ["DELETE", "PUT"]
+                
         return False
 
     async def async_process_order(self, request_data: dict, response_data: dict) -> None:
         """Asynchronously process order."""
         await self.trade_handler.process_order(request_data, response_data)
+
+    async def async_process_position_update(self, position_id: str, update_data: dict) -> None:
+        """Asynchronously process position update."""
+        await self.trade_handler.process_position_update(position_id, update_data)
 
     async def async_process_position_close(self, position_id: str) -> None:
         """Asynchronously process position close."""
@@ -72,7 +68,6 @@ class TradingViewInterceptor:
     async def async_process_execution(self, response_data: dict) -> None:
         """Asynchronously process execution."""
         await self.trade_handler.process_execution(response_data)
-
 
     def request(self, flow: http.HTTPFlow) -> None:
         """Handle requests."""
@@ -93,21 +88,11 @@ class TradingViewInterceptor:
             direction_emoji = "🔼" if side == 'buy' else "🔻"
             instrument = request_data.get('instrument', '')
             quantity = request_data.get('qty', '')
-            
-            # Log formatted trade request
-            # print(f"\n{direction_emoji} Received {side.upper()} request: {instrument} x {quantity}")
-            
-            # Only log TP/SL if present
-            take_profit = request_data.get('takeProfit')
-            stop_loss = request_data.get('stopLoss')
-            # if take_profit or stop_loss:
-            #     print(f"🎯 TP: {take_profit} | SL: {stop_loss}")
 
         elif flow.request.method == "DELETE":
             # Extract position ID from URL
             url_parts = flow.request.pretty_url.split('/')
             position_id = url_parts[-1].split('?')[0]
-            # print(f"\n🔄 Received close request for Position #{position_id}")
             # Create and run the coroutine in the event loop
             asyncio.create_task(self.async_process_position_close(position_id))
 
@@ -119,9 +104,25 @@ class TradingViewInterceptor:
         if flow.response and flow.response.content:
             try:
                 response_data = json.loads(flow.response.content.decode('utf-8'))
-                # Handle order and execution responses
-                if '/orders?' in flow.request.pretty_url and flow.request.method == "POST":
-                    # Create and run the coroutine in the event loop
+                
+                if '/positions/' in flow.request.pretty_url:
+                    if flow.request.method == "PUT":
+                        # Extract position ID from URL
+                        url_parts = flow.request.pretty_url.split('/')
+                        position_id = url_parts[-1].split('?')[0]
+                        
+                        # Get update data from request
+                        update_data = dict(flow.request.urlencoded_form)
+                        
+                        # Create and run the coroutine in the event loop
+                        asyncio.create_task(
+                            self.async_process_position_update(
+                                position_id, 
+                                update_data
+                            )
+                        )
+
+                elif '/orders?' in flow.request.pretty_url and flow.request.method == "POST":
                     asyncio.create_task(
                         self.async_process_order(
                             dict(flow.request.urlencoded_form), 
@@ -129,7 +130,6 @@ class TradingViewInterceptor:
                         )
                     )
                 elif '/executions?' in flow.request.pretty_url:
-                    # Create and run the coroutine in the event loop
                     asyncio.create_task(
                         self.async_process_execution(response_data)
                     )

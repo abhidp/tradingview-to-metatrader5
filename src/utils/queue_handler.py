@@ -160,7 +160,7 @@ class RedisQueue:
             })
             
             # Start listening
-            self.logger.info("Subscribed to trade channels")
+            # self.logger.info("Subscribed to trade channels")
             self.pubsub_thread = self.pubsub.run_in_thread(sleep_time=0.001)
             
         except Exception as e:

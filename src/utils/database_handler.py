@@ -15,6 +15,7 @@ import time
 import traceback
 import asyncio
 from functools import partial
+import logging
 
 logger = logging.getLogger('DatabaseHandler')
 
@@ -25,11 +26,11 @@ class DatabaseHandler:
             load_dotenv()
             
             # Log connection details (excluding password)
-            logger.info("Initializing DatabaseHandler")
-            logger.info(f"Host: {os.getenv('DB_HOST')}")
-            logger.info(f"Port: {os.getenv('DB_PORT')}")
-            logger.info(f"Database: {os.getenv('DB_NAME')}")
-            logger.info(f"User: {os.getenv('DB_USER')}")
+            # logger.info("Initializing DatabaseHandler")
+            # logger.info(f"Host: {os.getenv('DB_HOST')}")
+            # logger.info(f"Port: {os.getenv('DB_PORT')}")
+            # logger.info(f"Database: {os.getenv('DB_NAME')}")
+            # logger.info(f"User: {os.getenv('DB_USER')}")
             
             # Construct database URL
             db_url = (
@@ -73,7 +74,7 @@ class DatabaseHandler:
         try:
             with self.get_db() as db:
                 db.execute(text("SELECT 1"))
-                logger.info("Database connection test passed")
+                # logger.info("Database connection test passed")
         except Exception as e:
             logger.error(f"Database connection test failed: {e}")
             logger.error(traceback.format_exc())
@@ -330,12 +331,13 @@ class DatabaseHandler:
                             'side': trade.side,
                             'quantity': str(trade.quantity),
                             'status': trade.status,
-                            'type': trade.type
+                            'type': trade.type,
+                            'take_profit': float(trade.take_profit) if trade.take_profit is not None else None,
+                            'stop_loss': float(trade.stop_loss) if trade.stop_loss is not None else None
                         }
                     return None
                 except Exception as e:
                     logger.error(f"Error in async get trade by position: {e}")
-                    logger.error(traceback.format_exc())
                     raise
 
         return await self.loop.run_in_executor(None, _get_trade)
