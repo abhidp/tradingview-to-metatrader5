@@ -1,37 +1,79 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:16
     container_name: tradingview_db
     environment:
-      POSTGRES_DB: tradingview
-      POSTGRES_USER: tvuser
-      POSTGRES_PASSWORD: tvpassword
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
+    command: >
+      postgres
+      -c logging_collector=on
+      -c log_statement=all
+      -c log_connections=on
+      -c log_disconnections=on
+      -c log_directory=/var/log/postgresql
+      -c max_connections=100
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres-logs:/var/log/postgresql
+    networks:
+      - tradingview_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tvuser -d tradingview"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
 
   redis:
     image: redis:7
     container_name: tradingview_redis
+    command: redis-server --appendonly yes
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    networks:
+      - tradingview_network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
 
 volumes:
   postgres_data:
     name: tradingview_postgres_data
   redis_data:
     name: tradingview_redis_data
+
+networks:
+  tradingview_network:
+    name: tradingview_network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16

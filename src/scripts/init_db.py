@@ -10,7 +10,7 @@ sys.path.insert(0, project_root)
 from src.config.database import DB_CONFIG
 
 def reset_database():
-    """Reset database with fresh schema."""
+    """Reset database with fresh schema and optimized indexes."""
     try:
         # Connect to PostgreSQL
         conn = psycopg2.connect(
@@ -27,7 +27,7 @@ def reset_database():
         print("Dropping existing tables...")
         cur.execute("DROP TABLE IF EXISTS trades CASCADE;")
 
-        # Create fresh trades table
+        # Create fresh trades table with JSONB instead of JSON for better performance
         print("Creating trades table...")
         cur.execute("""
         CREATE TABLE trades (
@@ -67,19 +67,59 @@ def reset_database():
         );
         """)
 
-        # Create indexes
+        # Create optimized indexes
         print("Creating indexes...")
+        
+        # Primary lookup indexes
         cur.execute("""
-            CREATE INDEX idx_trade_id ON trades(trade_id);
+            CREATE UNIQUE INDEX idx_trade_id ON trades(trade_id);
             CREATE INDEX idx_order_id ON trades(order_id);
             CREATE INDEX idx_position_id ON trades(position_id);
             CREATE INDEX idx_mt5_ticket ON trades(mt5_ticket);
+        """)
+        
+        # Performance optimization indexes
+        cur.execute("""
+            -- Status-based queries
             CREATE INDEX idx_status ON trades(status);
-            CREATE INDEX idx_instrument ON trades(instrument);
+            CREATE INDEX idx_status_created_at ON trades(status, created_at);
+            
+            -- Time-based queries
             CREATE INDEX idx_created_at ON trades(created_at);
+            CREATE INDEX idx_executed_at ON trades(executed_at);
+            CREATE INDEX idx_closed_at ON trades(closed_at);
+            
+            -- Trade analysis indexes
+            CREATE INDEX idx_instrument_side ON trades(instrument, side);
+            CREATE INDEX idx_execution_time ON trades(execution_time_ms);
+            
+            -- Compound indexes for common queries
+            CREATE INDEX idx_status_instrument ON trades(status, instrument);
+            CREATE INDEX idx_is_closed_created_at ON trades(is_closed, created_at);
+            
+            -- JSONB indexes for faster JSON operations
+            CREATE INDEX idx_tv_request_gin ON trades USING gin(tv_request);
+            CREATE INDEX idx_execution_data_gin ON trades USING gin(execution_data);
+        """)
+
+        # Create partial indexes for active trades
+        cur.execute("""
+            -- Partial index for open trades
+            CREATE INDEX idx_active_trades ON trades(created_at) 
+            WHERE status IN ('new', 'pending', 'executing');
+            
+            -- Partial index for non-closed positions
+            CREATE INDEX idx_open_positions ON trades(mt5_ticket) 
+            WHERE is_closed = FALSE;
         """)
 
         print("Database reset completed successfully!")
+        print("\nOptimized indexes have been created for:")
+        print("✓ Fast trade lookups by ID/ticket")
+        print("✓ Efficient status and time-based queries")
+        print("✓ Quick instrument and execution analysis")
+        print("✓ Optimized JSON field searches")
+        print("✓ Active trade filtering")
 
     except Exception as e:
         print(f"Reset failed: {e}")

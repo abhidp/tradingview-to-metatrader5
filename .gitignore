@@ -23,11 +23,16 @@ wheels/
 *.egg
 
 # Logs
+postgres-logs/
+
 logs/
 *.log
 
 # Environment variables
 .env
+*.env
+.env.*
+!.env.example
 
 # VS Code
 .vscode/
@@ -49,3 +54,7 @@ Thumbs.db
 # Data files
 symbol_mappings.json
 token.json
+
+# Docker volumes
+postgres_data/
+redis_data/

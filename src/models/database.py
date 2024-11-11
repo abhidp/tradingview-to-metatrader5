@@ -1,15 +1,44 @@
+# models/database.py
+
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Numeric, JSON, Boolean, Text
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Numeric, JSON, Boolean, Text, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from src.config.database import DB_CONFIG
+from sqlalchemy.exc import OperationalError
+import time
+import logging
+from src.config.database import DATABASE_URL
 
-# Create database URL
-DATABASE_URL = f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}"
+logger = logging.getLogger(__name__)
 
-# Create SQLAlchemy engine
-engine = create_engine(DATABASE_URL)
+# Create SQLAlchemy engine with retries
+def create_db_engine(retries=5, delay=2):
+    """Create database engine with retry logic."""
+    for attempt in range(retries):
+        try:
+            engine = create_engine(
+                DATABASE_URL,
+                pool_size=20,
+                max_overflow=10,
+                pool_timeout=30,
+                pool_recycle=1800,
+                pool_pre_ping=True  # Add connection health check
+            )
+            # Test connection using proper SQLAlchemy syntax
+            with engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
+                conn.commit()
+            return engine
+        except OperationalError as e:
+            if attempt == retries - 1:
+                logger.error(f"Failed to connect to database after {retries} attempts: {e}")
+                raise
+            logger.warning(f"Database connection attempt {attempt + 1} failed, retrying in {delay} seconds...")
+            time.sleep(delay)
+            
+# Create engine with retry logic
+engine = create_db_engine()
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Create base class for declarative models
@@ -37,7 +66,6 @@ class Trade(Base):
     execution_price = Column(Numeric)
     take_profit = Column(Numeric)
     stop_loss = Column(Numeric)
-
     
     # Status
     status = Column(String(20), nullable=False, default='new')
@@ -58,5 +86,18 @@ class Trade(Base):
     executed_at = Column(DateTime(timezone=True))
     closed_at = Column(DateTime(timezone=True))
     
-# Create all tables
-Base.metadata.create_all(bind=engine)
+    def __repr__(self):
+        return f"<Trade(trade_id='{self.trade_id}', instrument='{self.instrument}', status='{self.status}')>"
+
+def init_db():
+    """Initialize database tables."""
+    try:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables created successfully")
+    except Exception as e:
+        logger.error(f"Error creating database tables: {e}")
+        raise
+
+# Initialize tables if this file is run directly
+if __name__ == "__main__":
+    init_db()
