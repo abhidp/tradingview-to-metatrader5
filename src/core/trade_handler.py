@@ -41,14 +41,19 @@ class TradeHandler:
                 'created_at': datetime.utcnow()
             }
             
-            # Log new order
-            print(f"\n📝 New {request_data['side'].upper()} order: {request_data['instrument']} x {request_data['qty']}")
+            # Get direction emoji
+            direction_emoji = "🔼" if request_data['side'].lower() == 'buy' else "🔻"
+            
+            # Log new order with improved format
+            print(f"\n{direction_emoji} New {request_data['side'].upper()} order: {request_data['instrument']} x {request_data['qty']}")
             if take_profit or stop_loss:
-                print(f"TP: {take_profit} | SL: {stop_loss}")
+                print(f"🎯 TP: {take_profit} | SL: {stop_loss}")
             
             # Store in database asynchronously
             await self.db.async_save_trade(trade_data)
             self.pending_orders[response_data['d']['orderId']] = trade_id
+            
+            print(f"📤 Trade sent to queue - TradeId#: {trade_id}")
             
         except Exception as e:
             logger.error(f"Error processing order: {e}")
@@ -62,17 +67,19 @@ class TradeHandler:
                 order_id = execution.get('orderId')
                 if order_id and order_id in self.pending_orders:
                     trade_id = self.pending_orders[order_id]
+                    position_id = execution.get('positionId')
                     
-                    # Get original trade data
+                    # Get original trade data asynchronously
                     original_trade = await self.db.async_get_trade(trade_id)
                     if not original_trade:
                         logger.error(f"Trade not found: {trade_id}")
                         continue
                     
-                    # Prepare trade data with TP/SL
+                    # Prepare trade data
                     trade_data = {
                         'trade_id': trade_id,
                         'execution_data': execution,
+                        'position_id': position_id,
                         'instrument': original_trade.get('instrument'),
                         'side': original_trade.get('side'),
                         'qty': original_trade.get('quantity'),
@@ -83,7 +90,7 @@ class TradeHandler:
 
                     # Update database asynchronously
                     update_data = {
-                        'position_id': execution.get('positionId'),
+                        'position_id': position_id,
                         'execution_price': execution.get('price'),
                         'execution_data': execution,
                         'executed_at': datetime.utcnow(),
@@ -92,9 +99,9 @@ class TradeHandler:
                     
                     await self.db.async_update_trade_status(trade_id, 'executed', update_data)
                     
-                    # Publish trade for execution
+                    # Publish trade for execution asynchronously
                     await self.queue.async_push_trade(trade_data)
-                    print(f"📤 Trade published: {original_trade['instrument']} {original_trade['side']} x {original_trade['quantity']}")
+                    print(f"✔  Trade executed - TV PositionID#: {position_id}")
                     
                     del self.pending_orders[order_id]
                     
@@ -104,7 +111,7 @@ class TradeHandler:
     async def process_position_close(self, position_id: str) -> None:
         """Process position close request from TradingView asynchronously."""
         try:
-            print(f"\n📍 Closing position: {position_id}")
+            print(f"\n📤 Closing PositionID#: {position_id}")
             
             # Get trade data asynchronously
             trade = await self.db.async_get_trade_by_position(position_id)
@@ -116,6 +123,9 @@ class TradeHandler:
             if not mt5_ticket:
                 logger.error(f"No MT5 ticket found for trade {trade['trade_id']}")
                 return
+            
+            # Get direction emoji
+            direction_emoji = "BUY🔼" if trade['side'].lower() == 'buy' else "SELL🔻"
             
             # Prepare close data
             close_data = {
@@ -136,7 +146,6 @@ class TradeHandler:
             
             # Publish close request asynchronously
             await self.queue.async_push_trade(close_data)
-            print(f"📤 Close request sent: {trade['instrument']} {close_data['side']} x {trade['quantity']}")
             
             # Update status asynchronously
             await self.db.async_update_trade_status(
@@ -146,6 +155,7 @@ class TradeHandler:
                     'close_requested_at': datetime.utcnow().isoformat()
                 }
             )
+            print(f"📌 Closed {direction_emoji} {trade['instrument']} x {trade['quantity']}")
             
         except Exception as e:
             logger.error(f"Error processing position close: {e}")

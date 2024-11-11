@@ -115,7 +115,7 @@ def generate_requirements():
                 f.write(f"# {package}=={installed_packages[package]}\n")
 
     print(f"✅ Generated requirements.txt")
-    print(f"📍 Location: {requirements_path}")
+    print(f"📌 Location: {requirements_path}")
     
     # Show the contents of the generated file
     print("\nGenerated requirements.txt contents:")

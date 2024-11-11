@@ -73,7 +73,7 @@ class DatabaseHandler:
         try:
             with self.get_db() as db:
                 db.execute(text("SELECT 1"))
-                logger.info("Initial database connection test successful")
+                logger.info("Database connection test passed")
         except Exception as e:
             logger.error(f"Database connection test failed: {e}")
             logger.error(traceback.format_exc())
