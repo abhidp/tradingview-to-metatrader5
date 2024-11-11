@@ -244,6 +244,66 @@ class MT5Service:
 
         return await self.loop.run_in_executor(None, _close)
 
+    async def async_update_position(self, trade_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Update position TP/SL in MT5."""
+        if not self.loop:
+            self.loop = asyncio.get_event_loop()
+            
+        def _update():
+            try:
+                # Initialize MT5
+                if not self.initialized and not mt5.initialize():
+                    return {"error": "MT5 initialization failed"}
+                    
+                symbol = trade_data['instrument']
+                ticket = int(trade_data['mt5_ticket'])
+                take_profit = float(trade_data['take_profit']) if trade_data.get('take_profit') else None
+                stop_loss = float(trade_data['stop_loss']) if trade_data.get('stop_loss') else None
+                
+                # Map symbol and enable for trading
+                mt5_symbol = self.map_symbol(symbol)
+                if not mt5.symbol_select(mt5_symbol, True):
+                    return {"error": f"Failed to select symbol {mt5_symbol}"}
+                
+                # Get current position
+                positions = mt5.positions_get(ticket=ticket)
+                if not positions:
+                    return {'error': f'No position found with ticket {ticket}'}
+                
+                position = positions[0]
+                
+                # Prepare request
+                request = {
+                    "action": mt5.TRADE_ACTION_SLTP,
+                    "symbol": mt5_symbol,
+                    "position": ticket,
+                    "tp": take_profit if take_profit is not None else position.tp,
+                    "sl": stop_loss if stop_loss is not None else position.sl,
+                    "type_time": mt5.ORDER_TIME_GTC,
+                }
+                
+                # Send the update request
+                result = mt5.order_send(request)
+                
+                if result.retcode != mt5.TRADE_RETCODE_DONE:
+                    return {
+                        'error': f'Failed to update position: {result.comment}',
+                        'retcode': result.retcode
+                    }
+                    
+                return {
+                    'ticket': ticket,
+                    'symbol': mt5_symbol,
+                    'take_profit': take_profit,
+                    'stop_loss': stop_loss
+                }
+                
+            except Exception as e:
+                logger.error(f"Error updating position: {e}")
+                return {'error': str(e)}
+
+        return await self.loop.run_in_executor(None, _update)
+
     def cleanup(self):
         """Cleanup MT5 connection."""
         if self.initialized:
