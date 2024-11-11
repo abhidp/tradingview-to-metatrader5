@@ -6,6 +6,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from src.core.trade_handler import TradeHandler
 from src.utils.token_manager import TokenManager
+from src.utils.token_manager import GLOBAL_TOKEN_MANAGER
 
 load_dotenv()
 TV_BROKER_URL = os.getenv('TV_BROKER_URL')
@@ -14,14 +15,34 @@ TV_ACCOUNT_ID = os.getenv('TV_ACCOUNT_ID')
 # Create a global token manager instance
 GLOBAL_TOKEN_MANAGER = TokenManager()
 
+# class TradingViewInterceptor:
+#     def __init__(self):
+#         self.base_path = f"{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
+#         self.trade_handler = TradeHandler()
+#         self.token_manager = GLOBAL_TOKEN_MANAGER  # Use global instance
+#         self.loop = asyncio.get_event_loop()
+#         print("\n🚀 Trade interceptor initialized")
+#         print("Watching for trades...\n")
+
 class TradingViewInterceptor:
+    """Intercepts and handles TradingView requests."""
+    
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(TradingViewInterceptor, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self):
-        self.base_path = f"{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
-        self.trade_handler = TradeHandler()
-        self.token_manager = GLOBAL_TOKEN_MANAGER  # Use global instance
-        self.loop = asyncio.get_event_loop()
-        print("\n🚀 Trade interceptor initialized")
-        print("Watching for trades...\n")
+        if not self._initialized:  # Only initialize once
+            self.base_path = f"{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
+            self.trade_handler = TradeHandler()
+            self.token_manager = GLOBAL_TOKEN_MANAGER
+            print("\n🚀 Trade interceptor initialized")
+            print("👀 Watching for trades...\n")
+            self._initialized = True
 
     def should_log_request(self, flow: http.HTTPFlow) -> bool:
         """Strictly check if we should log this request."""
@@ -52,6 +73,7 @@ class TradingViewInterceptor:
         """Asynchronously process execution."""
         await self.trade_handler.process_execution(response_data)
 
+
     def request(self, flow: http.HTTPFlow) -> None:
         """Handle requests."""
         # Capture auth token from all TradingView requests
@@ -64,12 +86,28 @@ class TradingViewInterceptor:
             return
         
         if flow.request.method == "POST" and flow.request.urlencoded_form:
-            print("\n📤 Trade Data:")
-            print(json.dumps(dict(flow.request.urlencoded_form), indent=2))
+            request_data = dict(flow.request.urlencoded_form)
+            
+            # Get direction and instrument details
+            side = request_data.get('side', '').lower()
+            direction_emoji = "🔼" if side == 'buy' else "🔻"
+            instrument = request_data.get('instrument', '')
+            quantity = request_data.get('qty', '')
+            
+            # Log formatted trade request
+            # print(f"\n{direction_emoji} Received {side.upper()} request: {instrument} x {quantity}")
+            
+            # Only log TP/SL if present
+            take_profit = request_data.get('takeProfit')
+            stop_loss = request_data.get('stopLoss')
+            # if take_profit or stop_loss:
+            #     print(f"🎯 TP: {take_profit} | SL: {stop_loss}")
+
         elif flow.request.method == "DELETE":
             # Extract position ID from URL
             url_parts = flow.request.pretty_url.split('/')
             position_id = url_parts[-1].split('?')[0]
+            # print(f"\n🔄 Received close request for Position #{position_id}")
             # Create and run the coroutine in the event loop
             asyncio.create_task(self.async_process_position_close(position_id))
 

@@ -19,8 +19,20 @@ logging.basicConfig(
 )
 logger = logging.getLogger('WorkerMain')
 
+def clear_screen():
+    """Clear terminal screen."""
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def print_banner():
+    """Print worker banner."""
+    print("\nMT5 Trade Worker")
+    print("===============")
+    print("Starting worker...")
+    print("Press Ctrl+C to stop\n")
+
 def signal_handler(signum, frame):
     """Handle termination signals gracefully."""
+    print("\n⛔ Shutdown requested...")
     logger.info("Received termination signal. Initiating shutdown...")
     sys.exit(0)
 
@@ -38,30 +50,41 @@ def cleanup():
         os._exit(0)
 
 def main():
-    # Register signal handlers
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
-    
-    # Register cleanup function
-    atexit.register(cleanup)
-    
-    # Silence SSL warnings
-    silence_ssl_warnings()
-    
-    worker = MT5Worker()
     try:
-        worker.run()
-    except KeyboardInterrupt:
-        logger.info("Shutdown requested via keyboard interrupt...")
-    except Exception as e:
-        logger.error(f"Fatal error: {e}", exc_info=True)
-    finally:
+        # Clear screen and show banner
+        clear_screen()
+        print_banner()
+
+        # Register signal handlers
+        signal.signal(signal.SIGINT, signal_handler)
+        signal.signal(signal.SIGTERM, signal_handler)
+        
+        # Register cleanup function
+        atexit.register(cleanup)
+        
+        # Silence SSL warnings
+        silence_ssl_warnings()
+        
+        # Initialize and start worker
+        worker = MT5Worker()
         try:
-            worker.cleanup()
-            logger.info("Worker stopped normally.")
+            worker.run()
+        except KeyboardInterrupt:
+            print("\n⛔ Shutdown requested by user...")
+            logger.info("Shutdown requested via keyboard interrupt...")
         except Exception as e:
-            logger.error(f"Error during worker cleanup: {e}")
-        sys.exit(0)
+            logger.error(f"Fatal error: {e}", exc_info=True)
+        finally:
+            try:
+                worker.cleanup()
+                logger.info("Worker stopped normally.")
+            except Exception as e:
+                logger.error(f"Error during worker cleanup: {e}")
+            sys.exit(0)
+
+    except Exception as e:
+        logger.error(f"Fatal error during startup: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

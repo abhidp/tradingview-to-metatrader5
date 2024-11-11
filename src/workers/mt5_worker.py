@@ -5,7 +5,7 @@ import asyncio
 from typing import Dict, Any, Set
 from datetime import datetime, timezone
 import MetaTrader5 as mt5
-from src.core.interceptor import GLOBAL_TOKEN_MANAGER
+from src.utils.token_manager import GLOBAL_TOKEN_MANAGER
 from src.utils.queue_handler import RedisQueue
 from src.services.mt5_service import MT5Service
 from src.services.tradingview_service import TradingViewService
@@ -55,7 +55,7 @@ class MT5Worker:
                 if positions is not None:
                     self.open_positions = {str(pos.ticket) for pos in positions}
                     print(f"📊 Initialized {len(self.open_positions)} open positions")
-                    logger.info(f"Initialized {len(self.open_positions)} open positions")
+                    logger.info(f"Initialized {len(self.open_positions)} open positions\n")
         except Exception as e:
             logger.error(f"❌ Error initializing positions: {e}")
 
@@ -85,7 +85,7 @@ class MT5Worker:
             position_id = trade_data.get('execution_data', {}).get('positionId', 'N/A')
             mt5_ticket = trade_data.get('mt5_ticket', 'Pending')
             
-            print(f"\n{trade_emoji} Processing {operation} trade: {trade_id}")
+            print(f"{trade_emoji} Processing {operation} TradeId#: {trade_id}")
             
             # Execute or close based on isClose flag
             if trade_data.get('execution_data', {}).get('isClose', False):
@@ -115,10 +115,10 @@ class MT5Worker:
                     await self.db.async_update_trade_status(trade_id, status, update_data)
                     
                     direction = trade_data.get('execution_data', {}).get('side', '').lower()
-                    direction_emoji = "SHORT🔻" if direction == 'buy' else "LONG🔼"
-                    print(f"📍 Position CLOSED: {direction_emoji} {result.get('symbol')} {result.get('volume')} @ {result.get('price')}")
+                    direction_emoji = "SELL🔻" if direction == 'buy' else "BUY🔼"
+                    print(f"📌 Position CLOSED: {direction_emoji} {result.get('symbol')} {result.get('volume')} @ {result.get('price')}")
                     print(f"🔗 References: TV #{position_id} --> MT5 #{mt5_ticket}")
-                    print(f"⚡ Execution time: {update_data['execution_time_ms']}ms")
+                    print(f"⚡ Execution time: {update_data['execution_time_ms']}ms\n")
                     return
                     
                 else:
@@ -142,7 +142,7 @@ class MT5Worker:
                     mt5_ticket = str(result['mt5_ticket'])
                     self.open_positions.add(mt5_ticket)
                     direction = trade_data.get('execution_data', {}).get('side', '').lower()
-                    direction_emoji = "LONG🔼" if direction == 'buy' else "SHORT🔻"
+                    direction_emoji = "BUY🔼" if direction == 'buy' else "SELL🔻"
                     print(f"✔  Position OPENED: {direction_emoji} {result.get('symbol')} x {result.get('volume')} @ {result.get('price')}")
                     print(f"🔗 References: TV #{position_id} --> MT5 #{mt5_ticket}")
                 else:
@@ -157,9 +157,9 @@ class MT5Worker:
             await self.db.async_update_trade_status(trade_id, status, update_data)
             
             if 'error' not in result and not trade_data.get('execution_data', {}).get('isClose', False):
-                print(f"⚡ Execution time: {update_data['execution_time_ms']}ms")
                 if result.get('take_profit') or result.get('stop_loss'):
                     print(f"🎯 TP: {result.get('take_profit')} | SL: {result.get('stop_loss')}")
+                print(f"⚡ Execution time: {update_data['execution_time_ms']}ms\n")
 
         except Exception as e:
             logger.error(f"❌ Error processing trade: {e}")
@@ -199,24 +199,25 @@ class MT5Worker:
         """Handle position closed in MT5 asynchronously."""
         try:            
             # Add initial logging
-            print(f"\n📤 Processing MT5-initiated close for ticket: {mt5_ticket}")
+            print(f"📤 Processing MT5-initiated close for Ticket#: {mt5_ticket}")
                 
             trade = await self.db.async_get_trade_by_mt5_ticket(mt5_ticket)
             if not trade:
-                logger.info(f"ℹ️ No trade found for MT5 ticket {mt5_ticket}")
+                logger.info(f"ℹ️ No trade found for MT5 ticket {mt5_ticket}\n")
                 return
                     
             if trade.get('is_closed'):
+                print()
                 return
 
             position_id = trade.get('position_id')
             if not position_id:
-                logger.error(f"❌ No position ID for trade {trade['trade_id']}")
+                logger.error(f"❌ No position ID for trade {trade['trade_id']}\n")
                 return
 
             # Log position details
             direction = trade.get('side', '').lower()
-            direction_emoji = "LONG🔼" if direction == 'buy' else "SHORT🔻"
+            direction_emoji = "BUY🔼" if direction == 'buy' else "SELL🔻"
             
             # Close in TradingView
             result = await self.tv_service.async_close_position(position_id)
@@ -228,11 +229,11 @@ class MT5Worker:
                         'closed_at': datetime.now(timezone.utc).isoformat()
                     })
                 else:
-                    logger.error(f"❌ Failed to close TV position: {result['error']}")
+                    logger.error(f"❌ Failed to close TV position: {result['error']}\n")
                 return
 
-            print(f"📍 Position CLOSED in TV: {direction_emoji} {trade['instrument']} {trade['quantity']}")
-            print(f"🔗 References: TV #{position_id} <-- MT5 #{mt5_ticket}" )
+            print(f"📌 Position CLOSED in TV: {direction_emoji} {trade['instrument']} {trade['quantity']}")
+            print(f"🔗 References: TV #{position_id} <-- MT5 #{mt5_ticket}\n" )
 
             await self.db.async_update_trade_status(trade['trade_id'], 'closed', {
                 'is_closed': True,
@@ -243,7 +244,7 @@ class MT5Worker:
             # print(f"💱 Close sync completed: {direction_emoji} {trade['instrument']} {trade['quantity']}")
 
         except Exception as e:
-            logger.error(f"❌ Error handling MT5 close: {e}")
+            logger.error(f"❌ Error handling MT5 close: {e}\n")
             if 'trade' in locals() and trade:
                 await self.db.async_update_trade_status(trade['trade_id'], 'failed', {
                     'error_message': str(e),

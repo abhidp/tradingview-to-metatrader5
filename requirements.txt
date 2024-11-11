@@ -14,10 +14,13 @@ sqlalchemy==2.0.27
 
 # Trading
 numpy==1.24.3
+MetaTrader5==5.0.4424
 
 # Utilities
 python-dotenv==1.0.1
 tabulate==0.9.0
 urllib3==2.2.3
+psutil==5.9.8
+pywin32==306; sys_platform == 'win32'
 
 # Development dependencies

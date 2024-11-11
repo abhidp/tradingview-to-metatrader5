@@ -20,6 +20,11 @@ class TradingViewService:
         self.base_url = f"https://{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
         self.session = None
         self.loop = asyncio.get_event_loop()
+        # Use local proxy for routing through mitmproxy
+        self.proxies = {
+            'http': 'http://localhost:8080',
+            'https': 'http://localhost:8080'
+        }
     
     async def async_close_position(self, position_id: str) -> Dict[str, Any]:
         """Close a position on TradingView asynchronously."""
@@ -48,12 +53,13 @@ class TradingViewService:
             if not self.session:
                 self.session = aiohttp.ClientSession()
             
-            # Send request
+            # Send request through proxy
             async with self.session.delete(
                 url,
                 params=params,
                 headers=headers,
-                ssl=False
+                ssl=False,
+                proxy=self.proxies['http']
             ) as response:
                 status_code = response.status
                 if status_code == 200:

@@ -1,3 +1,5 @@
+# utils/token_manager.py
+
 import logging
 import json
 from typing import Optional
@@ -9,10 +11,20 @@ logger = logging.getLogger('TokenManager')
 class TokenManager:
     """Manages TradingView authorization token."""
     
+    _instance = None  # Singleton instance
+    _initialized = False  # Initialization flag
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(TokenManager, cls).__new__(cls)
+        return cls._instance
+    
     def __init__(self):
-        self._token = None
-        self._token_file = Path('token.json')
-        self._load_token()
+        if not self._initialized:  # Only initialize once
+            self._token = None
+            self._token_file = Path('token.json')
+            self._load_token()
+            self._initialized = True
     
     def _load_token(self) -> None:
         """Load token from file."""
@@ -75,3 +87,6 @@ class TokenManager:
             'sec-fetch-mode': 'cors',
             'sec-fetch-site': 'cross-site'
         }
+
+# Create global instance
+GLOBAL_TOKEN_MANAGER = TokenManager()
