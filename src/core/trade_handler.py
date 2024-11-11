@@ -1,5 +1,6 @@
 import logging
 import json
+import asyncio
 from datetime import datetime
 from typing import Dict, Any
 from src.utils.database_handler import DatabaseHandler
@@ -12,9 +13,10 @@ class TradeHandler:
         self.db = DatabaseHandler()
         self.queue = RedisQueue()
         self.pending_orders = {}  # Track order->execution mapping
+        self.loop = asyncio.get_event_loop()
     
-    def process_order(self, request_data: Dict[str, Any], response_data: Dict[str, Any]) -> None:
-        """Process new order from TradingView."""
+    async def process_order(self, request_data: Dict[str, Any], response_data: Dict[str, Any]) -> None:
+        """Process new order from TradingView asynchronously."""
         try:
             trade_id = f"TV_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{response_data['d']['orderId']}"
             
@@ -44,16 +46,16 @@ class TradeHandler:
             if take_profit or stop_loss:
                 print(f"TP: {take_profit} | SL: {stop_loss}")
             
-            # Store in database and track order
-            self.db.save_trade(trade_data)
+            # Store in database asynchronously
+            await self.db.async_save_trade(trade_data)
             self.pending_orders[response_data['d']['orderId']] = trade_id
             
         except Exception as e:
             logger.error(f"Error processing order: {e}")
             print(f"❌ Order failed: {e}")
 
-    def process_execution(self, execution_data: Dict[str, Any]) -> None:
-        """Process execution update from TradingView."""
+    async def process_execution(self, execution_data: Dict[str, Any]) -> None:
+        """Process execution update from TradingView asynchronously."""
         try:
             executions = execution_data.get('d', [])
             for execution in executions:
@@ -62,7 +64,7 @@ class TradeHandler:
                     trade_id = self.pending_orders[order_id]
                     
                     # Get original trade data
-                    original_trade = self.db.get_trade(trade_id)
+                    original_trade = await self.db.async_get_trade(trade_id)
                     if not original_trade:
                         logger.error(f"Trade not found: {trade_id}")
                         continue
@@ -79,7 +81,7 @@ class TradeHandler:
                         'stop_loss': original_trade.get('stop_loss')
                     }
 
-                    # Update database
+                    # Update database asynchronously
                     update_data = {
                         'position_id': execution.get('positionId'),
                         'execution_price': execution.get('price'),
@@ -88,10 +90,10 @@ class TradeHandler:
                         'is_closed': execution.get('isClose', False)
                     }
                     
-                    self.db.update_trade_status(trade_id, 'executed', update_data)
+                    await self.db.async_update_trade_status(trade_id, 'executed', update_data)
                     
                     # Publish trade for execution
-                    self.queue.push_trade(trade_data)
+                    await self.queue.async_push_trade(trade_data)
                     print(f"📤 Trade published: {original_trade['instrument']} {original_trade['side']} x {original_trade['quantity']}")
                     
                     del self.pending_orders[order_id]
@@ -99,12 +101,13 @@ class TradeHandler:
         except Exception as e:
             logger.error(f"Error processing execution: {e}")
 
-    def process_position_close(self, position_id: str) -> None:
-        """Process position close request from TradingView."""
+    async def process_position_close(self, position_id: str) -> None:
+        """Process position close request from TradingView asynchronously."""
         try:
             print(f"\n📍 Closing position: {position_id}")
             
-            trade = self.db.get_trade_by_position(position_id)
+            # Get trade data asynchronously
+            trade = await self.db.async_get_trade_by_position(position_id)
             if not trade:
                 logger.error(f"No trade found for position {position_id}")
                 return
@@ -131,14 +134,22 @@ class TradeHandler:
                 }
             }
             
-            # Publish close request
-            self.queue.push_trade(close_data)
+            # Publish close request asynchronously
+            await self.queue.async_push_trade(close_data)
             print(f"📤 Close request sent: {trade['instrument']} {close_data['side']} x {trade['quantity']}")
             
-            # Update status
-            self.db.update_trade_status(trade['trade_id'], 'closing', {
-                'close_requested_at': datetime.utcnow().isoformat()
-            })
+            # Update status asynchronously
+            await self.db.async_update_trade_status(
+                trade['trade_id'], 
+                'closing', 
+                {
+                    'close_requested_at': datetime.utcnow().isoformat()
+                }
+            )
             
         except Exception as e:
             logger.error(f"Error processing position close: {e}")
+
+    def cleanup(self):
+        """Cleanup resources."""
+        self.db.cleanup()

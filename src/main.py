@@ -2,6 +2,16 @@ import sys
 from pathlib import Path
 import logging
 
+# Configure logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler('tradingview_copier.log')
+    ]
+)
+
 # Add project root to Python path
 project_root = str(Path(__file__).parent.parent)
 if project_root not in sys.path:
@@ -10,14 +20,14 @@ if project_root not in sys.path:
 from mitmproxy import ctx
 from src.core.interceptor import TradingViewInterceptor
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler()
-    ]
-)
+# # Configure logging
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format='%(asctime)s - %(levelname)s - %(message)s',
+#     handlers=[
+#         logging.StreamHandler()
+#     ]
+# )
 
 # Create logger
 logger = logging.getLogger('ProxyServer')

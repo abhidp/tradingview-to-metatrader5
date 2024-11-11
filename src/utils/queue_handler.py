@@ -1,8 +1,10 @@
 import redis
 import json
 import logging
+import asyncio
 from datetime import datetime
-from typing import Dict, Any, Optional, Tuple, Callable
+from typing import Dict, Any, Optional, Tuple, Callable, Awaitable, Union
+from functools import partial
 
 logger = logging.getLogger('RedisQueue')
 
@@ -27,6 +29,9 @@ class RedisQueue:
             'status': 'trades:status',       # Status updates channel
             'errors': 'trades:errors'        # Error notifications channel
         }
+        
+        # Initialize event loop for async operations
+        self.loop = asyncio.get_event_loop()
         
         # Initialize Redis
         self._init_redis()
@@ -59,6 +64,17 @@ class RedisQueue:
                              }))
         except Exception as e:
             self.logger.error(f"Error publishing status: {e}")
+    
+    async def async_publish_status(self, message: str) -> None:
+        """Publish status update asynchronously."""
+        try:
+            await self.loop.run_in_executor(
+                None,
+                self.publish_status,
+                message
+            )
+        except Exception as e:
+            self.logger.error(f"Error publishing async status: {e}")
     
     def push_trade(self, trade_data: Dict[str, Any]) -> str:
         """Publish trade data to channel."""
@@ -94,8 +110,47 @@ class RedisQueue:
             )
             raise
     
-    def subscribe(self, callback: Callable[[str, Dict], None]) -> None:
-        """Subscribe to trade channel with callback."""
+    async def async_push_trade(self, trade_data: Dict[str, Any]) -> str:
+        """Publish trade data to channel asynchronously."""
+        try:
+            return await self.loop.run_in_executor(
+                None,
+                self.push_trade,
+                trade_data
+            )
+        except Exception as e:
+            self.logger.error(f"Error publishing async trade: {e}")
+            raise
+
+    def _handle_message(self, callback: Union[Callable, Awaitable], msg_type: str) -> Callable:
+        """Create message handler that supports both sync and async callbacks."""
+        def handler(message):
+            try:
+                if message['type'] == 'message':
+                    data = json.loads(message['data'])
+                    if asyncio.iscoroutinefunction(callback):
+                        # Handle async callback
+                        future = asyncio.run_coroutine_threadsafe(
+                            callback(msg_type, data),
+                            self.loop
+                        )
+                        # Handle any exceptions from the future
+                        try:
+                            future.result(timeout=10)  # 10 second timeout
+                        except Exception as e:
+                            self.logger.error(f"Async callback error: {e}")
+                    else:
+                        # Handle sync callback
+                        callback(msg_type, data)
+            except Exception as e:
+                self.logger.error(f"Error handling {msg_type} message: {e}")
+        return handler
+    
+    def subscribe(self, callback: Union[Callable, Awaitable]) -> None:
+        """
+        Subscribe to trade channels with callback.
+        Supports both synchronous and asynchronous callbacks.
+        """
         try:
             # Create new connection for subscription
             pubsub = self.redis.pubsub()
@@ -115,16 +170,17 @@ class RedisQueue:
             self.logger.error(f"Error subscribing: {e}")
             raise
     
-    def _handle_message(self, callback: Callable, msg_type: str) -> Callable:
-        """Create message handler for type."""
-        def handler(message):
-            try:
-                if message['type'] == 'message':
-                    data = json.loads(message['data'])
-                    callback(msg_type, data)
-            except Exception as e:
-                self.logger.error(f"Error handling {msg_type} message: {e}")
-        return handler
+    async def async_subscribe(self, callback: Union[Callable, Awaitable]) -> None:
+        """Subscribe to trade channels asynchronously."""
+        try:
+            await self.loop.run_in_executor(
+                None,
+                self.subscribe,
+                callback
+            )
+        except Exception as e:
+            self.logger.error(f"Error in async subscribe: {e}")
+            raise
     
     def get_queue_status(self) -> Dict[str, int]:
         """Get current queue status."""
@@ -137,3 +193,22 @@ class RedisQueue:
         except Exception as e:
             self.logger.error(f"Error getting queue status: {e}")
             return {'error': str(e)}
+
+    async def async_get_queue_status(self) -> Dict[str, int]:
+        """Get current queue status asynchronously."""
+        try:
+            return await self.loop.run_in_executor(
+                None,
+                self.get_queue_status
+            )
+        except Exception as e:
+            self.logger.error(f"Error getting async queue status: {e}")
+            return {'error': str(e)}
+    
+    def cleanup(self) -> None:
+        """Cleanup Redis connections."""
+        try:
+            self.redis.close()
+            self.logger.info("Redis connections cleaned up")
+        except Exception as e:
+            self.logger.error(f"Error during cleanup: {e}")
