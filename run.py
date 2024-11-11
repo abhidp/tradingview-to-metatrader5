@@ -22,15 +22,7 @@ class Runner:
 
     def run_worker(self):
         """Start the MT5 worker."""
-        try:
-            subprocess.run(
-                [sys.executable, "src/start_worker.py"],
-                check=True
-            )
-        except KeyboardInterrupt:
-            pass
-        except subprocess.CalledProcessError:
-            sys.exit(1)
+        subprocess.run(["python", "src/start_worker.py"])
 
     def update_requirements(self):
         """Update requirements.txt."""
@@ -51,7 +43,28 @@ class Runner:
 
     def test_db(self):
         """Test database connection."""
-        subprocess.run(["python", "src/scripts/test_db.py"])
+        subprocess.run([sys.executable, "-m", "tests.infrastructure.test_db"])
+
+    def test_redis(self):
+        """Test Redis connection."""
+        subprocess.run([sys.executable, "-m", "tests.infrastructure.test_redis"])
+
+    def test_mt5(self):
+        """Test MT5 connection."""
+        try:
+            from tests.infrastructure.test_mt5 import run_test
+            run_test()
+        except Exception as e:
+            print(f"Error running MT5 test: {e}")
+            sys.exit(1)
+            
+    def test_tv(self):
+        """Test TradingView service."""
+        subprocess.run([sys.executable, "-m", "tests.infrastructure.test_tv"])
+
+    def test_all(self):
+        """Run all infrastructure tests."""
+        subprocess.run([sys.executable, "-m", "tests.infrastructure.test_all"])
 
     def clean_redis(self):
         """Clean Redis data."""
@@ -68,6 +81,10 @@ class Runner:
             "symbols": "List all MT5 symbols",
             "symbols-help": "Show symbol management commands",
             "test-db": "Test database connection",
+            "test-redis": "Test Redis connection",
+            "test-mt5": "Test MT5 connection",
+            "test-tv": "Test TradingView service",
+            "test-all": "Run all infrastructure tests",
             "clean-redis": "Clean Redis data",
             "help": "Show this help message"
         }
@@ -92,6 +109,10 @@ def main():
         'symbols': runner.list_symbols,
         'symbols-help': runner.manage_symbols,
         'test-db': runner.test_db,
+        'test-redis': runner.test_redis,
+        'test-mt5': runner.test_mt5,
+        'test-tv': runner.test_tv,
+        'test-all': runner.test_all,
         'clean-redis': runner.clean_redis,
         'help': runner.show_help
     }
