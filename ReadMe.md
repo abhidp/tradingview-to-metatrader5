@@ -69,15 +69,24 @@ pip install -r requirements.txt
 
 ## Usage
 
-The application provides a command-line interface for all operations:
+Step-1 : Open Terminal and Start the TradingView proxy server
 
-### Core Commands
-```bash
-# Start the TradingView proxy server
-python run.py proxy
+  `python run.py proxy`
 
-# Start the MT5 worker
-python run.py worker
+Step-2 : Open Another Terminal and Start the MT5 worker
+
+  `python run.py worker`
+
+Step-3 : Open Proxy settings on your Windows machine and set the following values"
+- Use a proxy server : `ON`
+- Address : `127.0.0.1`
+- Port : `8080`
+- User the proxy sever except for addresses: `localhost;127.0.0.1;<local>`
+- Don't use the proxy server for local (intranet) addresses : ☑
+
+Step-4: Open TradingView and login to your account and connect to your broker 
+
+Step-5: Place a trade on TradingView, watch it copy over to MT5 within milliseconds
 
 # Update requirements.txt
 python run.py update-reqs
@@ -109,39 +118,38 @@ python run.py help
 
 ## Project Structure
 ```
-src/
-├── config/                     # Configuration
-│   ├── constants.py           # Constants and URLs
-│   ├── database.py           # Database config
-│   ├── mt5_config.py         # MT5 credentials
-│   └── mt5_symbol_config.py  # Symbol mappings
-├── core/                      # Core functionality
-│   ├── interceptor.py        # Proxy interceptor
-│   └── trade_handler.py      # Trade processing
-├── models/                    # Database models
-│   └── database.py           # SQLAlchemy models
-├── scripts/                   # Utility scripts
-│   ├── check_db.py          # DB status check
-│   ├── clean_redis.py       # Redis cleanup
-│   ├── execution_stats.py   # Performance stats
-│   ├── generate_requirements.py  # Deps manager
-│   ├── init_db.py           # DB initialization
-│   ├── manage_symbols.py    # Symbol management
-│   ├── start_proxy.py       # Proxy starter
-│   └── test_db.py          # DB connection test
-├── services/                  # External services
-│   ├── mt5_service.py       # MT5 operations
-│   └── tradingview_service.py  # TV operations
-├── utils/                     # Utilities
-│   ├── database_handler.py  # DB operations
-│   ├── queue_handler.py     # Redis operations
-│   ├── ssl_handler.py       # SSL config
-│   ├── symbol_mapper.py     # Symbol mapping
-│   └── token_manager.py     # Auth management
-├── workers/                   # Workers
-│   └── mt5_worker.py        # MT5 trade executor
-├── main.py                    # Main entry point
-└── start_worker.py            # Worker entry
+.
+├── src/
+│   ├── config/                     # Configuration files
+│   │   ├── constants.py            # Constants and URLs
+│   │   ├── database.py             # Database config
+│   │   ├── mt5_config.py           # MT5 credentials
+│   │   └── mt5_symbol_config.py    # Symbol mappings
+│   ├── core/                       # Core functionality
+│   │   ├── interceptor.py          # Proxy interceptor
+│   │   └── trade_handler.py        # Trade processing
+│   ├── models/                     # Database models
+│   │   └── database.py             # SQLAlchemy models
+│   ├── services/                   # External services
+│   │   ├── mt5_service.py          # MT5 operations
+│   │   └── tradingview_service.py  # TV operations
+│   ├── utils/                      # Utilities
+│   │   ├── database_handler.py     # DB operations
+│   │   ├── queue_handler.py        # Redis operations
+│   │   ├── ssl_handler.py          # SSL config
+│   │   ├── symbol_mapper.py        # Symbol mapping
+│   │   └── token_manager.py        # Auth management
+│   └── workers/                    # Workers
+│       └── mt5_worker.py           # MT5 trade executor
+├── tests/                          # Test suite
+│   └── infrastructure/             # Infrastructure tests
+│       ├── test_db.py              # Database tests
+│       ├── test_redis.py           # Redis tests
+│       ├── test_mt5.py             # MT5 tests
+│       └── test_tv.py              # TradingView tests
+├── docker-compose.yml              # Docker services
+├── requirements.txt                # Dependencies
+└── run.py                          # CLI interface
 ```
 
 ## Development
@@ -160,6 +168,22 @@ python src/scripts/init_db.py
 # Check database status
 python src/scripts/check_db.py
 ```
+
+### Running Tests
+Before running tests, ensure:
+1. Docker containers are running
+2. MT5 terminal is connected
+3. Environment variables are properly set
+
+Run tests:
+```bash
+# Run all tests
+python run.py test-all
+
+# Run specific test
+python run.py test-mt5
+```
+
 
 ### Symbol Management
 ```bash
