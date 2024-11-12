@@ -68,9 +68,8 @@ def run_proxy():
 
         # Print banner
         print("\nTradingView Proxy Server")
-        print("======================")
+        print("========================")
         print("Starting proxy server...")
-        print("Listening for trades...")
         print("Press Ctrl+C to stop\n")
 
         # Construct mitmdump command

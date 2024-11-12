@@ -48,7 +48,7 @@ class RedisQueue:
             )
             
             # Publish system startup message
-            self.publish_status("Queue system initialized")
+            self.publish_status("Queue system initialized\n")
             
         except Exception as e:
             self.logger.error(f"Error initializing Redis: {e}")

@@ -6,7 +6,7 @@ from pathlib import Path
 import atexit
 
 # Add project root to Python path
-project_root = str(Path(__file__).parent.parent)
+project_root = str(Path(__file__).parent.parent.parent)  # One more parent to reach root
 sys.path.insert(0, project_root)
 
 from src.workers.mt5_worker import MT5Worker
@@ -26,7 +26,7 @@ def clear_screen():
 def print_banner():
     """Print worker banner."""
     print("\nMT5 Trade Worker")
-    print("===============")
+    print("================")
     print("Starting worker...")
     print("Press Ctrl+C to stop\n")
 
