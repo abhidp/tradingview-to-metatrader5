@@ -22,7 +22,7 @@ class Runner:
 
     def run_worker(self):
         """Start the MT5 worker."""
-        subprocess.run(["python", "src/start_worker.py"])
+        subprocess.run(["python", "src/scripts/start_worker.py"])
 
     def update_requirements(self):
         """Update requirements.txt."""

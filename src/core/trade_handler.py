@@ -171,6 +171,13 @@ class TradeHandler:
     async def process_position_update(self, position_id: str, update_data: Dict[str, Any]) -> None:
         """Process position update from TradingView asynchronously."""
         try:
+            # Check for TradingView error response
+            if 's' in update_data and update_data['s'] == 'error':
+                logger.error(f"TradingView rejected TP/SL update: {update_data.get('errmsg')}")
+                print(f"\n❌ TP/SL Update Failed - PositionID#: {position_id}")
+                print(f"📋 Error: {update_data.get('errmsg')}\n")
+                return
+
             # Get trade data asynchronously
             trade = await self.db.async_get_trade_by_position(position_id)
             if not trade:
@@ -201,12 +208,13 @@ class TradeHandler:
             }
             
             # Log the update request with previous and new values
-            print(f"\n🔄 Updating TP/SL for PositionID#: {position_id}")
+            print(f"\n📝 Updating TP/SL for PositionID#: {position_id}")
             if take_profit is not None:
                 print(f"🟢 TP: {current_tp} → {take_profit}")
             if stop_loss is not None:
-                print(f"🟠 SL: {current_sl} → {stop_loss}")
-                
+                print(f"🛑 SL: {current_sl} → {stop_loss}")
+            print()
+
             # Publish update request asynchronously
             await self.queue.async_push_trade(update_trade_data)
             
