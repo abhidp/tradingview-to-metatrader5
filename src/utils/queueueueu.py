@@ -82,11 +82,6 @@ class RedisQueue:
             # Generate trade ID
             trade_id = f"trade_{datetime.now().timestamp()}"
             
-            # Add trade ID and timestamp if not present
-            if isinstance(trade_data, dict):
-                if 'trade_id' not in trade_data:
-                    trade_data['trade_id'] = trade_id
-
             # Prepare message
             message = {
                 'id': trade_id,
@@ -118,12 +113,11 @@ class RedisQueue:
     async def async_push_trade(self, trade_data: Dict[str, Any]) -> str:
         """Publish trade data to channel asynchronously."""
         try:
-            result = await self.loop.run_in_executor(
+            return await self.loop.run_in_executor(
                 None,
                 self.push_trade,
                 trade_data
             )
-            return result
         except Exception as e:
             self.logger.error(f"Error publishing async trade: {e}")
             raise

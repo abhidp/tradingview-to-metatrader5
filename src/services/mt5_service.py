@@ -180,7 +180,6 @@ class MT5Service:
             self.loop = asyncio.get_event_loop()
         return await self._retry_operation(lambda: self.loop.run_in_executor(None, lambda: self._execute_order(trade_data)))    
         
-
     def _close_position(self, trade_data: Dict[str, Any]) -> Dict[str, Any]:
         """Synchronous internal method for position closing."""
         try:
@@ -195,39 +194,59 @@ class MT5Service:
 
             execution_data = trade_data.get('execution_data', {})
             instrument = trade_data.get('instrument') or execution_data.get('instrument')
-            qty = trade_data.get('qty') or execution_data.get('qty')
+            close_volume = float(trade_data.get('qty') or execution_data.get('qty', 0))
 
-            if not instrument or not qty:
+            if not instrument or not close_volume:
                 return {"error": "Missing required fields"}
 
             # Get position details
             mt5_symbol = self.map_symbol(instrument)
+                        
+            # Select symbol first
+            if not mt5.symbol_select(mt5_symbol, True):
+                return {"error": f"Failed to select symbol {mt5_symbol}"}
+                
+            # Get symbol info
+            symbol_info = mt5.symbol_info(mt5_symbol)
+            if not symbol_info:
+                return {"error": f"Failed to get symbol info for {mt5_symbol}"}
+
+            # Get position details
             positions = mt5.positions_get(ticket=int(mt5_ticket))
             if not positions:
                 return {"error": f"Position #{mt5_ticket} not found"}
 
             position = positions[0]
             
-            # Prepare close order
-            is_buy = position.type == mt5.POSITION_TYPE_SELL
-            order_type = mt5.ORDER_TYPE_BUY if is_buy else mt5.ORDER_TYPE_SELL
-            symbol_info = mt5.symbol_info(mt5_symbol)
-            price = symbol_info.ask if is_buy else symbol_info.bid
+            # Validate close volume
+            if close_volume > position.volume:
+                return {'error': f'Close amount {close_volume} exceeds position size {position.volume}'}
+            
+            is_partial = close_volume < position.volume
+                
+            # Determine order type based on position type
+            if position.type == mt5.POSITION_TYPE_BUY:
+                order_type = mt5.ORDER_TYPE_SELL
+                price = symbol_info.bid
+            else:
+                order_type = mt5.ORDER_TYPE_BUY
+                price = symbol_info.ask
 
+            # Build request
             request = {
                 "action": mt5.TRADE_ACTION_DEAL,
                 "symbol": mt5_symbol,
-                "volume": float(qty),
-                "type": order_type,
+                "volume": close_volume,
+                "type": order_type,  # Use the correct order type
                 "position": int(mt5_ticket),
                 "price": price,
                 "deviation": 20,
                 "magic": 234000,
-                "comment": trade_data.get('trade_id', 'trade'),
+                "comment": f"partial_{mt5_ticket}" if is_partial else f"close_{mt5_ticket}",
                 "type_time": mt5.ORDER_TIME_GTC,
                 "type_filling": mt5.ORDER_FILLING_IOC,
             }
-
+            
             # Send close order
             result = mt5.order_send(request)
             
@@ -238,15 +257,21 @@ class MT5Service:
                     "retcode": result.retcode if result else None
                 }
 
+            # Get updated position volume after the close
+            updated_positions = mt5.positions_get(ticket=int(mt5_ticket))
+            remaining_volume = updated_positions[0].volume if updated_positions else 0.0
+
             # Prepare success response
             response = {
                 "mt5_ticket": str(result.order),
-                "volume": result.volume,
+                "volume": close_volume,
+                "remaining_volume": remaining_volume,
                 "price": result.price,
                 "symbol": mt5_symbol,
                 "side": "buy" if position.type == mt5.POSITION_TYPE_SELL else "sell",
                 "comment": result.comment,
                 "closed_position": str(position.ticket),
+                "is_partial": is_partial,
                 "timestamp": datetime.now().isoformat()
             }
 
@@ -255,7 +280,7 @@ class MT5Service:
         except Exception as e:
             logger.error(f"Error closing position: {e}")
             return {"error": str(e)}
-
+        
     async def async_close_position(self, trade_data: Dict[str, Any]) -> Dict[str, Any]:
         """Close an existing position asynchronously."""
         if not self.loop:
