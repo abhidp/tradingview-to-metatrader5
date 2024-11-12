@@ -177,7 +177,7 @@ class MT5Worker:
                 
                 direction = trade_data.get('execution_data', {}).get('side', '').lower()
                 direction_emoji = "SELL🔻" if direction == 'buy' else "BUY🔼"
-                print(f"📌 Position {'partially closed' if is_partial else 'CLOSED'}: {direction_emoji} {result.get('symbol')} {result.get('volume')} @ {result.get('price')}")
+                print(f"⭕ Position {'partially closed' if is_partial else 'CLOSED'}: {direction_emoji} {result.get('symbol')} {result.get('volume')} @ {result.get('price')}")
                 print(f"🔗 References: TV# {position_id} --> MT5# {mt5_ticket}")
                 
                 if is_partial:
@@ -215,7 +215,6 @@ class MT5Worker:
                 logger.info(f"Position {mt5_ticket} is already closed, skipping update")
                 return
             
-            print(f"\n📝 Processing UPDATE TradeId#: {trade_id}")
             result = await self.mt5.async_update_position(trade_data)
             
             if 'error' not in result:
@@ -227,7 +226,7 @@ class MT5Worker:
                     'stop_loss': result.get('stop_loss')
                 }
                 
-                print(f"✔  Position updated in MT5: #{mt5_ticket}")
+                print(f"💱 Position updated in MT5: #{mt5_ticket}")
                 print(f"🔗 References: TV# {position_id} --> MT5# {mt5_ticket}")
                 
                 if result.get('take_profit') or result.get('stop_loss'):
@@ -282,7 +281,7 @@ class MT5Worker:
     async def handle_mt5_close(self, ticket: str) -> None:
         """Handle position closed in MT5 asynchronously."""
         try:            
-            print(f"\n📤 Processing MT5-initiated close for Ticket#: {ticket}")
+            print(f"📤 Processing MT5-initiated close for Ticket#: {ticket}")
                 
             # Get trade data from database
             trade = await self.db.async_get_trade_by_mt5_ticket(ticket)
@@ -317,8 +316,8 @@ class MT5Worker:
                     logger.error(f"❌ Failed to close TV position: {result['error']}\n")
                 return
 
-            print(f"📌 Position CLOSED in TV: {direction_emoji} {trade['instrument']} {trade['quantity']}")
-            print(f"🔗 References: TV# {position_id} <-- MT5# {ticket}\n")
+            print(f"📌 Closed {direction_emoji} {trade['instrument']} x {trade['quantity']}")
+            print(f"🔗 References: TV #{position_id} <-- MT5 #{ticket}\n")
 
         except Exception as e:
             logger.error(f"❌ Error handling MT5 close: {e}\n")
@@ -327,7 +326,6 @@ class MT5Worker:
                     'error_message': str(e),
                     'closed_at': datetime.now(timezone.utc).isoformat()
                 })
-
     async def run_async(self):
         """Run the worker service asynchronously."""
         print("\n🚀 MT5 Worker Started")

@@ -107,9 +107,10 @@ class TradingViewInterceptor:
                         url_parts = flow.request.pretty_url.split('/')
                         position_id = url_parts[-1].split('?')[0]
                         
-                        # Get update data from request and include response data
+                        # Get update data and merge with response
                         update_data = dict(flow.request.urlencoded_form)
-                        update_data.update(response_data)  # Merge response data
+                        if 's' in response_data and response_data['s'] == 'error':
+                            update_data.update(response_data)  # Include error info
                         
                         # Create and run the coroutine in the event loop
                         asyncio.create_task(
