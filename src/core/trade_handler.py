@@ -1,5 +1,5 @@
 import logging
-import json
+import MetaTrader5 as mt5
 import asyncio
 from datetime import datetime
 from typing import Dict, Any
@@ -116,9 +116,10 @@ class TradeHandler:
         except Exception as e:
             logger.error(f"Error processing execution: {e}")
 
-    async def process_position_close(self, position_id: str) -> None:
+    async def process_position_close(self, position_id: str, close_data: Dict[str, Any] = None) -> None:
         """Process position close request from TradingView asynchronously."""
         try:
+            close_data = close_data or {}  # Ensure close_data is dict
             print(f"\n📤 Closing PositionID#: {position_id}")
             
             # Get trade data asynchronously
@@ -127,57 +128,103 @@ class TradeHandler:
                 logger.error(f"No trade found for position {position_id}")
                 return
             
+            
             mt5_ticket = trade.get('mt5_ticket')
             if not mt5_ticket:
                 logger.error(f"No MT5 ticket found for trade {trade['trade_id']}")
                 return
+
+            try:
+                # Initialize MT5 connection if needed
+                if not mt5.initialize():
+                    logger.error("Failed to initialize MT5")
+                    return
+
+                # Query all positions first for debugging
+                all_positions = mt5.positions_get()
+
+                # Get specific position
+                positions = mt5.positions_get(ticket=int(mt5_ticket))
+
+                if not positions:
+                    logger.info(f"Position {mt5_ticket} not found in MT5")
+                    return
+                    
+            except Exception as e:
+                logger.error(f"Error getting MT5 position: {e}")
+                logger.error(f"MT5 last error: {mt5.last_error()}")
+                return
+            
+            current_volume = float(positions[0].volume)
             
             # Get direction emoji
             direction_emoji = "BUY🔼" if trade['side'].lower() == 'buy' else "SELL🔻"
             
+            # Handle partial close
+            try:
+                close_amount = float(close_data.get('amount', current_volume))
+                
+                # Validate close amount
+                if close_amount <= 0 or close_amount > current_volume:
+                    logger.error(f"Invalid close amount: {close_amount} (current volume: {current_volume})")
+                    return
+                    
+                # Check if this closes the entire remaining position
+                is_partial = close_amount < current_volume
+            except Exception as e:
+                logger.error(f"Error processing close amount: {e}")
+                return
+
+            # Use mapped symbol
+            instrument = trade['instrument']
+            mt5_symbol = f"{instrument}.r"  # Add proper suffix
+
             # Prepare close data
-            close_data = {
+            close_request = {
                 'trade_id': trade['trade_id'],
                 'mt5_ticket': mt5_ticket,
-                'instrument': trade['instrument'],
+                'instrument': trade['instrument'],  # Use original instrument name without suffix
                 'type': 'market',
-                'qty': trade['quantity'],
+                'qty': str(close_amount),
+                'is_partial': is_partial,
                 'side': 'sell' if trade['side'] == 'buy' else 'buy',
                 'execution_data': {
-                    'instrument': trade['instrument'],
+                    'instrument': trade['instrument'],  # Use original instrument name without suffix
                     'positionId': position_id,
-                    'qty': trade['quantity'],
+                    'qty': str(close_amount),
                     'side': 'sell' if trade['side'] == 'buy' else 'buy',
                     'isClose': True
                 }
             }
             
             # Publish close request asynchronously
-            await self.queue.async_push_trade(close_data)
+            await self.queue.async_push_trade(close_request)
             
             # Update status asynchronously
+            close_status = 'closing' if is_partial else 'closed'
+            status_update = {
+                'close_requested_at': datetime.utcnow().isoformat(),
+                'is_closed': not is_partial  # Only mark as closed for full closes
+            }
             await self.db.async_update_trade_status(
                 trade['trade_id'], 
-                'closing', 
-                {
-                    'close_requested_at': datetime.utcnow().isoformat()
-                }
+                close_status, 
+                status_update
             )
-            print(f"📌 Closed {direction_emoji} {trade['instrument']} x {trade['quantity']}")
+            
+            operation_type = "⭕ Partially closed" if is_partial else "📌 Closed"
+            print(f"{operation_type} {direction_emoji} {trade['instrument']} x {close_amount}")
             
         except Exception as e:
             logger.error(f"Error processing position close: {e}")
+            logger.error(f"Close data was: {close_data}")
 
     async def process_position_update(self, position_id: str, update_data: Dict[str, Any]) -> None:
         """Process position update from TradingView asynchronously."""
         try:
-            # Check for TradingView error response
-            if 's' in update_data and update_data['s'] == 'error':
-                logger.error(f"TradingView rejected TP/SL update: {update_data.get('errmsg')}")
-                print(f"\n❌ TP/SL Update Failed - PositionID#: {position_id}")
-                print(f"📋 Error: {update_data.get('errmsg')}\n")
-                return
-
+            close_data = close_data or {}
+            print(f"\n📤 Closing PositionID#: {position_id}")
+            
             # Get trade data asynchronously
             trade = await self.db.async_get_trade_by_position(position_id)
             if not trade:
@@ -207,28 +254,18 @@ class TradeHandler:
                 'type': 'update'
             }
             
-            # Log the update request with previous and new values
-            print(f"\n📝 Updating TP/SL for PositionID#: {position_id}")
+            # Log the update request only if values are changing
             if take_profit is not None:
-                print(f"🟢 TP: {current_tp} → {take_profit}")
+                print(f"🎯 TP: {current_tp} → {take_profit}")
             if stop_loss is not None:
                 print(f"🛑 SL: {current_sl} → {stop_loss}")
-            print()
-
+                
             # Publish update request asynchronously
             await self.queue.async_push_trade(update_trade_data)
-            
-            # Update database with new TP/SL values
-            update_data = {
-                'take_profit': take_profit if take_profit is not None else current_tp,
-                'stop_loss': stop_loss if stop_loss is not None else current_sl,
-                'updated_at': datetime.utcnow()
-            }
-            await self.db.async_update_trade_status(trade['trade_id'], 'updated', update_data)
-            
+                
         except Exception as e:
             logger.error(f"Error processing position update: {e}")
-
+            
     def cleanup(self):
         """Cleanup resources."""
         self.db.cleanup()

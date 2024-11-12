@@ -61,9 +61,9 @@ class TradingViewInterceptor:
         """Asynchronously process position update."""
         await self.trade_handler.process_position_update(position_id, update_data)
 
-    async def async_process_position_close(self, position_id: str) -> None:
+    async def async_process_position_close(self, position_id: str, close_data: dict[str, any] = None) -> None:
         """Asynchronously process position close."""
-        await self.trade_handler.process_position_close(position_id)
+        await self.trade_handler.process_position_close(position_id, close_data)
 
     async def async_process_execution(self, response_data: dict) -> None:
         """Asynchronously process execution."""
@@ -71,7 +71,6 @@ class TradingViewInterceptor:
 
     def request(self, flow: http.HTTPFlow) -> None:
         """Handle requests."""
-        # Capture auth token from all TradingView requests
         if self.base_path in flow.request.pretty_url:
             auth_header = flow.request.headers.get('authorization')
             if auth_header:
@@ -80,21 +79,18 @@ class TradingViewInterceptor:
         if not self.should_log_request(flow):
             return
         
-        if flow.request.method == "POST" and flow.request.urlencoded_form:
-            request_data = dict(flow.request.urlencoded_form)
-            
-            # Get direction and instrument details
-            side = request_data.get('side', '').lower()
-            direction_emoji = "🔼" if side == 'buy' else "🔻"
-            instrument = request_data.get('instrument', '')
-            quantity = request_data.get('qty', '')
-
-        elif flow.request.method == "DELETE":
+        if flow.request.method == "DELETE":
             # Extract position ID from URL
             url_parts = flow.request.pretty_url.split('/')
             position_id = url_parts[-1].split('?')[0]
+            
+            # Get close data if exists
+            close_data = {}
+            if flow.request.urlencoded_form:
+                close_data = dict(flow.request.urlencoded_form)
+            
             # Create and run the coroutine in the event loop
-            asyncio.create_task(self.async_process_position_close(position_id))
+            asyncio.create_task(self.async_process_position_close(position_id, close_data))
 
     def response(self, flow: http.HTTPFlow) -> None:
         """Handle responses."""
