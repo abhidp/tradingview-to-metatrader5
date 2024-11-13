@@ -1,11 +1,13 @@
-import MetaTrader5 as mt5
-import logging
 import json
-from typing import Dict, Optional, Set
-from pathlib import Path
+import logging
 from datetime import datetime, timedelta
-from src.services.mt5_service import MT5Service
+from pathlib import Path
+from typing import Dict, Optional, Set
+
+import MetaTrader5 as mt5
+
 from src.config.mt5_config import MT5_CONFIG
+from src.services.mt5_service import MT5Service
 
 logger = logging.getLogger('SymbolMapper')
 

@@ -1,12 +1,12 @@
-import os
-import json
 import asyncio
-from mitmproxy import ctx, http
-from datetime import datetime
+import json
+import os
+
 from dotenv import load_dotenv
+
+from mitmproxy import http
 from src.core.trade_handler import TradeHandler
-from src.utils.token_manager import TokenManager
-from src.utils.token_manager import GLOBAL_TOKEN_MANAGER
+from src.utils.token_manager import GLOBAL_TOKEN_MANAGER, TokenManager
 
 load_dotenv()
 TV_BROKER_URL = os.getenv('TV_BROKER_URL')
@@ -26,14 +26,24 @@ class TradingViewInterceptor:
             cls._instance = super(TradingViewInterceptor, cls).__new__(cls)
         return cls._instance
 
+
     def __init__(self):
         if not self._initialized:  # Only initialize once
             self.base_path = f"{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
             self.trade_handler = TradeHandler()
             self.token_manager = GLOBAL_TOKEN_MANAGER
+
+            broker_url = os.getenv('TV_BROKER_URL', 'Unknown Broker')
+            account_id = os.getenv('TV_ACCOUNT_ID', 'Unknown Account')
+
             print("\n🚀 Trade interceptor initialized")
             print("👀 Watching for trades...\n")
+            print(f"✅ TradingView Connected: {account_id} ({broker_url})")
+
             self._initialized = True
+
+
+
 
     def should_log_request(self, flow: http.HTTPFlow) -> bool:
         """Strictly check if we should log this request."""

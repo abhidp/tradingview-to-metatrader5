@@ -1,10 +1,12 @@
-import aiohttp
+import asyncio
 import logging
 import os
+from typing import Any, Dict
+
+import aiohttp
 from dotenv import load_dotenv
-from typing import Dict, Any, Optional
+
 from src.utils.token_manager import TokenManager
-import asyncio
 
 logger = logging.getLogger('TradingViewService')
 

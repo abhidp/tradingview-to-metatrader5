@@ -1,13 +1,13 @@
-# models/database.py
-
+import logging
+import time
 from datetime import datetime
-from typing import Optional
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Numeric, JSON, Boolean, Text, text
+
+from sqlalchemy import (JSON, Boolean, Column, DateTime, Integer, Numeric,
+                        String, Text, create_engine, text)
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import OperationalError
-import time
-import logging
+
 from src.config.database import DATABASE_URL
 
 logger = logging.getLogger(__name__)

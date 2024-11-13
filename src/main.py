@@ -1,8 +1,6 @@
+import logging
 import sys
 from pathlib import Path
-import logging
-import argparse
-# from mitmproxy import ctx
 
 # Configure logging to be minimal
 logging.basicConfig(

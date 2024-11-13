@@ -22,7 +22,7 @@ Automatically copy trades from TradingView to MetaTrader 5 using a proxy server.
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/YOUR_USERNAME/tradingview-trade-capture.git
+git clone https://github.com/abhidp/tradingview-tradecapture.git
 cd tradingview-trade-capture
 ```
 
@@ -42,10 +42,8 @@ pip install -r requirements.txt
 1. Make a copy of the `.env.template` file and name it `.env`:
 
    - `cp .env.template .env`
-   - overwrite the values with your credentials
+   - overwrite the dummy values with your real credentials
    - ⚠️ IMPORTANT: Never commit your `.env` file to version control!
-
-
 
 
 2. Start services:
@@ -66,6 +64,12 @@ pip install -r requirements.txt
       73c4a6bc2c3c   postgres:16   "docker-entrypoint.s…"   5 minutes ago   Up 5 minutes (healthy)   0.0.0.0:5432->5432/tcp   tradingview_db
       ac6d86109537   redis:7       "docker-entrypoint.s…"   5 minutes ago   Up 5 minutes (healthy)   0.0.0.0:6379->6379/tcp   tradingview_redis
     ```
+
+4. Create Database and Tables 
+    ```
+    python src/scripts/init_db.py
+    ```
+    select `Y`
 
 ## Usage
 
@@ -121,7 +125,6 @@ python run.py help
 .
 ├── src/
 │   ├── config/                     # Configuration files
-│   │   ├── constants.py            # Constants and URLs
 │   │   ├── database.py             # Database config
 │   │   ├── mt5_config.py           # MT5 credentials
 │   │   └── mt5_symbol_config.py    # Symbol mappings

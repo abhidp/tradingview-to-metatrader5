@@ -1,5 +1,7 @@
-import logging
+"""Test TradingView service functionality."""
 import asyncio
+import logging
+
 from src.services.tradingview_service import TradingViewService
 from src.utils.token_manager import GLOBAL_TOKEN_MANAGER
 
@@ -25,26 +27,39 @@ async def test_tv_service():
             print("✅ Token available")
         else:
             print("❌ No token available - please log into TradingView first")
+            return False
         
         print("\nTradingView service tests completed")
+        return True
         
     except Exception as e:
-        print(f"\n❌ TradingView service test failed: {e}")
-        raise
+        logger.error(f"❌ TradingView service test failed: {e}")
+        return False
     finally:
         if tv_service:
             await tv_service.cleanup()
             print("\nTradingView service cleaned up")
 
+async def run_test():
+    """Run the async test."""
+    try:
+        return await test_tv_service()
+    except Exception as e:
+        logger.error(f"Test failed: {e}")
+        return False
+
 def test_tv():
-    """Wrapper to run async test."""
-    asyncio.run(test_tv_service())
+    """Run the test synchronously."""
+    return asyncio.run(run_test())
 
 if __name__ == "__main__":
     try:
-        test_tv()
+        success = test_tv()
+        if not success:
+            exit(1)
     except KeyboardInterrupt:
         print("\nTest cancelled by user")
+        exit(1)
     except Exception as e:
         print(f"Test failed: {e}")
         exit(1)

@@ -1,16 +1,15 @@
+import argparse
+import logging
 import sys
 from pathlib import Path
-import logging
-from datetime import datetime
-import argparse
+
 from sqlalchemy import inspect, text
 
 # Add project root to Python path
 project_root = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, project_root)
 
-from src.models.database import Base, engine, SessionLocal
-from src.config.database import DB_CONFIG
+from src.models.database import Base, SessionLocal, engine
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('DBTools')

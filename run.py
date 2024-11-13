@@ -1,13 +1,16 @@
-#!/usr/bin/env python
-# run.py
+"""CLI runner for TradingView Copier."""
 
 import argparse
+import asyncio
+import signal
 import subprocess
 import sys
-import signal
 from pathlib import Path
 
+
 class Runner:
+    """Runner class for managing TradingView Copier operations."""
+    
     def run_proxy(self):
         """Start the TradingView proxy server."""
         try:
@@ -52,19 +55,31 @@ class Runner:
     def test_mt5(self):
         """Test MT5 connection."""
         try:
-            from tests.infrastructure.test_mt5 import run_test
-            run_test()
+            from tests.infrastructure.test_mt5 import test_mt5_connection
+            asyncio.run(test_mt5_connection())
         except Exception as e:
             print(f"Error running MT5 test: {e}")
             sys.exit(1)
             
     def test_tv(self):
         """Test TradingView service."""
-        subprocess.run([sys.executable, "-m", "tests.infrastructure.test_tv"])
+        try:
+            from tests.infrastructure.test_tv import run_test
+            success = asyncio.run(run_test())
+            if not success:
+                sys.exit(1)
+        except Exception as e:
+            print(f"Error running TV test: {e}")
+            sys.exit(1)
 
     def test_all(self):
         """Run all infrastructure tests."""
-        subprocess.run([sys.executable, "-m", "tests.infrastructure.test_all"])
+        try:
+            from tests.infrastructure.test_all import main
+            main()  # This already handles asyncio.run internally
+        except Exception as e:
+            print(f"Error running tests: {e}")
+            sys.exit(1)
 
     def clean_redis(self):
         """Clean Redis data."""
@@ -91,7 +106,9 @@ class Runner:
         for cmd, desc in commands.items():
             print(f"python run.py {cmd:<15} - {desc}")
 
+
 def main():
+    """Main entry point for the CLI."""
     parser = argparse.ArgumentParser(description="TradingView Copier CLI")
     parser.add_argument('command', nargs='?', default='help',
                        help="Command to execute")
@@ -129,6 +146,7 @@ def main():
         print(f"Unknown command: {args.command}")
         runner.show_help()
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

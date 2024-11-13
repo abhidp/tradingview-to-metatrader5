@@ -1,8 +1,9 @@
-# src/utils/ssl_handler.py
-import warnings
-import urllib3
 import contextlib
+import warnings
 from functools import wraps
+
+import urllib3
+
 
 def silence_ssl_warnings():
     """Silence SSL verification warnings."""

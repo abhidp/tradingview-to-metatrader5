@@ -1,5 +1,7 @@
 import logging
+
 from sqlalchemy import text
+
 from src.utils.database_handler import DatabaseHandler
 
 logging.basicConfig(level=logging.INFO)
