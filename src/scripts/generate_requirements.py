@@ -1,9 +1,9 @@
-# scripts/generate_requirements.py
-
-import subprocess
-import pkg_resources
 import re
+import subprocess
 from pathlib import Path
+
+import pkg_resources
+
 
 def get_project_root():
     """Get project root directory."""

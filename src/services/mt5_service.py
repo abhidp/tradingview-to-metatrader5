@@ -1,10 +1,11 @@
-import MetaTrader5 as mt5
-import logging
 import asyncio
-from datetime import datetime
-from typing import Callable, Dict, Any, Optional
+import logging
 import time
-from functools import partial
+from datetime import datetime
+from typing import Any, Callable, Dict
+
+import MetaTrader5 as mt5
+
 from src.config.mt5_symbol_config import SymbolMapper
 
 logger = logging.getLogger('MT5Service')
@@ -122,7 +123,8 @@ class MT5Service:
                 is_buy = side.lower() == 'buy'
                 order_type = mt5.ORDER_TYPE_BUY if is_buy else mt5.ORDER_TYPE_SELL
                 price = symbol_info.ask if is_buy else symbol_info.bid
-                
+                position_id = trade_data.get('execution_data', {}).get('positionId', 'unknown')
+
                 # Construct order request
                 request = {
                     "action": mt5.TRADE_ACTION_DEAL,
@@ -132,7 +134,7 @@ class MT5Service:
                     "price": price,
                     "deviation": 20,
                     "magic": 234000,
-                    "comment": trade_data.get('trade_id', 'trade'),
+                    "comment": f"TV#{position_id}",
                     "type_time": mt5.ORDER_TIME_GTC,
                     "type_filling": mt5.ORDER_FILLING_IOC,
                 }
@@ -232,7 +234,8 @@ class MT5Service:
                 order_type = mt5.ORDER_TYPE_BUY
                 price = symbol_info.ask
 
-            # Build request
+            position_id = trade_data.get('execution_data', {}).get('positionId', 'unknown')
+
             request = {
                 "action": mt5.TRADE_ACTION_DEAL,
                 "symbol": mt5_symbol,
@@ -242,7 +245,7 @@ class MT5Service:
                 "price": price,
                 "deviation": 20,
                 "magic": 234000,
-                "comment": f"partial_{mt5_ticket}" if is_partial else f"close_{mt5_ticket}",
+                "comment":  f"TV#{position_id}",
                 "type_time": mt5.ORDER_TIME_GTC,
                 "type_filling": mt5.ORDER_FILLING_IOC,
             }

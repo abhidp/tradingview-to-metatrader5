@@ -1,16 +1,16 @@
-import os
-import sys
-import signal
-import logging
-from pathlib import Path
 import atexit
+import logging
+import os
+import signal
+import sys
+from pathlib import Path
 
 # Add project root to Python path
 project_root = str(Path(__file__).parent.parent.parent)  # One more parent to reach root
 sys.path.insert(0, project_root)
 
-from src.workers.mt5_worker import MT5Worker
 from src.utils.ssl_handler import silence_ssl_warnings
+from src.workers.mt5_worker import MT5Worker
 
 # Configure logging
 logging.basicConfig(

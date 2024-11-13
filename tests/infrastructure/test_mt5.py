@@ -1,8 +1,11 @@
-import logging
+"""MT5 connection test module."""
 import asyncio
+import logging
+
 import MetaTrader5 as mt5
-from src.services.mt5_service import MT5Service
+
 from src.config.mt5_config import MT5_CONFIG
+from src.services.mt5_service import MT5Service
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('MT5Test')
@@ -24,6 +27,8 @@ async def test_mt5_connection():
         
         if await mt5_service.async_initialize():
             print("✅ MT5 initialization successful")
+        else:
+            raise Exception("MT5 initialization failed")
         
         # Test symbol mapping
         print("\n2. Testing symbol mapping...")
@@ -36,35 +41,22 @@ async def test_mt5_connection():
         print("\n3. Testing market data access...")
         for sym in test_symbols:
             mapped_sym = mt5_service.map_symbol(sym)
-            # Use mt5.symbol_select directly since it's a static method
-            if mt5.symbol_select(mapped_sym, True):
-                symbol_info = mt5.symbol_info(mapped_sym)
-                if symbol_info:
-                    print(f"✅ Selected {mapped_sym} (Bid: {symbol_info.bid}, Ask: {symbol_info.ask})")
-                else:
-                    print(f"⚠️  No data for {mapped_sym}")
+            symbol_info = await asyncio.to_thread(mt5.symbol_info, mapped_sym)
+            if symbol_info:
+                print(f"✅ Selected {mapped_sym} (Bid: {symbol_info.bid}, Ask: {symbol_info.ask})")
             else:
-                print(f"⚠️  Could not select {mapped_sym}")
+                print(f"⚠️  No data for {mapped_sym}")
         
         print("\nAll MT5 tests passed! ✨")
+        return True
         
     except Exception as e:
-        print(f"\n❌ MT5 test failed: {e}")
-        raise
+        logger.error(f"MT5 test failed: {e}")
+        return False
     finally:
         if mt5_service:
             mt5_service.cleanup()
             print("\nMT5 connection cleaned up")
 
-def run_test():
-    """Run the async test."""
-    asyncio.run(test_mt5_connection())
-
 if __name__ == "__main__":
-    try:
-        run_test()
-    except KeyboardInterrupt:
-        print("\nTest cancelled by user")
-    except Exception as e:
-        print(f"Test failed: {e}")
-        exit(1)
+    asyncio.run(test_mt5_connection())

@@ -1,10 +1,11 @@
-import redis
+import asyncio
 import json
 import logging
-import asyncio
 from datetime import datetime
-from typing import Dict, Any, Optional, Tuple, Callable, Awaitable, Union
 from functools import partial
+from typing import Any, Awaitable, Callable, Dict, Optional, Tuple, Union
+
+import redis
 
 logger = logging.getLogger('RedisQueue')
 

@@ -58,3 +58,5 @@ token.json
 # Docker volumes
 postgres_data/
 redis_data/
+
+tests/reports

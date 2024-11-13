@@ -1,5 +1,6 @@
 import logging
-from typing import Dict, Any
+from typing import Any, Dict
+
 from src.utils.queue_handler import RedisQueue
 
 logging.basicConfig(level=logging.INFO)

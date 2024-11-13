@@ -1,8 +1,7 @@
-# config/mt5_symbol_config.py
-
-import os
 import json
+import os
 from typing import Dict
+
 from dotenv import load_dotenv
 
 # Load environment variables

@@ -1,16 +1,18 @@
+import asyncio
 import logging
 import signal
 import time
-import asyncio
-from typing import Dict, Any, Set
 from datetime import datetime, timezone
+from typing import Any, Dict, Set
+
 import MetaTrader5 as mt5
-from src.utils.token_manager import GLOBAL_TOKEN_MANAGER
-from src.utils.queue_handler import RedisQueue
+
+from src.config.mt5_config import MT5_CONFIG
 from src.services.mt5_service import MT5Service
 from src.services.tradingview_service import TradingViewService
 from src.utils.database_handler import DatabaseHandler
-from src.config.mt5_config import MT5_CONFIG
+from src.utils.queue_handler import RedisQueue
+from src.utils.token_manager import GLOBAL_TOKEN_MANAGER
 
 logger = logging.getLogger('MT5Worker')
 

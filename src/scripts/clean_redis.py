@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+
 import redis
 
 # Add project root to Python path

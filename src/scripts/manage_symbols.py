@@ -1,5 +1,3 @@
-# scripts/manage_symbols.py
-
 '''
 Usage:
 =============
@@ -12,13 +10,12 @@ Filter symbols        : `python src/scripts/manage_symbols.py --mt5-symbols --fi
 See specific pairs    : `python src/scripts/manage_symbols.py --mt5-symbols --filter BTC`
 '''
 
-#!/usr/bin/env python
-import os
-import sys
-import json
 import argparse
+import json
+import sys
 from pathlib import Path
 from typing import Dict, List
+
 import MetaTrader5 as mt5
 from tabulate import tabulate
 
@@ -27,8 +24,9 @@ current_dir = Path(__file__).resolve().parent
 project_root = current_dir.parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.config.mt5_symbol_config import SymbolMapper
 from src.config.mt5_config import MT5_CONFIG
+from src.config.mt5_symbol_config import SymbolMapper
+
 
 def initialize_mt5() -> bool:
     """Initialize MT5 connection."""

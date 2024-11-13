@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
@@ -8,6 +9,7 @@ project_root = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, project_root)
 
 from src.config.database import DB_CONFIG
+
 
 def reset_database():
     """Reset database with fresh schema and optimized indexes."""
@@ -129,7 +131,7 @@ def reset_database():
 
 if __name__ == "__main__":
     print("\n=== Resetting Database ===")
-    confirm = input("This will delete all existing trade data. Continue? (y/n): ")
+    confirm = input("This will delete all existing trade data. Continue? (Y/N): ")
     if confirm.lower() == 'y':
         reset_database()
     else:

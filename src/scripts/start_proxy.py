@@ -1,12 +1,10 @@
-#!/usr/bin/env python
-# scripts/start_proxy.py
-
 import os
-import sys
-import subprocess
-from pathlib import Path
-import psutil
 import signal
+import subprocess
+import sys
+from pathlib import Path
+
+import psutil
 
 def kill_process_on_port(port):
     """Kill process running on specified port."""
@@ -49,6 +47,10 @@ def signal_handler(signum, frame):
     print("\n⛔ Shutdown requested...")
     cleanup()
     sys.exit(0)
+
+
+
+
 
 def run_proxy():
     """Run the proxy server with minimal output."""

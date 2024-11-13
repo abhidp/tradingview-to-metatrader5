@@ -1,14 +1,12 @@
-# src/scripts/execution_stats.py
 import sys
 from pathlib import Path
-from typing import Dict, Any
-from datetime import datetime, timedelta
 
 # Add project root to Python path
 project_root = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, project_root)
 
 from src.utils.database_handler import DatabaseHandler
+
 
 def main():
     db = DatabaseHandler()

@@ -1,21 +1,19 @@
 # utils/database_handler.py
 
-from typing import Dict, Any, Optional
-from contextlib import contextmanager
-import logging
-from datetime import datetime, timedelta
-from sqlalchemy import update, create_engine, text
-from sqlalchemy.orm import Session, sessionmaker, scoped_session
-from sqlalchemy.pool import QueuePool
-from sqlalchemy.exc import OperationalError, SQLAlchemyError
-from src.models.database import Base, Trade
-import os
-from dotenv import load_dotenv
-import time
-import traceback
 import asyncio
-from functools import partial
 import logging
+import os
+import traceback
+from contextlib import contextmanager
+from datetime import datetime
+from typing import Any, Dict, Optional
+
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, text, update
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.pool import QueuePool
+
+from src.models.database import Trade
 
 logger = logging.getLogger('DatabaseHandler')
 
@@ -24,13 +22,6 @@ class DatabaseHandler:
         try:
             # Load environment variables
             load_dotenv()
-            
-            # Log connection details (excluding password)
-            # logger.info("Initializing DatabaseHandler")
-            # logger.info(f"Host: {os.getenv('DB_HOST')}")
-            # logger.info(f"Port: {os.getenv('DB_PORT')}")
-            # logger.info(f"Database: {os.getenv('DB_NAME')}")
-            # logger.info(f"User: {os.getenv('DB_USER')}")
             
             # Construct database URL
             db_url = (
