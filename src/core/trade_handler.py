@@ -1,12 +1,13 @@
-import logging
-import MetaTrader5 as mt5
 import asyncio
+import logging
 from datetime import datetime
-from typing import Dict, Any
+from typing import Any, Dict
+
+import MetaTrader5 as mt5
+
 from src.utils.database_handler import DatabaseHandler
 from src.utils.queue_handler import RedisQueue
 
-import logging
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -30,9 +31,15 @@ class TradeHandler:
             take_profit = float(request_data['takeProfit']) if 'takeProfit' in request_data else None
             stop_loss = float(request_data['stopLoss']) if 'stopLoss' in request_data else None
             
+            # Store the order ID for TP/SL separately
+            tp_order_id = response_data['d'].get('takeProfitOrderId')
+            sl_order_id = response_data['d'].get('stopLossOrderId')
+            
             trade_data = {
                 'trade_id': trade_id,
                 'order_id': response_data['d']['orderId'],
+                'tp_order_id': tp_order_id,
+                'sl_order_id': sl_order_id,
                 'instrument': request_data['instrument'],
                 'side': request_data['side'],
                 'quantity': request_data['qty'],
@@ -59,7 +66,10 @@ class TradeHandler:
             await self.db.async_save_trade(trade_data)
             self.pending_orders[response_data['d']['orderId']] = trade_id
             
-            # print(f"📤 Trade sent to queue - TradeId#: {trade_id}")
+            if tp_order_id:
+                self.pending_orders[tp_order_id] = trade_id
+            if sl_order_id:
+                self.pending_orders[sl_order_id] = trade_id
             
         except Exception as e:
             logger.error(f"Error processing order: {e}")
@@ -279,6 +289,54 @@ class TradeHandler:
             
         except Exception as e:
             logger.error(f"Error processing position update: {e}")
+
+    async def process_tpsl_delete(self, order_id: str, level_type: str) -> None:
+        """Process deletion of TP or SL level."""
+        try:
+            # Get active trades from database
+            trade = await self.db.async_get_latest_active_trade()
+            if not trade:
+                logger.error("No active trades found")
+                return
+
+            position_id = trade.get('position_id')
+            print(f"🗑  Removing {level_type} for Position #{position_id}")
+            
+            # Prepare update data
+            update_data = {
+                'trade_id': trade['trade_id'],
+                'mt5_ticket': trade.get('mt5_ticket'),
+                'instrument': trade['instrument'],
+                'position_id': position_id,
+                'type': 'update'
+            }
+
+            # Set which level to remove while keeping the other level
+            current_tp = trade.get('take_profit')
+            current_sl = trade.get('stop_loss')
+            
+            if level_type == 'TP':
+                update_data['take_profit'] = 0  # Remove TP
+                update_data['stop_loss'] = current_sl  # Keep existing SL
+                print(f"🟢 TP: {current_tp} → None")
+            else:  # SL
+                update_data['stop_loss'] = 0  # Remove SL
+                update_data['take_profit'] = current_tp  # Keep existing TP
+                print(f"🛑 SL: {current_sl} → None")
+
+            # Push to queue for MT5 processing
+            await self.queue.async_push_trade(update_data)
+
+            # Update database
+            db_update = {
+                'take_profit': None if level_type == 'TP' else current_tp,
+                'stop_loss': None if level_type == 'SL' else current_sl,
+                'updated_at': datetime.utcnow()
+            }
+            await self.db.async_update_trade_status(trade['trade_id'], 'updated', db_update)
+
+        except Exception as e:
+            logger.error(f"Error processing {level_type} deletion: {e}")
 
     def cleanup(self):
         """Cleanup resources."""

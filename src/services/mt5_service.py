@@ -293,6 +293,7 @@ class MT5Service:
             lambda: self.loop.run_in_executor(None, self._close_position, trade_data)
         )
 
+
     def _update_position(self, trade_data: Dict[str, Any]) -> Dict[str, Any]:
         """Synchronous method to update position TP/SL in MT5."""
         try:
@@ -302,8 +303,8 @@ class MT5Service:
                 
             symbol = trade_data['instrument']
             ticket = int(trade_data['mt5_ticket'])
-            take_profit = float(trade_data['take_profit']) if trade_data.get('take_profit') else None
-            stop_loss = float(trade_data['stop_loss']) if trade_data.get('stop_loss') else None
+            take_profit = float(trade_data['take_profit']) if trade_data.get('take_profit') is not None else None
+            stop_loss = float(trade_data['stop_loss']) if trade_data.get('stop_loss') is not None else None
             
             # Map symbol and enable for trading
             mt5_symbol = self.map_symbol(symbol)
@@ -320,6 +321,12 @@ class MT5Service:
             # Verify symbol match
             if position.symbol != mt5_symbol:
                 return {'error': f'Position #{ticket} exists but symbol mismatch: expected {mt5_symbol}, found {position.symbol}'}
+            
+            # Handle TP/SL removal (when value is 0)
+            if take_profit == 0:
+                take_profit = 0.0  # MT5 expects 0.0 for removal
+            if stop_loss == 0:
+                stop_loss = 0.0  # MT5 expects 0.0 for removal
             
             # Prepare request
             request = {
@@ -350,6 +357,8 @@ class MT5Service:
         except Exception as e:
             logger.error(f"Error updating position: {e}")
             return {'error': str(e)}
+
+
 
     async def async_update_position(self, trade_data: Dict[str, Any]) -> Dict[str, Any]:
         """Async wrapper to update position TP/SL in MT5."""

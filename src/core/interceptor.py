@@ -58,9 +58,10 @@ class TradingViewInterceptor:
         if '/executions?locale=' in url and 'instrument=' in url:
             return True
         if '/positions/' in url:
-            # Match both DELETE and PUT methods
             return flow.request.method in ["DELETE", "PUT"]
-                
+        if '.TP.' in url or '.SL.' in url:
+            return flow.request.method == "DELETE"   
+            
         return False
 
     async def async_process_order(self, request_data: dict, response_data: dict) -> None:
@@ -79,6 +80,10 @@ class TradingViewInterceptor:
         """Asynchronously process execution."""
         await self.trade_handler.process_execution(response_data)
 
+    async def async_process_tpsl_delete(self, order_id: str, order_type: str) -> None:
+        """Process TP/SL deletion request."""
+        await self.trade_handler.process_tpsl_delete(order_id, order_type)
+
     def request(self, flow: http.HTTPFlow) -> None:
         """Handle requests."""
         if self.base_path in flow.request.pretty_url:
@@ -90,17 +95,34 @@ class TradingViewInterceptor:
             return
         
         if flow.request.method == "DELETE":
-            # Extract position ID from URL
-            url_parts = flow.request.pretty_url.split('/')
-            position_id = url_parts[-1].split('?')[0]
-            
-            # Get close data if exists
-            close_data = {}
-            if flow.request.urlencoded_form:
-                close_data = dict(flow.request.urlencoded_form)
-            
-            # Create and run the coroutine in the event loop
-            asyncio.create_task(self.async_process_position_close(position_id, close_data))
+            url = flow.request.pretty_url
+        
+            # Handle TP/SL deletion
+            if '.TP.' in url or '.SL.' in url:
+                # Extract order ID from the URL
+                # Format: orders/orderId.TP|SL.timestamp
+                parts = url.split('/')[-1].split('.')
+                order_id = parts[0]  # This is what we need
+                level_type = parts[1]  # 'TP' or 'SL'
+                
+                print(f"\n💱 Processing {level_type} deletion for OrderID#: {order_id}")
+                asyncio.create_task(
+                    self.async_process_tpsl_delete(order_id, level_type)
+                )
+            else:
+                # Only process position close for non-TP/SL deletions
+                url_parts = flow.request.pretty_url.split('/')
+                position_id = url_parts[-1].split('?')[0]
+                
+                # Get close data if exists
+                close_data = {}
+                if flow.request.urlencoded_form:
+                    close_data = dict(flow.request.urlencoded_form)
+                
+                # Create and run the coroutine in the event loop
+                asyncio.create_task(
+                    self.async_process_position_close(position_id, close_data)
+                )
 
     def response(self, flow: http.HTTPFlow) -> None:
         """Handle responses."""
