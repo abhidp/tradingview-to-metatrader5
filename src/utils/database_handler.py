@@ -333,6 +333,42 @@ class DatabaseHandler:
 
         return await self.loop.run_in_executor(None, _get_trade)
 
+    async def async_get_latest_active_trade(self) -> Optional[Dict[str, Any]]:
+        """Get the most recent active trade."""
+        def _get_trade():
+            with self.get_db() as db:
+                try:
+                    trade = (
+                        db.query(Trade)
+                        .filter(
+                            Trade.position_id.isnot(None),
+                            Trade.is_closed.is_(False),
+                            Trade.mt5_ticket.isnot(None)  # Ensure it's executed in MT5
+                        )
+                        .order_by(Trade.created_at.desc())
+                        .first()
+                    )
+                    
+                    if trade:
+                        return {
+                            'trade_id': trade.trade_id,
+                            'position_id': trade.position_id,
+                            'mt5_ticket': trade.mt5_ticket,
+                            'instrument': trade.instrument,
+                            'side': trade.side,
+                            'quantity': str(trade.quantity),
+                            'status': trade.status,
+                            'type': trade.type,
+                            'take_profit': float(trade.take_profit) if trade.take_profit is not None else None,
+                            'stop_loss': float(trade.stop_loss) if trade.stop_loss is not None else None
+                        }
+                    return None
+                except Exception as e:
+                    logger.error(f"Error in async get latest active trade: {e}")
+                    raise
+
+        return await self.loop.run_in_executor(None, _get_trade)
+
     async def async_get_trade_by_mt5_ticket(self, mt5_ticket: str) -> Optional[Dict[str, Any]]:
         """Get trade by MT5 ticket asynchronously."""
         def _get_trade():

@@ -179,7 +179,7 @@ class MT5Worker:
                 
                 direction = trade_data.get('execution_data', {}).get('side', '').lower()
                 direction_emoji = "SELL🔻" if direction == 'buy' else "BUY🔼"
-                print(f"⭕ Position {'partially closed' if is_partial else 'CLOSED'}: {direction_emoji} {result.get('symbol')} {result.get('volume')} @ {result.get('price')}")
+                print(f"{'🛡 Position partially closed' if is_partial else '📌 Position CLOSED'}: {direction_emoji} {result.get('symbol')} {result.get('volume')} @ {result.get('price')}")
                 print(f"🔗 References: TV# {position_id} --> MT5# {mt5_ticket}")
                 
                 if is_partial:
@@ -232,7 +232,7 @@ class MT5Worker:
                 print(f"🔗 References: TV# {position_id} --> MT5# {mt5_ticket}")
                 
                 if result.get('take_profit') or result.get('stop_loss'):
-                    print(f"🎯 New TP: {result.get('take_profit')} | SL: {result.get('stop_loss')}")
+                    print(f"🟢 New TP: {result.get('take_profit')} | SL: {result.get('stop_loss')}")
                 print(f"⚡ Execution time: {update_data['execution_time_ms']}ms\n")
                 
             else:

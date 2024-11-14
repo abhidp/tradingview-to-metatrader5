@@ -50,6 +50,8 @@ def reset_database():
             execution_price DECIMAL,
             take_profit DECIMAL,
             stop_loss DECIMAL,
+            tp_order_id VARCHAR(50),
+            sl_order_id VARCHAR(50),
             
             status VARCHAR(20) NOT NULL DEFAULT 'new',
             error_message TEXT,

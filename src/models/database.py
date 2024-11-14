@@ -66,6 +66,8 @@ class Trade(Base):
     execution_price = Column(Numeric)
     take_profit = Column(Numeric)
     stop_loss = Column(Numeric)
+    tp_order_id = Column(String(50)) 
+    sl_order_id = Column(String(50))
     
     # Status
     status = Column(String(20), nullable=False, default='new')
