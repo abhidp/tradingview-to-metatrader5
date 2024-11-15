@@ -26,6 +26,7 @@ class MT5Worker:
         self.db = None
         self.mt5 = None
         self.tv_service = None
+        # asyncio.create_task(self.mt5.monitor_trailing_stops())
 
     def initialize(self):
         """Initialize all services with shared event loop."""
@@ -41,13 +42,15 @@ class MT5Worker:
         self.mt5 = MT5Service(
             account=MT5_CONFIG['account'],
             password=MT5_CONFIG['password'],
-            server=MT5_CONFIG['server']
+            server=MT5_CONFIG['server'],
+            db_handler=self.db
         )
         self.mt5.set_loop(self.loop)
         
         self.tv_service = TradingViewService(
             token_manager=GLOBAL_TOKEN_MANAGER
         )
+
 
     async def _initialize_positions(self) -> None:
         """Initialize open positions set on startup."""
@@ -201,6 +204,7 @@ class MT5Worker:
                         'closed_at': datetime.now(timezone.utc).isoformat()
                     }
                 )
+    
     async def _handle_position_update(self, trade_data: Dict[str, Any], trade_id: str, start_time: int) -> None:
         """Handle updating TP/SL for an existing position."""
         try:
@@ -232,7 +236,7 @@ class MT5Worker:
                 print(f"🔗 References: TV# {position_id} --> MT5# {mt5_ticket}")
                 
                 if result.get('take_profit') or result.get('stop_loss'):
-                    print(f"🟢 New TP: {result.get('take_profit')} | SL: {result.get('stop_loss')}")
+                    print(f"🎯 New TP: {result.get('take_profit')} | SL: {result.get('stop_loss')}")
                 print(f"⚡ Execution time: {update_data['execution_time_ms']}ms\n")
                 
             else:
@@ -336,7 +340,12 @@ class MT5Worker:
         try:
             # Initialize positions
             await self._initialize_positions()
-            
+
+            # Start trailing stop monitor after successful initialization
+            if self.mt5.initialized:
+                self.loop.create_task(self.mt5.monitor_trailing_stops())
+                print("📊 Trailing stop monitor started")
+                
             # Main loop for position checking
             while self.running:
                 try:

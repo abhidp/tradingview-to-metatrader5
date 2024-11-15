@@ -68,6 +68,8 @@ class Trade(Base):
     stop_loss = Column(Numeric)
     tp_order_id = Column(String(50)) 
     sl_order_id = Column(String(50))
+    trailing_stop_pips = Column(Numeric)
+
     
     # Status
     status = Column(String(20), nullable=False, default='new')

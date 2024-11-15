@@ -236,8 +236,7 @@ class TradeHandler:
                     print(f"⚠  Error: {error_msg}")
                     return
 
-
-            update_data = update_data or {}  # Ensure update_data is dict
+            update_data = update_data or {}
             
             # Get trade data asynchronously
             trade = await self.db.async_get_trade_by_position(position_id)
@@ -248,14 +247,16 @@ class TradeHandler:
             # Convert TP/SL to float if present
             take_profit = float(update_data.get('takeProfit')) if 'takeProfit' in update_data else None
             stop_loss = float(update_data.get('stopLoss')) if 'stopLoss' in update_data else None
+            trailing_stop_pips = float(update_data.get('trailingStopPips')) if 'trailingStopPips' in update_data else None
             
-            if not take_profit and not stop_loss:
-                logger.error(f"No TP/SL update found in request data")
+            if not take_profit and not stop_loss and not trailing_stop_pips:
+                logger.error(f"No TP/SL/TSL update found in request data")
                 return
                     
-            # Get current TP/SL values from trade
+            # Get current values from trade
             current_tp = trade.get('take_profit')
             current_sl = trade.get('stop_loss')
+            current_tsl = trade.get('trailing_stop_pips')
                     
             # Prepare update data for queue
             update_trade_data = {
@@ -265,6 +266,7 @@ class TradeHandler:
                 'position_id': position_id,
                 'take_profit': take_profit if take_profit is not None else current_tp,
                 'stop_loss': stop_loss if stop_loss is not None else current_sl,
+                'trailing_stop_pips': trailing_stop_pips if trailing_stop_pips is not None else current_tsl,
                 'type': 'update'
             }
             
@@ -274,21 +276,25 @@ class TradeHandler:
                 print(f"🟢 TP: {current_tp} → {take_profit}")
             if stop_loss is not None:
                 print(f"🛑 SL: {current_sl} → {stop_loss}")
+            if trailing_stop_pips is not None:
+                print(f"🟡 Trailing Stop: {current_tsl} → {trailing_stop_pips} pips")
             print()
 
             # Publish update request asynchronously
             await self.queue.async_push_trade(update_trade_data)
             
-            # Update database with new TP/SL values
+            # Update database with new values
             update_data = {
                 'take_profit': take_profit if take_profit is not None else current_tp,
                 'stop_loss': stop_loss if stop_loss is not None else current_sl,
+                'trailing_stop_pips': trailing_stop_pips if trailing_stop_pips is not None else current_tsl,
                 'updated_at': datetime.utcnow()
             }
             await self.db.async_update_trade_status(trade['trade_id'], 'updated', update_data)
             
         except Exception as e:
             logger.error(f"Error processing position update: {e}")
+
 
     async def process_tpsl_delete(self, order_id: str, level_type: str) -> None:
         """Process deletion of TP or SL level."""
