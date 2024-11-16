@@ -389,7 +389,10 @@ class DatabaseHandler:
                             'side': trade.side,
                             'quantity': str(trade.quantity),
                             'status': trade.status,
-                            'is_closed': trade.is_closed
+                            'is_closed': trade.is_closed,
+                            'trailing_stop_pips': float(trade.trailing_stop_pips) if trade.trailing_stop_pips is not None else None,  # Add this
+                            'take_profit': float(trade.take_profit) if trade.take_profit is not None else None,  # Add this
+                            'stop_loss': float(trade.stop_loss) if trade.stop_loss is not None else None,  # Add this
                         }
                     return None
                 except Exception as e:

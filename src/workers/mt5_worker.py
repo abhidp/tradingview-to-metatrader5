@@ -332,6 +332,7 @@ class MT5Worker:
                     'error_message': str(e),
                     'closed_at': datetime.now(timezone.utc).isoformat()
                 })
+    
     async def run_async(self):
         """Run the worker service asynchronously."""
         print("\n🚀 MT5 Worker Started")
@@ -340,12 +341,12 @@ class MT5Worker:
         try:
             # Initialize positions
             await self._initialize_positions()
-
-            # Start trailing stop monitor after successful initialization
+            
+            # Start trailing stop monitor as a task
             if self.mt5.initialized:
-                self.loop.create_task(self.mt5.monitor_trailing_stops())
+                monitor_task = self.loop.create_task(self.mt5.monitor_trailing_stops())
                 print("📊 Trailing stop monitor started")
-                
+            
             # Main loop for position checking
             while self.running:
                 try:
