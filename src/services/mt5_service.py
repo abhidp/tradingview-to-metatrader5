@@ -370,7 +370,6 @@ class MT5Service:
             }
 
             print(f"\n📊 MT5 Modify Request:")
-            print(f"Action: {request['action']}")
             print(f"Symbol: {mt5_symbol} (digits: {digits}, point: {point})")
             if stop_loss is not None:
                 print(f"New SL: {stop_loss}")
@@ -403,11 +402,9 @@ class MT5Service:
             return {'error': str(e)}     
     
     async def monitor_trailing_stops(self):
-        """Monitor and update trailing stops using EA concepts."""
+        """Monitor and update trailing stops."""
         if not self.loop:
             self.loop = asyncio.get_event_loop()
-
-        print("📊 Starting trailing stop monitor...")
         
         while self.running:
             try:
@@ -422,121 +419,69 @@ class MT5Service:
 
                 for position in positions:
                     try:
+                        # Get trade data and check for trailing stop
                         trade = await self.db.async_get_trade_by_mt5_ticket(str(position.ticket))
-                        if not trade or 'trailing_stop_pips' not in trade:
+                        if not trade or 'trailing_stop_pips' not in trade or not trade['trailing_stop_pips']:
                             continue
 
-                        trailing_pips = float(trade['trailing_stop_pips'])
-                        if trailing_pips <= 0:
-                            continue
-
+                        # Get symbol information
                         symbol_info = mt5.symbol_info(position.symbol)
                         current_prices = mt5.symbol_info_tick(position.symbol)
                         if not symbol_info or not current_prices:
                             continue
 
-                        # Calculate trailing distance based on instrument type
-                        is_btc = 'BTC' in position.symbol
-                        if is_btc:
-                            # For BTCUSD, use a smaller multiplier
-                            trailing_distance = trailing_pips * 0.1  # Divide by 10 for reasonable distance
-                        else:
-                            trailing_distance = trailing_pips * 0.0001  # For forex pairs
+                        # Calculate trailing distance
+                        trailing_pips = float(trade['trailing_stop_pips'])
+                        trailing_distance = trailing_pips * 0.1 if 'BTC' in position.symbol else trailing_pips * 0.0001
 
-                        min_profit = 10  # Hardcoded for testing
-
-                        # print(f"\n🔍 Position #{position.ticket} Status:")
-                        # print(f"Symbol: {position.symbol}")
-                        # print(f"Current Bid/Ask: {current_prices.bid}/{current_prices.ask}")
-                        # print(f"Current SL: {position.sl}")
-                        # print(f"Open Price: {position.price_open}")
-                        # print(f"Trailing Distance: {trailing_distance}")
-
+                        # Calculate and update stop loss based on position type
                         if position.type == mt5.POSITION_TYPE_BUY:
-                            profit = current_prices.bid - position.price_open
-                            # print(f"Current Profit: {profit}")
-                            # print(f"Minimum Profit Required: {min_profit}")
+                            new_sl = round(current_prices.bid - trailing_distance, symbol_info.digits)
+                            
+                            # Only move stop loss up
+                            if new_sl > position.sl:
+                                request = {
+                                    "action": mt5.TRADE_ACTION_SLTP,
+                                    "position": position.ticket,
+                                    "symbol": position.symbol,
+                                    "sl": new_sl,
+                                    "tp": position.tp,
+                                    "type_time": mt5.ORDER_TIME_GTC
+                                }
 
-                            if profit > min_profit:
-                                new_sl = round(current_prices.bid - trailing_distance, symbol_info.digits)
-                                # print(f"Calculated new SL: {new_sl}")
-                                # print(f"Current SL: {position.sl}")
-                                # print(f"Would update: {new_sl > position.sl}")
-
-                                if new_sl > position.sl:
-                                    print(f"📈 Moving BUY SL: {position.sl} → {new_sl} (Profit: {profit})")
-                                    
-                                    # Create request dictionary without None values
-                                    request = {
-                                        "action": mt5.TRADE_ACTION_SLTP,
-                                        "position": position.ticket,
-                                        "symbol": position.symbol,
-                                        "type_time": mt5.ORDER_TIME_GTC
-                                    }
-
-                                    # Only add SL/TP if they exist
-                                    if new_sl:
-                                        request["sl"] = new_sl
-                                    if position.tp:
-                                        request["tp"] = position.tp
-
-                                    print(f"Sending request: {request}")
-
-                                    def _send_order():
-                                        try:
-                                            return mt5.order_send(request)
-                                        except Exception as e:
-                                            print(f"Error in _send_order: {e}")
-                                            return None
-
-                                    result = await self.loop.run_in_executor(None, _send_order)
-
-                                    # result = await self.loop.run_in_executor(None, mt5.order_send, request)
-                                    if result and result.retcode == mt5.TRADE_RETCODE_DONE:
-                                        print(f"✅ Successfully moved SL to {new_sl}")
-                                    else:
-                                        error = mt5.last_error()
-                                        print(f"❌ Failed to move SL: {error}")
-                            #     else:
-                            #         print("SL would not move up - skipping update")
-                            # else:
-                            #     print("Not enough profit to move SL")
-
+                                result = await self.loop.run_in_executor(
+                                    None,
+                                    lambda: mt5.order_send(request)
+                                )
 
                         else:  # SELL position
-                            profit = position.price_open - current_prices.ask
-                            print(f"Current Profit: {profit}")
-                            print(f"Minimum Profit Required: {min_profit}")
+                            new_sl = round(current_prices.ask + trailing_distance, symbol_info.digits)
+                            
+                            # Only move stop loss down
+                            if position.sl == 0 or new_sl < position.sl:
+                                request = {
+                                    "action": mt5.TRADE_ACTION_SLTP,
+                                    "position": position.ticket,
+                                    "symbol": position.symbol,
+                                    "sl": new_sl,
+                                    "tp": position.tp,
+                                    "type_time": mt5.ORDER_TIME_GTC
+                                }
 
-                            if profit > min_profit:  # Only trail if enough profit
-                                new_sl = round(current_prices.ask + trailing_distance, symbol_info.digits)
-
-                                if position.sl == 0 or new_sl < position.sl:
-                                    print(f"📉 Moving SELL SL: {position.sl} → {new_sl} (Profit: {profit})")
-                                    request = {
-                                        "action": mt5.TRADE_ACTION_SLTP,
-                                        "symbol": position.symbol,
-                                        "position": position.ticket,
-                                        "sl": new_sl,
-                                        "tp": position.tp
-                                    }
-
-                                    result = await self.loop.run_in_executor(None, mt5.order_send, request)
-                                    if result and result.retcode == mt5.TRADE_RETCODE_DONE:
-                                        print(f"✅ Successfully moved SL to {new_sl}")
-                                    else:
-                                        error = mt5.last_error()
-                                        print(f"❌ Failed to move SL: {error}")
+                                result = await self.loop.run_in_executor(
+                                    None,
+                                    lambda: mt5.order_send(request)
+                                )
 
                     except Exception as e:
                         print(f"❌ Error processing position {position.ticket}: {e}")
+                        logger.error(f"Position processing error: {e}")
 
                 await asyncio.sleep(1)
 
             except Exception as e:
-                logger.error(f"Error monitoring trailing stops: {e}")
+                logger.error(f"Monitor error: {e}")
                 await asyncio.sleep(1)
-
 
 
     async def _update_stop_loss_mt5(self, ticket: int, sl: float, tp: float, symbol: str) -> None:

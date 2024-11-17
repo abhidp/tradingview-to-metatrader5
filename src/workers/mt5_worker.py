@@ -26,7 +26,6 @@ class MT5Worker:
         self.db = None
         self.mt5 = None
         self.tv_service = None
-        # asyncio.create_task(self.mt5.monitor_trailing_stops())
 
     def initialize(self):
         """Initialize all services with shared event loop."""
@@ -60,7 +59,6 @@ class MT5Worker:
                 if positions is not None:
                     self.open_positions = {str(pos.ticket) for pos in positions}
                     print(f"📊 Initialized {len(self.open_positions)} open positions\n")
-                    # logger.info(f"Initialized {len(self.open_positions)} open positions\n")
         except Exception as e:
             logger.error(f"❌ Error initializing positions: {e}")
 
@@ -246,7 +244,7 @@ class MT5Worker:
                     'mt5_response': result,
                     'execution_time_ms': int(time.time() * 1000) - start_time
                 }
-                print(f"❌ Update Failed: {result['error']} (TV #{position_id} --> MT5 #{mt5_ticket})")
+                print(f"❌ Update Failed: {result['error']} (TV #{position_id} --> MT5# {mt5_ticket})")
             
             await self.db.async_update_trade_status(trade_id, status, update_data)
             
@@ -323,7 +321,7 @@ class MT5Worker:
                 return
 
             print(f"📌 Closed {direction_emoji} {trade['instrument']} x {trade['quantity']}")
-            print(f"🔗 References: TV #{position_id} <-- MT5 #{ticket}\n")
+            print(f"🔗 References: TV# {position_id} <-- MT5# {ticket}\n")
 
         except Exception as e:
             logger.error(f"❌ Error handling MT5 close: {e}\n")
@@ -344,8 +342,7 @@ class MT5Worker:
             
             # Start trailing stop monitor as a task
             if self.mt5.initialized:
-                monitor_task = self.loop.create_task(self.mt5.monitor_trailing_stops())
-                print("📊 Trailing stop monitor started")
+                self.loop.create_task(self.mt5.monitor_trailing_stops())
             
             # Main loop for position checking
             while self.running:
