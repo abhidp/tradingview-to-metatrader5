@@ -1,3 +1,4 @@
+
 import asyncio
 import json
 import os
@@ -141,10 +142,13 @@ class TradingViewInterceptor:
                         
                         # Get update data and merge with response
                         update_data = dict(flow.request.urlencoded_form)
-                        if 's' in response_data and response_data['s'] == 'error':
-                            update_data.update(response_data)  # Include error info
+                        print(f"\n🔍 Received position update data:")
+                        print(f"Position ID: {position_id}")
+                        print(f"Update data: {update_data}")  # Should show trailingStopPips if present
                         
-                        # Create and run the coroutine in the event loop
+                        if 's' in response_data and response_data['s'] == 'error':
+                            update_data.update(response_data)
+                        
                         asyncio.create_task(
                             self.async_process_position_update(
                                 position_id, 

@@ -52,7 +52,8 @@ def reset_database():
             stop_loss DECIMAL,
             tp_order_id VARCHAR(50),
             sl_order_id VARCHAR(50),
-            
+            trailing_stop_pips DECIMAL,
+                    
             status VARCHAR(20) NOT NULL DEFAULT 'new',
             error_message TEXT,
             is_closed BOOLEAN DEFAULT FALSE,

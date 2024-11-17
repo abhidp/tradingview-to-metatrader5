@@ -76,7 +76,7 @@ class DatabaseHandler:
         """Get database session with improved error handling."""
         session = self.SessionLocal()
         try:
-            logger.debug("Database session created")
+            # logger.debug("Database session created")
             yield session
         except Exception as e:
             logger.error(f"Error in database session: {e}")
@@ -86,7 +86,7 @@ class DatabaseHandler:
         finally:
             session.close()
             self.SessionLocal.remove()
-            logger.debug("Database session closed")
+            # logger.debug("Database session closed")
     
     def save_trade(self, trade_data: Dict[str, Any]) -> None:
         """Save trade to database with enhanced error handling."""
@@ -389,7 +389,10 @@ class DatabaseHandler:
                             'side': trade.side,
                             'quantity': str(trade.quantity),
                             'status': trade.status,
-                            'is_closed': trade.is_closed
+                            'is_closed': trade.is_closed,
+                            'trailing_stop_pips': float(trade.trailing_stop_pips) if trade.trailing_stop_pips is not None else None,  # Add this
+                            'take_profit': float(trade.take_profit) if trade.take_profit is not None else None,  # Add this
+                            'stop_loss': float(trade.stop_loss) if trade.stop_loss is not None else None,  # Add this
                         }
                     return None
                 except Exception as e:

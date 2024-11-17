@@ -7,19 +7,22 @@ from typing import Any, Callable, Dict
 import MetaTrader5 as mt5
 
 from src.config.mt5_symbol_config import SymbolMapper
+from src.utils.database_handler import DatabaseHandler
 
 logger = logging.getLogger('MT5Service')
 
 class MT5Service:
-    def __init__(self, account: int, password: str, server: str):
+    def __init__(self, account: int, password: str, server: str,db_handler: DatabaseHandler = None):
         self.account = account
         self.password = password
         self.server = server
         self.initialized = False
         self.last_init_time = 0
-        self.init_cooldown = 1  # seconds between initialization attempts
+        self.init_cooldown = 1  
         self.loop = None
         self.symbol_mapper = SymbolMapper()
+        self.running = True
+        self.db = db_handler
     
     def set_loop(self, loop: asyncio.AbstractEventLoop):
         """Set the event loop for this service."""
@@ -293,7 +296,6 @@ class MT5Service:
             lambda: self.loop.run_in_executor(None, self._close_position, trade_data)
         )
 
-
     def _update_position(self, trade_data: Dict[str, Any]) -> Dict[str, Any]:
         """Synchronous method to update position TP/SL in MT5."""
         try:
@@ -303,8 +305,6 @@ class MT5Service:
                 
             symbol = trade_data['instrument']
             ticket = int(trade_data['mt5_ticket'])
-            take_profit = float(trade_data['take_profit']) if trade_data.get('take_profit') is not None else None
-            stop_loss = float(trade_data['stop_loss']) if trade_data.get('stop_loss') is not None else None
             
             # Map symbol and enable for trading
             mt5_symbol = self.map_symbol(symbol)
@@ -321,13 +321,44 @@ class MT5Service:
             # Verify symbol match
             if position.symbol != mt5_symbol:
                 return {'error': f'Position #{ticket} exists but symbol mismatch: expected {mt5_symbol}, found {position.symbol}'}
+
+            # Get symbol info for proper formatting
+            symbol_info = mt5.symbol_info(mt5_symbol)
+            if not symbol_info:
+                return {'error': f'Could not get symbol info for {mt5_symbol}'}
             
-            # Handle TP/SL removal (when value is 0)
-            if take_profit == 0:
-                take_profit = 0.0  # MT5 expects 0.0 for removal
-            if stop_loss == 0:
-                stop_loss = 0.0  # MT5 expects 0.0 for removal
-            
+            digits = symbol_info.digits
+            point = symbol_info.point
+
+            # Handle None values and proper formatting
+            take_profit = float(trade_data['take_profit']) if trade_data.get('take_profit') is not None else None
+            stop_loss = float(trade_data['stop_loss']) if trade_data.get('stop_loss') is not None else None
+            trailing_pips = float(trade_data.get('trailing_stop_pips', 0)) if trade_data.get('trailing_stop_pips') is not None else None
+
+            # Calculate stop loss based on trailing pips if provided
+            if trailing_pips and trailing_pips > 0:
+                trailing_points = trailing_pips * 10  # Convert pips to points
+                price_tick = mt5.symbol_info_tick(mt5_symbol)
+                
+                if position.type == mt5.POSITION_TYPE_BUY:
+                    stop_loss = round(price_tick.bid - trailing_points * point, digits)
+                else:
+                    stop_loss = round(price_tick.ask + trailing_points * point, digits)
+
+            # Validate stop loss level
+            price_tick = mt5.symbol_info_tick(mt5_symbol)
+            if stop_loss is not None:
+                if position.type == mt5.POSITION_TYPE_BUY and stop_loss >= price_tick.bid:
+                    return {'error': 'Stop Loss must be below current price for buy positions'}
+                elif position.type == mt5.POSITION_TYPE_SELL and stop_loss <= price_tick.ask:
+                    return {'error': 'Stop Loss must be above current price for sell positions'}
+
+            # Round values to proper decimal places
+            if take_profit is not None:
+                take_profit = round(take_profit, digits)
+            if stop_loss is not None:
+                stop_loss = round(stop_loss, digits)
+
             # Prepare request
             request = {
                 "action": mt5.TRADE_ACTION_SLTP,
@@ -335,9 +366,18 @@ class MT5Service:
                 "position": ticket,
                 "tp": take_profit if take_profit is not None else position.tp,
                 "sl": stop_loss if stop_loss is not None else position.sl,
-                "type_time": mt5.ORDER_TIME_GTC,
+                "type_time": mt5.ORDER_TIME_GTC
             }
-            
+
+            print(f"\n📊 MT5 Modify Request:")
+            print(f"Symbol: {mt5_symbol} (digits: {digits}, point: {point})")
+            if stop_loss is not None:
+                print(f"New SL: {stop_loss}")
+            if trailing_pips:
+                print(f"Based on trailing: {trailing_pips} pips ({trailing_points} points)")
+            if take_profit is not None:
+                print(f"New TP: {take_profit}")
+
             # Send the update request
             result = mt5.order_send(request)
             
@@ -347,17 +387,146 @@ class MT5Service:
                     'retcode': result.retcode
                 }
                 
-            return {
+            response = {
                 'ticket': ticket,
                 'symbol': mt5_symbol,
                 'take_profit': take_profit,
-                'stop_loss': stop_loss
+                'stop_loss': stop_loss,
+                'trailing_stop_pips': trailing_pips if trailing_pips else None
             }
+                
+            return response
             
         except Exception as e:
             logger.error(f"Error updating position: {e}")
-            return {'error': str(e)}
+            return {'error': str(e)}     
+    
+    async def monitor_trailing_stops(self):
+        """Monitor and update trailing stops."""
+        if not self.loop:
+            self.loop = asyncio.get_event_loop()
+        
+        while self.running:
+            try:
+                if not self.initialized:
+                    await asyncio.sleep(1)
+                    continue
 
+                positions = await self.loop.run_in_executor(None, mt5.positions_get)
+                if not positions:
+                    await asyncio.sleep(1)
+                    continue
+
+                for position in positions:
+                    try:
+                        # Get trade data and check for trailing stop
+                        trade = await self.db.async_get_trade_by_mt5_ticket(str(position.ticket))
+                        if not trade or 'trailing_stop_pips' not in trade or not trade['trailing_stop_pips']:
+                            continue
+
+                        # Get symbol information
+                        symbol_info = mt5.symbol_info(position.symbol)
+                        current_prices = mt5.symbol_info_tick(position.symbol)
+                        if not symbol_info or not current_prices:
+                            continue
+
+                        # Calculate trailing distance
+                        trailing_pips = float(trade['trailing_stop_pips'])
+                        trailing_distance = trailing_pips * 0.1 if 'BTC' in position.symbol else trailing_pips * 0.0001
+
+                        # Calculate and update stop loss based on position type
+                        if position.type == mt5.POSITION_TYPE_BUY:
+                            new_sl = round(current_prices.bid - trailing_distance, symbol_info.digits)
+                            
+                            # Only move stop loss up
+                            if new_sl > position.sl:
+                                request = {
+                                    "action": mt5.TRADE_ACTION_SLTP,
+                                    "position": position.ticket,
+                                    "symbol": position.symbol,
+                                    "sl": new_sl,
+                                    "tp": position.tp,
+                                    "type_time": mt5.ORDER_TIME_GTC
+                                }
+
+                                result = await self.loop.run_in_executor(
+                                    None,
+                                    lambda: mt5.order_send(request)
+                                )
+
+                        else:  # SELL position
+                            new_sl = round(current_prices.ask + trailing_distance, symbol_info.digits)
+                            
+                            # Only move stop loss down
+                            if position.sl == 0 or new_sl < position.sl:
+                                request = {
+                                    "action": mt5.TRADE_ACTION_SLTP,
+                                    "position": position.ticket,
+                                    "symbol": position.symbol,
+                                    "sl": new_sl,
+                                    "tp": position.tp,
+                                    "type_time": mt5.ORDER_TIME_GTC
+                                }
+
+                                result = await self.loop.run_in_executor(
+                                    None,
+                                    lambda: mt5.order_send(request)
+                                )
+
+                    except Exception as e:
+                        print(f"❌ Error processing position {position.ticket}: {e}")
+                        logger.error(f"Position processing error: {e}")
+
+                await asyncio.sleep(1)
+
+            except Exception as e:
+                logger.error(f"Monitor error: {e}")
+                await asyncio.sleep(1)
+
+
+    async def _update_stop_loss_mt5(self, ticket: int, sl: float, tp: float, symbol: str) -> None:
+        """Update position's stop loss with retry logic."""
+        for attempt in range(5):  # 5 retry attempts
+            try:
+                def _modify():
+                    request = {
+                        "action": mt5.TRADE_ACTION_SLTP,
+                        "symbol": symbol,
+                        "position": ticket,
+                        "sl": sl,
+                        "tp": tp,
+                        "type_time": mt5.ORDER_TIME_GTC
+                    }
+                    
+                    result = mt5.order_send(request)
+                    success = result and result.retcode == mt5.TRADE_RETCODE_DONE
+                    
+                    if success:
+                        print(f"✅ Updated trailing stop for #{ticket} to {sl}")
+                    else:
+                        error = mt5.last_error()
+                        print(f"❌ Failed to update trailing stop (attempt {attempt+1}): {error}")
+                        
+                    return success
+
+                success = await self.loop.run_in_executor(None, _modify)
+                if success:
+                    return
+                    
+                await asyncio.sleep(0.1 * (attempt + 1))  # Increasing delay between retries
+                
+            except Exception as e:
+                logger.error(f"Error updating stop loss (attempt {attempt+1}): {e}")
+                await asyncio.sleep(0.1 * (attempt + 1))
+
+        logger.error(f"Failed to update trailing stop after 5 attempts")
+
+    def cleanup(self):
+        """Cleanup MT5 connection."""
+        self.running = False  # Stop the monitor
+        if self.initialized:
+            mt5.shutdown()
+            self.initialized = False
 
 
     async def async_update_position(self, trade_data: Dict[str, Any]) -> Dict[str, Any]:

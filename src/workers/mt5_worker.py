@@ -41,13 +41,15 @@ class MT5Worker:
         self.mt5 = MT5Service(
             account=MT5_CONFIG['account'],
             password=MT5_CONFIG['password'],
-            server=MT5_CONFIG['server']
+            server=MT5_CONFIG['server'],
+            db_handler=self.db
         )
         self.mt5.set_loop(self.loop)
         
         self.tv_service = TradingViewService(
             token_manager=GLOBAL_TOKEN_MANAGER
         )
+
 
     async def _initialize_positions(self) -> None:
         """Initialize open positions set on startup."""
@@ -57,7 +59,6 @@ class MT5Worker:
                 if positions is not None:
                     self.open_positions = {str(pos.ticket) for pos in positions}
                     print(f"📊 Initialized {len(self.open_positions)} open positions\n")
-                    # logger.info(f"Initialized {len(self.open_positions)} open positions\n")
         except Exception as e:
             logger.error(f"❌ Error initializing positions: {e}")
 
@@ -201,6 +202,7 @@ class MT5Worker:
                         'closed_at': datetime.now(timezone.utc).isoformat()
                     }
                 )
+    
     async def _handle_position_update(self, trade_data: Dict[str, Any], trade_id: str, start_time: int) -> None:
         """Handle updating TP/SL for an existing position."""
         try:
@@ -232,7 +234,7 @@ class MT5Worker:
                 print(f"🔗 References: TV# {position_id} --> MT5# {mt5_ticket}")
                 
                 if result.get('take_profit') or result.get('stop_loss'):
-                    print(f"🟢 New TP: {result.get('take_profit')} | SL: {result.get('stop_loss')}")
+                    print(f"🎯 New TP: {result.get('take_profit')} | SL: {result.get('stop_loss')}")
                 print(f"⚡ Execution time: {update_data['execution_time_ms']}ms\n")
                 
             else:
@@ -242,7 +244,7 @@ class MT5Worker:
                     'mt5_response': result,
                     'execution_time_ms': int(time.time() * 1000) - start_time
                 }
-                print(f"❌ Update Failed: {result['error']} (TV #{position_id} --> MT5 #{mt5_ticket})")
+                print(f"❌ Update Failed: {result['error']} (TV #{position_id} --> MT5# {mt5_ticket})")
             
             await self.db.async_update_trade_status(trade_id, status, update_data)
             
@@ -319,7 +321,7 @@ class MT5Worker:
                 return
 
             print(f"📌 Closed {direction_emoji} {trade['instrument']} x {trade['quantity']}")
-            print(f"🔗 References: TV #{position_id} <-- MT5 #{ticket}\n")
+            print(f"🔗 References: TV# {position_id} <-- MT5# {ticket}\n")
 
         except Exception as e:
             logger.error(f"❌ Error handling MT5 close: {e}\n")
@@ -328,6 +330,7 @@ class MT5Worker:
                     'error_message': str(e),
                     'closed_at': datetime.now(timezone.utc).isoformat()
                 })
+    
     async def run_async(self):
         """Run the worker service asynchronously."""
         print("\n🚀 MT5 Worker Started")
@@ -336,6 +339,10 @@ class MT5Worker:
         try:
             # Initialize positions
             await self._initialize_positions()
+            
+            # Start trailing stop monitor as a task
+            if self.mt5.initialized:
+                self.loop.create_task(self.mt5.monitor_trailing_stops())
             
             # Main loop for position checking
             while self.running:
