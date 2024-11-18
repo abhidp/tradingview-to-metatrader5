@@ -1,212 +1,66 @@
-# TradingView to MT5 Trade Copier
+# TradingView to MT5 Trade Copier -  System Architecture
 
-Automatically copy trades from TradingView to MetaTrader 5 using a proxy server.
+![alt text](./data/system-architecture-diagram.png)
 
-## Features
-- Intercepts TradingView trades
-- Copies trades to MT5 in real-time
-- Supports market orders (buy/sell)
-- Position tracking and management
-- Trade status monitoring
-- Persistent storage in PostgreSQL
-- Real-time trade synchronization using Redis Pub/Sub
-- Asynchronous operations
-- Clean logging and error handling
+## **Setup and Installation**
+For setting up this application, please refer [Setup](Setup.md)
 
-## Prerequisites
-- Python 3.11
-- Docker Desktop
-- MetaTrader 5 Terminal
+## **System Overview**
+This document describes a sophisticated trading system architecture that enables copying trades from TradingView to the MetaTrader5 (MT5) platform. The system is designed with multiple layers to ensure reliable trade execution, data persistence, and synchronization across various MT5 terminals.
 
-## Installation
+---
 
-1. Clone the repository:
-```bash
-git clone https://github.com/abhidp/tradingview-tradecapture.git
-cd tradingview-trade-capture
-```
+## **Architecture Components**
 
-2. Create and activate virtual environment:
-```bash
-python -m venv venv
-.\venv\Scripts\activate  # Windows
-```
+### **1. Client Environment**
+- **TradingView Browser/Desktop**: The entry point where trades are placed.
+- **Network Traffic**: Handles API calls from TradingView to the proxy service layer.
 
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+### **2. Proxy Service Layer**
+- **mitmproxy**: Intercepts and monitors network traffic from TradingView.
+- **Proxy Server**: Extracts and validates the payload from intercepted traffic.
+- **Trade Handler**: Processes trade data and distributes it to appropriate containerized services.
 
-## Environment Setup
+### **3. Containerized Services**
+- **Redis Pub/Sub**: Manages real-time message queuing between Proxy and Worker service layers.
+- **PostgreSQL Database**: Provides persistent storage for trade data and system state.
 
-1. Make a copy of the `.env.template` file and name it `.env`:
+### **4. Worker Service Layer**
+- **MT5 Worker**: Subscribes to Redis messages and prepares trades for execution.
+- **MT5 Python API**: Interfaces with the MetaTrader5 platform for trade execution.
 
-   - `cp .env.template .env`
-   - overwrite the dummy values with your real credentials
-   - ⚠️ IMPORTANT: Never commit your `.env` file to version control!
+### **5. MetaTrader5 Platform**
+- **MT5 Account**: Central trading account where orders are placed.
+- **Multiple Terminals**: Trades get synchronized across web, mobile and desktop applications.
 
+---
 
-2. Start services:
+## **Data Flow**
+1. Trading signals originate from TradingView browser/desktop.
+2. The proxy service layer intercepts and processes these signals by continuously listening to TradingView network traffic.
+3. Trade data is:
+   - Stored in PostgreSQL for persistence and analysis.
+   - Published to Redis for real-time message handling.
+4. MT5 Worker subscribes to Redis messages and executes trades via the MT5 Python API.
+5. Orders are placed in MT5 and synchronized across all terminals.
 
-      `docker-compose up -d`
+---
 
-      Output should be similar to : 
-      ```
-      [+] Running 2/2
-      ✔ Container tradingview_db       Running     0.0s
-      ✔ Container tradingview_redis    Running     0.0s
-      ```
+## **Key Features**
+- **Scalability**: Containerized services allow for easy scaling.
+- **Reliability**: Multiple layers ensure robust trade execution.
+- **Persistence**: Trade data is stored for analysis and auditing.
+- **Multi-platform Access**: Synchronized trading across different devices.
+- **Real-time Processing**: Redis pub/sub enables immediate trade execution.
 
-3. Verify docker containers are running
-    ```
-    $ docker ps -a
-      CONTAINER ID   IMAGE         COMMAND                  CREATED         STATUS                   PORTS                    NAMES
-      73c4a6bc2c3c   postgres:16   "docker-entrypoint.s…"   5 minutes ago   Up 5 minutes (healthy)   0.0.0.0:5432->5432/tcp   tradingview_db
-      ac6d86109537   redis:7       "docker-entrypoint.s…"   5 minutes ago   Up 5 minutes (healthy)   0.0.0.0:6379->6379/tcp   tradingview_redis
-    ```
+---
 
-4. Create Database and Tables 
-    ```
-    python src/scripts/init_db.py
-    ```
-    select `Y`
+## **Security Considerations**
+- **Secure Interception**: Network traffic interception is handled securely through `mitmproxy`.
+- **Isolated Database Access**: Database access is containerized and isolated.
+- **Encrypted Communication**: MT5 API communications are encrypted.
+- **Validation Layers**: Multiple validation layers prevent unauthorized trade execution.
 
-## Usage
+---
 
-Step-1 : Open Terminal and Start the TradingView proxy server
-
-  `python run.py proxy`
-
-Step-2 : Open Another Terminal and Start the MT5 worker
-
-  `python run.py worker`
-
-Step-3 : Open Proxy settings on your Windows machine and set the following values"
-- Use a proxy server : `ON`
-- Address : `127.0.0.1`
-- Port : `8080`
-- User the proxy sever except for addresses: `localhost;127.0.0.1;<local>`
-- Don't use the proxy server for local (intranet) addresses : ☑
-
-Step-4: Open TradingView and login to your account and connect to your broker 
-
-Step-5: Place a trade on TradingView, watch it copy over to MT5 within milliseconds
-
-# Update requirements.txt
-python run.py update-reqs
-```
-
-### Symbol Management
-```bash
-# List all MT5 symbols
-python run.py symbols
-
-# Filter symbols
-python run.py symbols --filter USD
-
-# Show symbol management help
-python run.py symbols-help
-```
-
-### Utility Commands
-```bash
-# Test database connection
-python run.py test-db
-
-# Clean Redis data
-python run.py clean-redis
-
-# Show all available commands
-python run.py help
-```
-
-## Project Structure
-```
-.
-├── src/
-│   ├── config/                     # Configuration files
-│   │   ├── database.py             # Database config
-│   │   ├── mt5_config.py           # MT5 credentials
-│   │   └── mt5_symbol_config.py    # Symbol mappings
-│   ├── core/                       # Core functionality
-│   │   ├── interceptor.py          # Proxy interceptor
-│   │   └── trade_handler.py        # Trade processing
-│   ├── models/                     # Database models
-│   │   └── database.py             # SQLAlchemy models
-│   ├── services/                   # External services
-│   │   ├── mt5_service.py          # MT5 operations
-│   │   └── tradingview_service.py  # TV operations
-│   ├── utils/                      # Utilities
-│   │   ├── database_handler.py     # DB operations
-│   │   ├── queue_handler.py        # Redis operations
-│   │   ├── ssl_handler.py          # SSL config
-│   │   ├── symbol_mapper.py        # Symbol mapping
-│   │   └── token_manager.py        # Auth management
-│   └── workers/                    # Workers
-│       └── mt5_worker.py           # MT5 trade executor
-├── tests/                          # Test suite
-│   └── infrastructure/             # Infrastructure tests
-│       ├── test_db.py              # Database tests
-│       ├── test_redis.py           # Redis tests
-│       ├── test_mt5.py             # MT5 tests
-│       └── test_tv.py              # TradingView tests
-├── docker-compose.yml              # Docker services
-├── requirements.txt                # Dependencies
-└── run.py                          # CLI interface
-```
-
-## Development
-
-### Adding New Dependencies
-```bash
-pip install package-name
-python run.py update-reqs
-```
-
-### Database Management
-```bash
-# Initialize database
-python src/scripts/init_db.py
-
-# Check database status
-python src/scripts/check_db.py
-```
-
-### Running Tests
-Before running tests, ensure:
-1. Docker containers are running
-2. MT5 terminal is connected
-3. Environment variables are properly set
-
-Run tests:
-```bash
-# Run all tests
-python run.py test-all
-
-# Run specific test
-python run.py test-mt5
-```
-
-
-### Symbol Management
-```bash
-# View all symbols
-python src/scripts/manage_symbols.py --list
-
-# Add mapping
-python src/scripts/manage_symbols.py --add BTCUSD BTCUSD.r
-
-# Update suffix
-python src/scripts/manage_symbols.py --suffix .r
-```
-
-## System Requirements
-- OS: Windows (primarily developed and tested), Linux/Mac (never tested, no gurantee it will work)
-- RAM: 4GB minimum
-- Disk Space: 1GB for installation
-- Network: Stable internet connection
-- Docker for PostgreSQL and Redis
-
-## License
-
-MIT License - see LICENSE file for details.
+This architecture provides a robust foundation for automated trading while maintaining flexibility for future enhancements and scaling requirements.
