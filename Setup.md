@@ -1,6 +1,8 @@
-# TradingView to MT5 Trade Copier
+# TradingView to MT5 Trade Copier (WINDOWS only)
 
 Automatically copy trades from TradingView to MetaTrader 5 using a proxy server.
+This application has been built and tested on Windows machines only. 
+It will not work on MacOS or Linux or any of Linux's Distros. 
 
 ## System Architecture
 For an onverview of the System Architecture, please refer to [System Architecture](SystemArchitecture.md)
@@ -25,14 +27,14 @@ For an onverview of the System Architecture, please refer to [System Architectur
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/abhidp/tradingview-tradecapture.git
-cd tradingview-trade-capture
+git clone https://github.com/abhidp/tradingview-to-mt5-copier.git
+cd tradingview-to-mt5-copier
 ```
 
 2. Create and activate virtual environment:
 ```bash
 python -m venv venv
-.\venv\Scripts\activate  # Windows
+.\venv\Scripts\activate
 ```
 
 3. Install dependencies:
@@ -74,9 +76,15 @@ pip install -r requirements.txt
     ```
     select `Y`
 
+5. Test if all setups are in place. All tests should pass when you run the command
+    ```
+    python run.py test-all
+    ```
+
+
 ## Usage
 
-Step-1 : Open Terminal and Start the TradingView proxy server
+Step-1 : Open a Terminal and Start the TradingView proxy server
 
   `python run.py proxy`
 
@@ -84,44 +92,24 @@ Step-2 : Open Another Terminal and Start the MT5 worker
 
   `python run.py worker`
 
-Step-3 : Open Proxy settings on your Windows machine and set the following values"
+Step-3 : Open Proxy settings on your Windows machine and set the following values:
 - Use a proxy server : `ON`
 - Address : `127.0.0.1`
 - Port : `8080`
 - User the proxy sever except for addresses: `localhost;127.0.0.1;<local>`
 - Don't use the proxy server for local (intranet) addresses : ☑
 
-Step-4: Open TradingView and login to your account and connect to your broker 
+Step-4: Open TradingView and login to your account and connect to your broker
 
-Step-5: Place a trade on TradingView, watch it copy over to MT5 within milliseconds
+Step-5: Open MT5 Desktop and login to your account
 
-# Update requirements.txt
-python run.py update-reqs
-```
+Step-6: Place a trade on TradingView, watch it copy over to MT5 within milliseconds
 
-### Symbol Management
-```bash
-# List all MT5 symbols
-python run.py symbols
 
-# Filter symbols
-python run.py symbols --filter USD
 
-# Show symbol management help
-python run.py symbols-help
-```
 
-### Utility Commands
-```bash
-# Test database connection
-python run.py test-db
+## Misc info for those who are interested in Development
 
-# Clean Redis data
-python run.py clean-redis
-
-# Show all available commands
-python run.py help
-```
 
 ## Project Structure
 ```
@@ -158,7 +146,32 @@ python run.py help
 └── run.py                          # CLI interface
 ```
 
-## Development
+
+
+### Symbol Management
+```bash
+# List all MT5 symbols
+python run.py symbols
+
+# Filter symbols
+python run.py symbols --filter USD
+
+# Show symbol management help
+python run.py symbols-help
+```
+
+### Utility Commands
+```bash
+# Test database connection
+python run.py test-db
+
+# Clean Redis data
+python run.py clean-redis
+
+# Show all available commands
+python run.py help
+
+```
 
 ### Adding New Dependencies
 ```bash
