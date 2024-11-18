@@ -2,6 +2,9 @@
 
 Automatically copy trades from TradingView to MetaTrader 5 using a proxy server.
 
+## System Architecture
+For an onverview of the System Architecture, please refer to [System Architecture](SystemArchitecture.md)
+
 ## Features
 - Intercepts TradingView trades
 - Copies trades to MT5 in real-time
