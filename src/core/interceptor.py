@@ -2,12 +2,18 @@
 import asyncio
 import json
 import os
+import sys
+from pathlib import Path
 
 from dotenv import load_dotenv
 
+from backup.instrument_sync import InstrumentSynchronizer
 from mitmproxy import http
 from src.core.trade_handler import TradeHandler
 from src.utils.token_manager import GLOBAL_TOKEN_MANAGER, TokenManager
+
+project_root = str(Path(__file__).parent.parent.parent)
+sys.path.insert(0, project_root)
 
 load_dotenv()
 TV_BROKER_URL = os.getenv('TV_BROKER_URL')
@@ -33,6 +39,7 @@ class TradingViewInterceptor:
             self.base_path = f"{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
             self.trade_handler = TradeHandler()
             self.token_manager = GLOBAL_TOKEN_MANAGER
+            self._sync_instruments_sync()
 
             broker_url = os.getenv('TV_BROKER_URL', 'Unknown Broker')
             account_id = os.getenv('TV_ACCOUNT_ID', 'Unknown Account')
@@ -44,6 +51,81 @@ class TradingViewInterceptor:
             self._initialized = True
 
 
+    def _sync_instruments_sync(self) -> None:
+        """Synchronously sync instruments."""
+        try:
+            # print("\n📊 Syncing instrument configuration...")
+            
+            token = self.token_manager.get_token()
+            if not token:
+                print("❌ No auth token available")
+                return
+
+            # Make synchronous request
+            import requests
+            
+            url = f"https://{os.getenv('TV_BROKER_URL')}/accounts/{os.getenv('TV_ACCOUNT_ID')}/instruments?locale=en"
+            headers = {
+                'accept': 'application/json',
+                'authorization': token,
+                'content-type': 'application/x-www-form-urlencoded',
+                'origin': 'https://www.tradingview.com',
+                'referer': 'https://www.tradingview.com/'
+            }
+
+            response = requests.get(url, headers=headers)
+            if response.status_code != 200:
+                print(f"❌ Failed to fetch instruments: {response.status_code}")
+                return
+
+            data = response.json()
+            
+            instruments = {
+                'instruments': {
+                    'description': 'All trading instruments',
+                    'pairs': []
+                },
+                'custom': {
+                    'description': 'User-defined instruments',
+                    'pairs': []
+                }
+            }
+
+            # Process instruments
+            for instrument in data.get('d', []):
+                name = instrument['name']
+                pip_size = float(instrument.get('pipSize', 0))
+                pip_size_str = f"{pip_size:.10f}".rstrip('0').rstrip('.')
+                
+                instruments['instruments']['pairs'].append({
+                    'name': name,
+                    'pip_size': pip_size_str
+                })
+
+            # Preserve custom pairs if file exists
+            config_path = Path(__file__).parent.parent.parent / 'data' / 'instruments.json'
+            if config_path.exists():
+                try:
+                    with open(config_path, 'r') as f:
+                        existing = json.load(f)
+                        if 'custom' in existing:
+                            instruments['custom'] = existing['custom']
+                except Exception:
+                    pass
+
+            # Sort pairs by name
+            instruments['instruments']['pairs'].sort(key=lambda x: x['name'])
+
+            # Save configuration
+            config_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(config_path, 'w') as f:
+                json.dump(instruments, f, indent=4)
+
+            # print(f"✅ Synced {len(instruments['instruments']['pairs'])} instruments")
+
+        except Exception as e:
+            print(f"❌ Error syncing instruments: {e}")
+            print("⚠️  Using fallback instrument configuration")
 
 
     def should_log_request(self, flow: http.HTTPFlow) -> bool:

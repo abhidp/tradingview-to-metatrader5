@@ -1,0 +1,531 @@
+{
+    "instruments": {
+        "description": "All trading instruments",
+        "pairs": [
+            {
+                "name": "ADAUSD",
+                "pip_size": "0.001"
+            },
+            {
+                "name": "AUDCAD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "AUDCHF",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "AUDHUF",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "AUDJPY",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "AUDNZD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "AUDSGD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "AUDUSD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "AUS200",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "AVAXUSD",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "BCHUSD",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "BNBUSD",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "BTCUSD",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "CA60",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "CADCHF",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "CADJPY",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "CHFDKK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "CHFJPY",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "CHFNOK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "CHFPLN",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "CHFSEK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "CHFSGD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "CHINAH",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "COFARA",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "COFROB",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "CORN",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "COTTON",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "DOGEUSD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "DOTUSD",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "E35",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "EOSUSD",
+                "pip_size": "0.001"
+            },
+            {
+                "name": "ETHUSD",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "EURAUD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURCAD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURCHF",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURCZK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURDKK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURGBP",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURHKD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURHUF",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURILS",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURJPY",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "EURMXN",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURNOK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURNZD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURPLN",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURSEK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURSGD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURUSD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EURZAR",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "EUSTX50",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "FRA40",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "GBPAUD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "GBPCAD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "GBPCHF",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "GBPDKK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "GBPJPY",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "GBPNOK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "GBPNZD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "GBPPLN",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "GBPSEK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "GBPSGD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "GBPUSD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "GBPZAR",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "GER40",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "HK50",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "JPN225",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "LNKUSD",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "LTCUSD",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "MATICUSD",
+                "pip_size": "0.001"
+            },
+            {
+                "name": "MXNJPY",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "NAS100",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "NETH25",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "NOKJPY",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "NOKSEK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "NZDCAD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "NZDCHF",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "NZDJPY",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "NZDSGD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "NZDUSD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "OJ",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "SGDJPY",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "SOLUSD",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "SOYBEAN",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "SUGAR",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "SUGARRAW",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "UK100",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "UKCOCOA",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "US2000",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "US30",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "US500",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "USCOCOA",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "USDBRL",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDCAD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDCHF",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDCNH",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDCZK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDDKK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDHKD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDHUF",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDIDR",
+                "pip_size": "1"
+            },
+            {
+                "name": "USDINR",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "USDJPY",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "USDKRW",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "USDMXN",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDNOK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDPLN",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDSEK",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDSGD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDTHB",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "USDX",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "USDZAR",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "WHEAT",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "XAGEUR",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "XAGUSD",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "XALUSD",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "XAUAUD",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "XAUEUR",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "XAUUSD",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "XBRUSD",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "XCUUSD",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "XLMUSD",
+                "pip_size": "0.0001"
+            },
+            {
+                "name": "XNGUSD",
+                "pip_size": "0.001"
+            },
+            {
+                "name": "XNIUSD",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "XPBUSD",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "XPDUSD",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "XPTUSD",
+                "pip_size": "0.1"
+            },
+            {
+                "name": "XTIUSD",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "XZNUSD",
+                "pip_size": "0.01"
+            },
+            {
+                "name": "ZARJPY",
+                "pip_size": "0.01"
+            }
+        ]
+    },
+    "custom": {
+        "description": "User-defined instruments",
+        "pairs": []
+    }
+}
