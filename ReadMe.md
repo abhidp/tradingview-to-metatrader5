@@ -1,6 +1,6 @@
 # TradingView to MT5 Trade Copier -  System Architecture
 
-![alt text](tv2mt5hd1.png)
+![alt text](./data/system-architecture-diagram.png)
 
 ## **Setup and Installation**
 For setting up this application, please refer [Setup](Setup.md)
