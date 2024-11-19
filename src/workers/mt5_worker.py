@@ -67,8 +67,8 @@ class MT5Worker:
         try:
             if msg_type == 'trade':
                 await self.process_trade(data['data'])
-            elif msg_type == 'status':
-                print(f"📡 Status: {data['message']}")
+            # elif msg_type == 'status':
+                # print(f"📡 Status: {data['message']}")
             elif msg_type == 'error':
                 logger.error(f"❌ Queue error: {data['error']}")
         except Exception as e:
@@ -129,7 +129,9 @@ class MT5Worker:
             # Log success
             direction = trade_data.get('execution_data', {}).get('side', '').lower()
             direction_emoji = "BUY🔼" if direction == 'buy' else "SELL🔻"
-            print(f"✔  Position OPENED: {direction_emoji} {result.get('symbol')} x {result.get('volume')} @ {result.get('price')}")
+            execution_price = result.get('price') or trade_data.get('execution_data', {}).get('price', 0.0)
+
+            print(f"✔  Position OPENED: {direction_emoji} {result.get('symbol')} x {result.get('volume')} @ {execution_price}")
             print(f"🔗 References: TV# {position_id} --> MT5# {mt5_ticket}")
             
             if result.get('take_profit') or result.get('stop_loss'):
@@ -180,7 +182,9 @@ class MT5Worker:
                 
                 direction = trade_data.get('execution_data', {}).get('side', '').lower()
                 direction_emoji = "SELL🔻" if direction == 'buy' else "BUY🔼"
-                print(f"{'🛡 Position partially closed' if is_partial else '📌 Position CLOSED'}: {direction_emoji} {result.get('symbol')} {result.get('volume')} @ {result.get('price')}")
+                execution_price = result.get('price') or trade_data.get('execution_data', {}).get('price', 0.0)
+
+                print(f"{'🛡 Position partially closed' if is_partial else '📌 Position CLOSED'}: {direction_emoji} {result.get('symbol')} {result.get('volume')} @ {execution_price}")
                 print(f"🔗 References: TV# {position_id} --> MT5# {mt5_ticket}")
                 
                 if is_partial:

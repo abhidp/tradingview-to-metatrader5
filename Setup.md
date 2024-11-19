@@ -103,7 +103,9 @@ Step-4: Open TradingView and login to your account and connect to your broker
 
 Step-5: Open MT5 Desktop and login to your account
 
-Step-6: Place a trade on TradingView, watch it copy over to MT5 within milliseconds
+Step-6: IMPORTANT: Turn ON ▶ Algo Trading in MT5 Terminal
+
+Step-7: Place a trade on TradingView, watch it copy over to MT5 within milliseconds
 
 
 
