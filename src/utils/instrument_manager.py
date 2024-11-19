@@ -15,8 +15,6 @@ class InstrumentManager:
         self.default_suffix = os.getenv('MT5_DEFAULT_SUFFIX', '')
         self.instruments = self._load_config()
         
-        return {}
-
     def _load_config(self) -> Dict:
         """Load instrument configuration."""
         try:
