@@ -2,7 +2,7 @@ import asyncio
 import logging
 import time
 from datetime import datetime
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Optional
 
 import MetaTrader5 as mt5
 
@@ -96,6 +96,31 @@ class MT5Service:
         """Map TradingView symbol to MT5 symbol."""
         return self.symbol_mapper.map_symbol(tv_symbol)
 
+    def _get_filling_type(self, symbol_info) -> Optional[int]:
+        """Get appropriate filling type for symbol."""
+        try:
+            filling_modes = symbol_info.filling_mode
+            
+            # Don't set filling type if only one mode is supported
+            if filling_modes == 1:
+                return None
+                
+            # Try different filling modes
+            if filling_modes & mt5.ORDER_FILLING_FOK:
+                filling_type = mt5.ORDER_FILLING_FOK
+            elif filling_modes & mt5.ORDER_FILLING_IOC:
+                filling_type = mt5.ORDER_FILLING_IOC
+            elif filling_modes & mt5.ORDER_FILLING_RETURN:
+                filling_type = mt5.ORDER_FILLING_RETURN
+            else:
+                return None
+
+            return filling_type
+            
+        except Exception as e:
+            logger.error(f"Error determining filling type: {e}")
+            return None
+
     def _execute_order(self, trade_data: Dict[str, Any]) -> Dict[str, Any]:
             try:
                 # Initialize MT5
@@ -130,6 +155,9 @@ class MT5Service:
                 price = symbol_info.ask if is_buy else symbol_info.bid
                 position_id = trade_data.get('execution_data', {}).get('positionId', 'unknown')
 
+                # Get supported filling modes
+                filling_type = self._get_filling_type(symbol_info)
+
                 # Construct order request
                 request = {
                     "action": mt5.TRADE_ACTION_DEAL,
@@ -141,15 +169,18 @@ class MT5Service:
                     "magic": 234000,
                     "comment": f"TV#{position_id}",
                     "type_time": mt5.ORDER_TIME_GTC,
-                    "type_filling": mt5.ORDER_FILLING_IOC,
                 }
+
+                # Only add filling type if we determined it should be set
+                if filling_type is not None:
+                    request["type_filling"] = filling_type
                 
                 # Add TP/SL if provided
                 if take_profit is not None:
                     request["tp"] = float(take_profit)
                 if stop_loss is not None:
                     request["sl"] = float(stop_loss)
-                
+
                 # Send order
                 result = mt5.order_send(request)
                 if not result or result.retcode != mt5.TRADE_RETCODE_DONE:
@@ -164,7 +195,7 @@ class MT5Service:
                     "mt5_ticket": str(result.order),
                     "mt5_position": str(result.order),
                     "volume": result.volume,
-                    "price": result.price,
+                    "price": result.price or price,
                     "symbol": mt5_symbol,
                     "side": side,
                     "take_profit": take_profit,
@@ -241,6 +272,8 @@ class MT5Service:
 
             position_id = trade_data.get('execution_data', {}).get('positionId', 'unknown')
 
+            filling_type = self._get_filling_type(symbol_info)
+
             request = {
                 "action": mt5.TRADE_ACTION_DEAL,
                 "symbol": mt5_symbol,
@@ -251,9 +284,11 @@ class MT5Service:
                 "deviation": 20,
                 "magic": 234000,
                 "comment":  f"TV#{position_id}",
-                "type_time": mt5.ORDER_TIME_GTC,
-                "type_filling": mt5.ORDER_FILLING_IOC,
+                "type_time": mt5.ORDER_TIME_GTC
             }
+
+            if filling_type is not None:
+               request["type_filling"] = filling_type
             
             # Send close order
             result = mt5.order_send(request)
@@ -274,7 +309,7 @@ class MT5Service:
                 "mt5_ticket": str(result.order),
                 "volume": close_volume,
                 "remaining_volume": remaining_volume,
-                "price": result.price,
+                "price": result.price or price,
                 "symbol": mt5_symbol,
                 "side": "buy" if position.type == mt5.POSITION_TYPE_SELL else "sell",
                 "comment": result.comment,
@@ -378,7 +413,7 @@ class MT5Service:
             if trailing_pips:
                 print(f"Based on trailing: {trailing_pips} pips ({trailing_points} points)")
             if take_profit is not None:
-                print(f"New TP: {take_profit}")
+                print(f"New TP: {take_profit}\n")
 
             # Send the update request
             result = mt5.order_send(request)
@@ -435,7 +470,6 @@ class MT5Service:
                             new_sl = round(current_prices.bid - trailing_distance, symbol_info.digits)
                             
                             if position.sl == 0 or new_sl > position.sl:
-                                print(f"📈 Moving BUY SL up: {position.sl} → {new_sl}")
                                 await self._update_stop_loss_mt5(
                                     position.ticket, 
                                     new_sl, 
@@ -447,7 +481,6 @@ class MT5Service:
                             new_sl = round(current_prices.ask + trailing_distance, symbol_info.digits)
                             
                             if position.sl == 0 or new_sl < position.sl:
-                                print(f"📉 Moving SELL SL down: {position.sl} → {new_sl}")
                                 await self._update_stop_loss_mt5(
                                     position.ticket, 
                                     new_sl, 
@@ -505,11 +538,6 @@ class MT5Service:
                             request["sl"] = sl
                         if tp is not None:
                             request["tp"] = tp
-
-                        print(f"\n📊 MT5 SL Update:")
-                        print(f"Position: #{ticket}")
-                        print(f"Current SL: {position[0].sl}")
-                        print(f"New SL: {sl}")
                         
                         result = mt5.order_send(request)
                         
@@ -531,7 +559,6 @@ class MT5Service:
                             print(f"❌ SL not updated correctly. Expected: {sl}, Got: {updated_position[0].sl}")
                             return False
 
-                        print(f"✅ Stop loss updated to {sl}")
                         return True
 
                     except Exception as e:

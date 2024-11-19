@@ -224,9 +224,6 @@ class TradingViewInterceptor:
                         
                         # Get update data and merge with response
                         update_data = dict(flow.request.urlencoded_form)
-                        print(f"\n🔍 Received position update data:")
-                        print(f"Position ID: {position_id}")
-                        print(f"Update data: {update_data}")  # Should show trailingStopPips if present
                         
                         if 's' in response_data and response_data['s'] == 'error':
                             update_data.update(response_data)
