@@ -1,3 +1,4 @@
+import logging
 import os
 import signal
 import subprocess
@@ -5,6 +6,8 @@ import sys
 from pathlib import Path
 
 import psutil
+from dotenv import load_dotenv
+
 
 def kill_process_on_port(port):
     """Kill process running on specified port."""
@@ -12,7 +15,9 @@ def kill_process_on_port(port):
         try:
             for conn in proc.connections():
                 if conn.laddr.port == port:
-                    print(f"Killing process on port {port}: {proc.name()} (PID: {proc.pid})")
+                    # Don't print for System Idle Process
+                    if proc.pid != 0:  # System Idle Process has PID 0
+                        print(f"Stopping process on port {port}: {proc.name()} (PID: {proc.pid})")
                     proc.kill()
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             pass
@@ -48,8 +53,18 @@ def signal_handler(signum, frame):
     cleanup()
     sys.exit(0)
 
-
-
+def check_environment():
+    """Check if all required environment variables are set."""
+    load_dotenv()
+    required_vars = ['TV_BROKER_URL', 'TV_ACCOUNT_ID', 'MT5_DEFAULT_SUFFIX']
+    missing = [var for var in required_vars if not os.getenv(var)]
+    
+    if missing:
+        print("\n❌ Missing required environment variables:")
+        for var in missing:
+            print(f"  - {var}")
+        return False
+    return True
 
 
 def run_proxy():
@@ -59,14 +74,15 @@ def run_proxy():
         signal.signal(signal.SIGINT, signal_handler)
         signal.signal(signal.SIGTERM, signal_handler)
 
-        # Initial cleanup
+        # Initial cleanup and port check (do this before clearing screen)
+        print("Killing previous processes on port :8080")
         cleanup()
+
+        # Clear screen only after cleanup
+        os.system('cls' if os.name == 'nt' else 'clear')
 
         # Setup environment
         project_root = setup_environment()
-
-        # Clear screen
-        os.system('cls' if os.name == 'nt' else 'clear')
 
         # Print banner
         print("\nTradingView Proxy Server")
@@ -87,6 +103,9 @@ def run_proxy():
             "-s", str(Path(project_root) / "src" / "main.py"),
             "~u orders\\?locale=\\w+&requestId=\\w+ | ~u executions\\?locale=\\w+&instrument=\\w+"
         ]
+
+        # Suppress connection reset errors
+        logging.getLogger('asyncio').setLevel(logging.CRITICAL)
 
         # Run mitmdump
         subprocess.run(cmd)
