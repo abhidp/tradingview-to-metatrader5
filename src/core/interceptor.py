@@ -73,7 +73,12 @@ class TradingViewInterceptor:
                 'referer': 'https://www.tradingview.com/'
             }
 
-            response = requests.get(url, headers=headers)
+            proxies = {
+                'http': None,
+                'https': None
+            }
+
+            response = requests.get(url, headers=headers,proxies=proxies)
             if response.status_code != 200:
                 print(f"❌ Failed to fetch instruments: {response.status_code}")
                 return

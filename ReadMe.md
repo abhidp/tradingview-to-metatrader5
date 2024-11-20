@@ -1,9 +1,9 @@
 # TradingView to MT5 Trade Copier -  System Architecture
 
-![alt text](./data/system-architecture-diagram.png)
+![alt text](./docs/system-architecture-diagram.png)
 
 ## **Setup and Installation**
-For setting up this application, please refer [Setup](Setup.md)
+For setting up this application, please refer [Setup](./docs/Setup.md)
 
 ## **System Overview**
 This document describes a sophisticated trading system architecture that enables copying trades from TradingView to the MetaTrader5 (MT5) platform. The system is designed with multiple layers to ensure reliable trade execution, data persistence, and synchronization across various MT5 terminals.

@@ -49,6 +49,7 @@ pip install -r requirements.txt
    - `cp .env.template .env`
    - overwrite the dummy values with your real credentials
    - ⚠️ IMPORTANT: Never commit your `.env` file to version control!
+   - if you don't how how to find `TV_ACCOUNT_ID`, refer to [How-To-Find-TradingView-Account-Id](How-To-Find-TradingView-Account-Id.md)
 
 
 2. Start services:
