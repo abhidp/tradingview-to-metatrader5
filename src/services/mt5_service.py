@@ -406,15 +406,6 @@ class MT5Service:
                 "type_time": mt5.ORDER_TIME_GTC
             }
 
-            print(f"\n📊 MT5 Modify Request:")
-            print(f"Symbol: {mt5_symbol} (digits: {digits}, point: {point})")
-            if stop_loss is not None:
-                print(f"New SL: {stop_loss}")
-            if trailing_pips:
-                print(f"Based on trailing: {trailing_pips} pips ({trailing_points} points)")
-            if take_profit is not None:
-                print(f"New TP: {take_profit}\n")
-
             # Send the update request
             result = mt5.order_send(request)
             

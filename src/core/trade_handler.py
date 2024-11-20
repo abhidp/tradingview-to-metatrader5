@@ -272,13 +272,18 @@ class TradeHandler:
             }
             
             # Log the update
-            print(f"\n💱 Updating Position #{position_id}")
+            print(f"\n💱 Position update: {trade.get('instrument')} x {trade.get('quantity')} @ {trade.get('execution_price')}")
+            print(f"🔗 References: TV# {position_id}")
+
+            # only print if new TP and SL values have changed
             if take_profit is not None:
-                print(f"🎯 TP: {current_tp} → {take_profit}")
+                if take_profit != current_tp:
+                    print(f"🟢 TP: {current_tp} → {take_profit}")
             if stop_loss is not None:
-                print(f"🛑 SL: {current_sl} → {stop_loss}")
+                if stop_loss != current_sl:
+                    print(f"🛑 SL: {current_sl} → {stop_loss}")
             if trailing_stop_pips is not None:
-                print(f"🎯 Trailing Stop: {trailing_stop_pips} pips")
+                print(f"🟠 Trailing Stop: {trailing_stop_pips} pips")
             
             # Update database
             db_update = {
