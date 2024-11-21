@@ -12,3 +12,5 @@ Below are the steps on how to find it:
     TV_BROKER_URL=tradingview-api-client-demo.fusionmarkets.com
     TV_ACCOUNT_ID=27269
     ```
+
+#### Developer Contact: abhi358@gmail.com

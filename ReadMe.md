@@ -1,4 +1,4 @@
-# TradingView to MT5 Trade Copier
+# TradingView to MT5 Trade Copier (TV2MT5)
 
 ![Project Banner](./docs/banner.png)
 
@@ -6,17 +6,15 @@
 [![Python 3.11.0](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/yourusername/tradingview-mt5-bridge/graphs/commit-activity)
 
-###  [System Architecture](./docs/SystemArchitecture.md)
-###  [Setup and Installation](./docs/Setup.md)
-
-##
+##  [System Architecture](./docs/SystemArchitecture.md)
+##  [Setup and Installation](./docs/Setup.md)
 
 
-> Bridge the gap between TradingView's superior charting platform and MetaTrader5's robust trading ecosystem. Execute trades seamlessly, manage positions effortlessly, and trade from anywhere - all while using your preferred platforms.
+> Bridge the gap between TradingView's superior charting platform and MetaTrader5's robust trading ecosystem. Execute trades seamlessly, manage positions effortlessly - all while using your preferred platforms.
 
 # 🚀 Overview
 
-TradingView to MT5 Copier is a powerful tool that connects TradingView's advanced charting capabilities with MetaTrader5's execution environment. This bridge enables traders to use TradingView for analysis execute trades directly on TradingView while syncing all actions with their MT5 platform. Whether you're a day trader managing multiple screens or a swing trader checking positions on the go, this tool provides the flexibility and reliability you need.
+TradingView to MT5 Copier (TV2MT5) is a powerful tool that connects TradingView's advanced charting capabilities with MetaTrader5's execution environment. This bridge enables traders to use TradingView for analysis and execute trades directly on TradingView while seamlessly syncing all actions with their MT5 platform. Whether you're a scalper managing multiple screens or a day/swing trader checking positions on the go, this tool provides the flexibility and reliability you need.
 
 ## Key Features
 
@@ -32,7 +30,7 @@ TradingView to MT5 Copier is a powerful tool that connects TradingView's advance
 
 ## The Trading Platform Dilemma
 
-In today's trading landscape, we face a peculiar disconnect. MetaTrader 5 (MT5) is the industry standard, offered by nearly every broker. Meanwhile, TradingView has emerged as the preferred charting platform for modern traders, offering superior analysis tools and a more intuitive interface. However, bridging these two platforms often presents significant challenges:
+In today's trading landscape, we face a peculiar disconnect. MetaTrader5 (MT5) is the industry standard, offered by nearly every broker. Meanwhile, TradingView has emerged as the preferred charting platform for modern traders, offering superior analysis tools and a more intuitive interface. However, bridging these two platforms often presents significant challenges:
 
 ### Common Challenges
 
@@ -80,3 +78,5 @@ This tool was built from the ground up to solve these pain points, offering trad
    - Choose based on commission structures and spreads
    - Example: FusionMarkets for competitive pricing
 
+
+#### Developer Contact: abhi358@gmail.com

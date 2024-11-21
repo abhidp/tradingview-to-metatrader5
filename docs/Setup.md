@@ -1,6 +1,6 @@
 # TradingView to MT5 Trade Copier (WINDOWS only)
 
-Automatically copy trades from TradingView to MetaTrader 5 using a proxy server.
+Automatically copy trades from TradingView to MetaTrader5 using a proxy server.
 This application has been built and tested on Windows machines only. 
 It will not work on MacOS or Linux or any of Linux's Distros. 
 
@@ -10,7 +10,7 @@ For an onverview of the System Architecture, please refer to [System Architectur
 ## Features
 - Intercepts TradingView trades
 - Copies trades to MT5 in real-time
-- Supports market orders (buy/sell)
+- Supports market orders (buy, sell, adding/removing/updating take-profit and stop-loss, trailing-stops and partial-close)
 - Position tracking and management
 - Trade status monitoring
 - Persistent storage in PostgreSQL
@@ -19,7 +19,7 @@ For an onverview of the System Architecture, please refer to [System Architectur
 - Clean logging and error handling
 
 ## Prerequisites
-- Python 3.11
+- Python 3.11.0
 - Docker Desktop
 - MetaTrader5 Desktop Terminal (❗This does NOT work on MetaTrader4) 
 - TradingView Desktop Application (Recommended, but not mandatory)
@@ -105,7 +105,7 @@ Step-4: Open TradingView and login to your account and connect to your broker
 
 Step-5: Open MT5 Desktop and login to your account
 
-Step-6: IMPORTANT: Turn ON ▶ Algo Trading in MT5 Terminal
+Step-6: IMPORTANT: Turn ON ▶ Algo Trading in MT5 Terminal (without this being enabled, trades cannot be executed in MT5 automatically)
 
 Step-7: Place a trade on TradingView, watch it copy over to MT5 within milliseconds
 
@@ -228,6 +228,9 @@ python src/scripts/manage_symbols.py --suffix .r
 - Disk Space: 1GB for installation
 - Network: Stable internet connection
 - Docker for PostgreSQL and Redis
+
+
+## Developer Contact: abhi358@gmail.com
 
 ## License
 
