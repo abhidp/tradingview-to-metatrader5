@@ -1,6 +1,9 @@
-# TradingView to MT5 Trade Copier (WINDOWS only)
+# TradingView to MetaTrader5 Trade Copier (WINDOWS only)
 
-Automatically copy trades from TradingView to MetaTrader5 using a proxy server.
+Automatically copy trades from TradingView to MetaTrader5 using a proxy server that runs locally on your windows machine.
+
+🌲 This does NOT involve storing or entering your TradingView or MT5 credentials anywhere on the internet. 
+
 This application has been built and tested on Windows machines only. 
 It will not work on MacOS or Linux or any of Linux's Distros. 
 
@@ -28,7 +31,7 @@ For an onverview of the System Architecture, please refer to [System Architectur
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/abhidp/tradingview-to-mt5-copier.git
+git clone https://github.com/abhidp/tradingview-to-metatrader5.git
 cd tradingview-to-mt5-copier
 ```
 
