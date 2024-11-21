@@ -1,4 +1,5 @@
-# TradingView to MT5 Trade Copier (TV2MT5)
+# TradingView to MetaTrader5 (TV2MT5)
+> ⚡ A lightening-fast trade copier that works on your local windows machine
 
 ![Project Banner](./docs/banner.png)
 
