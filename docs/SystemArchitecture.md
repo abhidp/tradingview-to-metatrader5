@@ -3,9 +3,9 @@
 ![System Architecture](system-architecture-diagram.png)
 
 ## **Setup and Installation**
-For setting up this application, please refer [Setup](./docs/Setup.md)
+For setting up this application, please refer [Setup](Setup.md)
 
-## **System Overview**
+## **System Architecture Overview**
 This document describes a sophisticated trading system architecture that enables copying trades from TradingView to the MetaTrader5 (MT5) platform. The system is designed with multiple layers to ensure reliable trade execution, data persistence, and synchronization across various MT5 terminals.
 
 ---
@@ -64,3 +64,6 @@ This document describes a sophisticated trading system architecture that enables
 ---
 
 This architecture provides a robust foundation for automated trading while maintaining flexibility for future enhancements and scaling requirements.
+
+
+#### Developer Contact: abhi358@gmail.com

@@ -14,7 +14,7 @@ if errorlevel 1 (
 REM Check if MT5 is running
 tasklist /FI "IMAGENAME eq terminal64.exe" 2>NUL | find /I /N "terminal64.exe">NUL
 if errorlevel 1 (
-    echo Please start MetaTrader 5 first!
+    echo Please start MetaTrader5 first!
     pause
     exit
 )
@@ -43,7 +43,7 @@ echo.
 echo ✅ Started successfully!
 echo.
 echo Please ensure:
-echo 1. MetaTrader 5 is running
+echo 1. MetaTrader5 is running
 echo 2. Algo Trading is enabled in MT5
 echo 3. Log into TradingView
 echo.
