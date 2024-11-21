@@ -36,7 +36,7 @@ class TokenManager:
                     if isinstance(data, dict) and 'token' in data and 'timestamp' in data:
                         if datetime.fromisoformat(data['timestamp']) > datetime.now() - timedelta(hours=1):
                             self._token = data['token']
-                            logger.info("✅ Token loaded successfully")
+                            # logger.info("✅ Token loaded successfully")
                             return
                 except json.JSONDecodeError:
                     logger.warning("⚠️  Token file corrupted")

@@ -21,7 +21,8 @@ For an onverview of the System Architecture, please refer to [System Architectur
 ## Prerequisites
 - Python 3.11
 - Docker Desktop
-- MetaTrader 5 Terminal
+- MetaTrader5 Desktop Terminal (❗This does NOT work on MetaTrader4) 
+- TradingView Desktop Application (Recommended, but not mandatory)
 
 ## Installation
 
@@ -107,6 +108,8 @@ Step-5: Open MT5 Desktop and login to your account
 Step-6: IMPORTANT: Turn ON ▶ Algo Trading in MT5 Terminal
 
 Step-7: Place a trade on TradingView, watch it copy over to MT5 within milliseconds
+
+Step-8: Make sure the processes from Step-1 and Step-2 are running continuously in the background. Do NOT close any of the processes. If either of the processes stops, then trades will not be copied to MT5
 
 
 
