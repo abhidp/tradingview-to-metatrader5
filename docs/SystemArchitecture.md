@@ -67,3 +67,32 @@ This architecture provides a robust foundation for automated trading while maint
 
 
 #### Developer Contact: abhi358@gmail.com
+
+
+## 💝 Support the Project
+
+
+If you find this tool helpful and want to support its continued development, you can contribute in the following ways:
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/abhidp)
+[![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/abhidp)
+
+
+
+### Cryptocurrency Donations
+- **Bitcoin**: `bc1qv734cfcwlm9l34da7naeqkvu7taf9mp9g8c0hh`
+- **Ethereum**: `0x024e8D8A0F74b5966C86ef7FFefA6358d3713497`
+- **USDT (TRC20)**: `TVcA2grqRLkB91S9LrfqaNM1ro7GYTP9dU`
+
+### Other Ways to Support
+- ⭐ Star this repository
+- 🐛 Report bugs and contribute fixes
+- 💡 Suggest new features and improvements
+- 📖 Help improve documentation
+
+Your support helps keep this project maintained and free for everyone! 🙏
+
+
+## License
+
+MIT License - see LICENSE file for details.
