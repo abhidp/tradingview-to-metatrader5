@@ -10,8 +10,6 @@
 ##  [Setup and Installation](./docs/Setup.md)
 
 
-> Bridge the gap between TradingView's superior charting platform and MetaTrader5's robust trading ecosystem. Execute trades seamlessly, manage positions effortlessly - all while using your preferred platforms.
-
 # 🚀 Overview
 
 TradingView to MT5 Copier (TV2MT5) is a powerful tool that connects TradingView's advanced charting capabilities with MetaTrader5's execution environment. This bridge enables traders to use TradingView for analysis and execute trades directly on TradingView while seamlessly syncing all actions with their MT5 platform. Whether you're a scalper managing multiple screens or a day/swing trader checking positions on the go, this tool provides the flexibility and reliability you need.
