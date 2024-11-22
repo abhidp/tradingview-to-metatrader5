@@ -1,7 +1,7 @@
 # TradingView to MetaTrader5 (TV2MT5)
 > ⚡ A lightening-fast trade copier that works on your local windows machine
 
-![Project Banner](./docs/banner.png)
+![Project Banner](./docs/assets/banner.png)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11.0](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
