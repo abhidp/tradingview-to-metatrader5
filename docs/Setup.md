@@ -8,7 +8,7 @@ This application has been built and tested on Windows machines only.
 It will not work on MacOS or Linux or any of Linux's Distros. 
 
 ## System Architecture
-For an onverview of the System Architecture, please refer to [System Architecture](SystemArchitecture.md)
+For an onverview of the System Architecture, please refer to [System Architecture](./assets/SystemArchitecture.md)
 
 ## Features
 - Intercepts TradingView trades
