@@ -70,19 +70,27 @@ class TradingViewService:
                 elif status_code == 404:
                     # Position might already be closed
                     logger.info(f"Position {position_id} not found (might already be closed)")
-                    return {"status": "success", "data": {"message": "Position not found"}}
+                    return {
+                        "status": "success", 
+                        "data": {
+                            "message": "Position not found or already closed",
+                            "position_id": position_id,
+                            "status_code": 404
+                        }
+                    }
                 else:
-                    error_msg = f"Failed to close position: {status_code}"
+                    response_text = await response.text()
+                    error_msg = f"Failed to close position: Status {status_code}, Response: {response_text}"
                     logger.error(error_msg)
                     print(f"❌ {error_msg}")
-                    return {"error": error_msg}
+                    return {"error": error_msg, "status_code": status_code}
                 
         except Exception as e:
             error_msg = f"Error closing position: {e}"
             logger.error(error_msg)
             print(f"❌ {error_msg}")
             return {"error": error_msg}
-    
+
     def close_position(self, position_id: str) -> Dict[str, Any]:
         """Synchronous version of close_position for compatibility."""
         return asyncio.run(self.async_close_position(position_id))
