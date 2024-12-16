@@ -2,6 +2,9 @@
 
 import argparse
 import asyncio
+import os
+
+print(f"run.py location: {os.path.abspath(__file__)}")
 import signal
 import subprocess
 import sys
@@ -26,6 +29,56 @@ class Runner:
     def run_worker(self):
         """Start the MT5 worker."""
         subprocess.run(["python", "src/scripts/start_worker.py"])
+
+
+    # def run_monitor(self):
+    #     """Start the Process Monitor."""
+    #     subprocess.run(["python", "src/scripts/process_monitor.py"])
+
+
+
+    def run_monitor(self):
+        """Start the Process Monitor."""
+        try:
+            # Get the virtual environment's Python executable
+            python_executable = sys.executable
+            
+            # Get absolute path to project root
+            project_root = os.path.dirname(os.path.abspath(__file__))
+            
+            # Get path to monitor script
+            script_path = os.path.join(project_root, 'src', 'scripts', 'process_monitor.py')
+            
+            # Add the project root to PYTHONPATH so imports work correctly
+            env = os.environ.copy()
+            env['PYTHONPATH'] = project_root + os.pathsep + env.get('PYTHONPATH', '')
+            
+            # Print debug info
+            print(f"Starting monitor with:")
+            print(f"Python: {python_executable}")
+            print(f"Script: {script_path}")
+            print(f"PYTHONPATH: {env['PYTHONPATH']}")
+            
+            # Check if script exists
+            if not os.path.exists(script_path):
+                print(f"Error: Monitor script not found at {script_path}")
+                return
+
+            # Run the monitor
+            subprocess.run(
+                [python_executable, script_path],
+                env=env,
+                check=True
+            )
+            
+        except subprocess.CalledProcessError as e:
+            print(f"Monitor process failed with exit code {e.returncode}")
+            if e.stderr:
+                print(f"Error output:\n{e.stderr.decode()}")
+        except Exception as e:
+            print(f"Failed to start monitor: {e}")
+            import traceback
+            traceback.print_exc()
 
     def update_requirements(self):
         """Update requirements.txt."""
@@ -122,6 +175,7 @@ def main():
     commands = {
         'proxy': runner.run_proxy,
         'worker': runner.run_worker,
+        'monitor': runner.run_monitor,
         'update-reqs': runner.update_requirements,
         'symbols': runner.list_symbols,
         'symbols-help': runner.manage_symbols,
