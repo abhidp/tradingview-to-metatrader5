@@ -32,7 +32,7 @@ For an onverview of the System Architecture, please refer to [System Architectur
 1. Clone the repository:
 ```bash
 git clone https://github.com/abhidp/tradingview-to-metatrader5.git
-cd tradingview-to-mt5-copier
+cd tradingview-to-metatrader5
 ```
 
 2. Create and activate virtual environment:
