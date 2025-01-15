@@ -1,9 +1,10 @@
+import os
 import asyncio
 import logging
 import time
 from datetime import datetime
-from typing import Any, Callable, Dict, Optional
-
+from typing import Any, Callable, Dict, Optional, List
+from pathlib import Path
 import MetaTrader5 as mt5
 
 from src.config.mt5_symbol_config import SymbolMapper
@@ -12,8 +13,20 @@ from src.utils.instrument_manager import InstrumentManager
 
 logger = logging.getLogger('MT5Service')
 
+def find_mt5_terminals() -> List[str]:
+    """Find all MT5 terminals installed on the system."""
+    terminals = []
+    roaming = Path(os.getenv('APPDATA'))  # This gets the Roaming folder path
+    
+    # Search for all terminal64.exe files in Roaming directory
+    for path in roaming.glob("**/terminal64.exe"):
+        if "MetaTrader 5" in str(path) or "MT5" in str(path):
+            terminals.append(str(path))
+            
+    return terminals
+
 class MT5Service:
-    def __init__(self, account: int, password: str, server: str,db_handler: DatabaseHandler = None):
+    def __init__(self, account: int, password: str, server: str, db_handler: DatabaseHandler = None):
         self.account = account
         self.password = password
         self.server = server
@@ -25,53 +38,80 @@ class MT5Service:
         self.running = True
         self.db = db_handler
         self.instrument_manager = InstrumentManager()
-    
+        
+        # Get terminal path from environment
+        self.terminal_path = os.getenv('MT5_TERMINAL_PATH')
+        
+        if not self.terminal_path:
+            logger.warning("MT5_TERMINAL_PATH not set in .env file")
+            terminals = find_mt5_terminals()
+            if terminals:
+                logger.info("Available MT5 terminals:")
+                for i, path in enumerate(terminals, 1):
+                    logger.info(f"{i}. {path}")
+                logger.info("Set MT5_TERMINAL_PATH in .env to use a specific terminal")
+        elif not os.path.exists(self.terminal_path):
+            logger.error(f"MT5 terminal not found at: {self.terminal_path}")
+            available = find_mt5_terminals()
+            if available:
+                logger.info("Available terminals:")
+                for terminal in available:
+                    logger.info(terminal)
     def set_loop(self, loop: asyncio.AbstractEventLoop):
         """Set the event loop for this service."""
         self.loop = loop
-
-    def _init(self):
-                """Internal method for MT5 initialization."""
-                try:
-                    # Handle cooldown period
-                    current_time = time.time()
-                    if current_time - self.last_init_time < self.init_cooldown:
-                        time.sleep(self.init_cooldown)
-                    
-                    # Check if already initialized
-                    if self.initialized and mt5.account_info() is not None:
-                        return True
-                    
-                    # Initialize MT5 connection
-                    self.initialized = False
-                    if not mt5.initialize():
-                        logger.error(f"MT5 initialization failed: {mt5.last_error()}")
-                        return False
-                    
-                    # Login to MT5
-                    if not mt5.login(self.account, password=self.password, server=self.server):
-                        logger.error(f"MT5 login failed: {mt5.last_error()}")
-                        mt5.shutdown()
-                        return False
-                    
-                    # Verify account info
-                    account_info = mt5.account_info()
-                    if not account_info:
-                        logger.error("Could not get account info")
-                        mt5.shutdown()
-                        return False
-                    
-                    self.initialized = True
-                    self.last_init_time = current_time
-                    print(f"✅ MT5 Connected: {account_info.login} ({account_info.server})")
-                    return True
-                    
-                except Exception as e:
-                    logger.error(f"Error initializing MT5: {e}")
-                    self.initialized = False
-                    return False
-
-                # return await self.loop.run_in_executor(None, _init)
+    def _init(self) -> bool:
+        """Internal method for MT5 initialization."""
+        try:
+            # Handle cooldown period
+            current_time = time.time()
+            if current_time - self.last_init_time < self.init_cooldown:
+                time.sleep(self.init_cooldown)
+            
+            # Check if already initialized
+            if self.initialized and mt5.account_info() is not None:
+                return True
+            
+            # Initialize MT5 connection with specific path
+            init_params = {
+                "login": self.account,
+                "password": self.password,
+                "server": self.server,
+            }
+            
+            # Only add path if it exists
+            if self.terminal_path and os.path.exists(self.terminal_path):
+                init_params["path"] = self.terminal_path
+                
+            self.initialized = False
+            if not mt5.initialize(**init_params):
+                logger.error(f"MT5 initialization failed: {mt5.last_error()}")
+                return False
+            
+            # Login to MT5
+            if not mt5.login(self.account, password=self.password, server=self.server):
+                logger.error(f"MT5 login failed: {mt5.last_error()}")
+                mt5.shutdown()
+                return False
+            
+            # Verify account info
+            account_info = mt5.account_info()
+            if not account_info:
+                logger.error("Could not get account info")
+                mt5.shutdown()
+                return False
+            
+            self.initialized = True
+            self.last_init_time = current_time
+            logger.info(f"✅ MT5 Connected: {account_info.login} ({account_info.server})")
+            if self.terminal_path:
+                logger.info(f"Using terminal: {self.terminal_path}")
+            return True
+                
+        except Exception as e:
+            logger.error(f"Error initializing MT5: {e}")
+            self.initialized = False
+            return False
 
     async def _retry_operation(self, operation: Callable, max_retries: int = 3) -> Any:
         """Retry an operation with exponential backoff."""
