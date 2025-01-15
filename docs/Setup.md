@@ -205,6 +205,9 @@ python run.py clean-redis
 # Show all available commands
 python run.py help
 
+# Create an ExcelSheet with specifications of all available symbols
+python src\scripts\symbol_specifications.py
+
 ```
 
 ### Adding New Dependencies

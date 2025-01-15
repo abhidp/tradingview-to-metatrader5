@@ -54,6 +54,7 @@ Thumbs.db
 # Data files
 symbol_mappings.json
 token.json
+symbol_specifications.xlsx
 
 # Docker volumes
 postgres_data/
