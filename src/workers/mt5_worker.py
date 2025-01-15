@@ -4,11 +4,12 @@ import signal
 import time
 from datetime import datetime, timezone
 from typing import Any, Dict, Set
-
+import os
+from pathlib import Path
 import MetaTrader5 as mt5
 
 from src.config.mt5_config import MT5_CONFIG
-from src.services.mt5_service import MT5Service
+from src.services.mt5_service import MT5Service, find_mt5_terminals
 from src.services.tradingview_service import TradingViewService
 from src.utils.database_handler import DatabaseHandler
 from src.utils.queue_handler import RedisQueue
@@ -32,6 +33,16 @@ class MT5Worker:
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self.loop)
         
+        # Check MT5 terminal path before initialization
+        terminal_path = os.getenv('MT5_TERMINAL_PATH')
+        if not terminal_path:
+            print("\n⚠️  MT5_TERMINAL_PATH not set in .env")
+            print("Available MT5 terminals:")
+            terminals = find_mt5_terminals()
+            for i, path in enumerate(terminals, 1):
+                print(f"{i}. {path}")
+            print("\nAdd your chosen path to .env as MT5_TERMINAL_PATH=<path>")
+        
         # Initialize services
         self.queue = RedisQueue()
         self.queue.loop = self.loop
@@ -49,8 +60,7 @@ class MT5Worker:
         self.tv_service = TradingViewService(
             token_manager=GLOBAL_TOKEN_MANAGER
         )
-
-
+        
     async def _initialize_positions(self) -> None:
         """Initialize open positions set on startup."""
         try:
