@@ -103,9 +103,9 @@ class MT5Service:
             
             self.initialized = True
             self.last_init_time = current_time
-            logger.info(f"✅ MT5 Connected: {account_info.login} ({account_info.server})")
             if self.terminal_path:
-                logger.info(f"Using terminal: {self.terminal_path}")
+                logger.info(f"Using terminal: {self.terminal_path}\n")
+            logger.info(f"✅ MT5 Connected: {account_info.login} ({account_info.server})")
             return True
                 
         except Exception as e:

@@ -68,7 +68,7 @@ class MT5Worker:
                 positions = await self.loop.run_in_executor(None, mt5.positions_get)
                 if positions is not None:
                     self.open_positions = {str(pos.ticket) for pos in positions}
-                    print(f"📊 Initialized {len(self.open_positions)} open positions\n")
+                    print(f"\n📊 Initialized {len(self.open_positions)} open positions\n")
         except Exception as e:
             logger.error(f"❌ Error initializing positions: {e}")
 

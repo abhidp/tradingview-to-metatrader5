@@ -2,7 +2,7 @@
 
 import argparse
 import asyncio
-import signal
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -107,6 +107,47 @@ class Runner:
             print(f"python run.py {cmd:<15} - {desc}")
 
 
+    def run_token_monitor(self):
+        """Start the Token Monitor."""
+        try:
+            # Get the virtual environment's Python executable
+            python_executable = sys.executable
+            
+            # Get absolute path to project root
+            project_root = os.path.dirname(os.path.abspath(__file__))
+            
+            # Get path to monitor script
+            script_path = os.path.join(project_root, 'src', 'scripts', 'token_monitor.py')
+            
+            # Print debug info
+            print(f"Starting token monitor with:")
+            print(f"Python: {python_executable}")
+            print(f"Script: {script_path}")
+            
+            # Check if script exists
+            if not os.path.exists(script_path):
+                print(f"Error: Token monitor script not found at {script_path}")
+                return
+
+            # Add the project root to PYTHONPATH so imports work correctly
+            env = os.environ.copy()
+            env['PYTHONPATH'] = project_root + os.pathsep + env.get('PYTHONPATH', '')
+            
+            # Run the monitor
+            subprocess.run(
+                [python_executable, script_path],
+                env=env,
+                check=True
+            )
+            
+        except subprocess.CalledProcessError as e:
+            print(f"Error running token monitor: {e}")
+        except Exception as e:
+            print(f"Failed to start token monitor: {e}")
+            import traceback
+            traceback.print_exc()
+
+
 def main():
     """Main entry point for the CLI."""
     parser = argparse.ArgumentParser(description="TradingView Copier CLI")
@@ -131,6 +172,7 @@ def main():
         'test-tv': runner.test_tv,
         'test-all': runner.test_all,
         'clean-redis': runner.clean_redis,
+        'token-monitor': runner.run_token_monitor,
         'help': runner.show_help
     }
 
