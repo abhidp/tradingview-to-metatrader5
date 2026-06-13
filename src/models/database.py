@@ -68,7 +68,7 @@ class Trade(Base):
 def init_db():
     """Initialize database tables."""
     try:
-        Base.metadata.create_all(bind=engine)
+        Base.metadata.create_all(bind=get_engine())
         logger.info("Database tables created successfully")
     except Exception as e:
         logger.error(f"Error creating database tables: {e}")
