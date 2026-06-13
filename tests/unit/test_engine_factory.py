@@ -31,3 +31,30 @@ async def test_build_master_configures_listen_options(monkeypatch):
     assert master.options.listen_host == "127.0.0.1"
     assert master.options.listen_port == 8081
     assert master.options.ssl_insecure is True
+
+
+import asyncio  # noqa: E402
+
+
+async def test_worker_inproc_init_uses_injected_queue_and_db(temp_db_path, monkeypatch):
+    monkeypatch.setenv("MT5_ACCOUNT", "123")
+    monkeypatch.setenv("MT5_PASSWORD", "pw")
+    monkeypatch.setenv("MT5_SERVER", "Demo")
+
+    from src.models.database import init_db
+    from src.utils.database_handler import DatabaseHandler
+    from app.queue.inproc_queue import InProcQueue
+    from src.workers.mt5_worker import MT5Worker
+
+    init_db()
+    queue = InProcQueue()
+    db = DatabaseHandler()
+
+    worker = MT5Worker()
+    worker.init_inproc(loop=asyncio.get_event_loop(), queue=queue, db=db)
+
+    assert worker.queue is queue
+    assert worker.db is db
+    assert worker.loop is asyncio.get_event_loop()
+    queue.cleanup()
+    db.cleanup()

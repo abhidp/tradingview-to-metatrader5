@@ -12,7 +12,7 @@ from src.config.mt5_config import MT5_CONFIG
 from src.services.mt5_service import MT5Service, find_mt5_terminals
 from src.services.tradingview_service import TradingViewService
 from src.utils.database_handler import DatabaseHandler
-from src.utils.queue_handler import RedisQueue
+from app.queue.inproc_queue import InProcQueue
 from src.utils.token_manager import GLOBAL_TOKEN_MANAGER
 
 logger = logging.getLogger('MT5Worker')
@@ -44,7 +44,7 @@ class MT5Worker:
             print("\nAdd your chosen path to .env as MT5_TERMINAL_PATH=<path>")
         
         # Initialize services
-        self.queue = RedisQueue()
+        self.queue = InProcQueue()
         self.queue.loop = self.loop
         
         self.db = DatabaseHandler()
@@ -60,7 +60,30 @@ class MT5Worker:
         self.tv_service = TradingViewService(
             token_manager=GLOBAL_TOKEN_MANAGER
         )
-        
+
+    def init_inproc(self, loop, queue, db):
+        """Initialize the worker to share an existing event loop, queue, and db.
+
+        Used by app/engine.py so the proxy and worker run on one loop. Unlike
+        initialize(), this does NOT create a new event loop or its own queue/db.
+        """
+        self.loop = loop
+        self.queue = queue
+        self.queue.loop = loop
+        self.db = db
+
+        self.mt5 = MT5Service(
+            account=MT5_CONFIG['account'],
+            password=MT5_CONFIG['password'],
+            server=MT5_CONFIG['server'],
+            db_handler=self.db,
+        )
+        self.mt5.set_loop(self.loop)
+
+        self.tv_service = TradingViewService(
+            token_manager=GLOBAL_TOKEN_MANAGER
+        )
+
     async def _initialize_positions(self) -> None:
         """Initialize open positions set on startup."""
         try:
