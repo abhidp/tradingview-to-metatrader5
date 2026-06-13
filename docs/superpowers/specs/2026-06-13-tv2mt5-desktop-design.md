@@ -15,13 +15,21 @@ hundreds of requests to make it installable and one-click.
 ## Goal
 
 Repackage the tool as a **single-click Windows desktop app** that any
-non-technical trader can install and run. Build **local-first** (for the
-author's own testing now) but **architect so it can be monetized later** without
-a rewrite.
+non-technical trader can install and run. Build **local-first** (for the author's
+own testing now). The project stays **fully open-source**, developed in the existing
+**community repo** (`abhidp/tradingview-to-metatrader5`) on the **`v2-desktop`**
+branch — to keep its audience/stars. Monetization, if any, is **soft** (donations /
+sponsorship / paid support), **not** closed-source.
+
+> **Distribution decision (2026-06-14):** v2 develops on `v2-desktop`; `main` stays
+> the stable **v1** for existing users until v2 is ready, then v2 is promoted to
+> `main` as a major release (v1 tagged, migration notes). The earlier private-repo +
+> closed-monetization plan was reversed.
 
 ## Non-Goals
 
-- Not a cloud service yet (no backend stood up; monetization features are seams/stubs).
+- Not a cloud service (no backend stood up; the optional seams remain stubs).
+- Not closed-source — fully open; soft monetization only.
 - Not multi-broker on day one (Fusion Markets only; pluggable for later).
 - Not cross-platform (Windows-only; MT5 Python API + WebView2 are Windows-bound).
 - Not a rewrite of the trade interception/execution logic, which already works.
@@ -32,13 +40,14 @@ a rewrite.
 |----------|--------|-----------|
 | Strategy | Evolve repo (collapse + wrap), not rewrite | Interception/execution is the hard, proven part; keep it. |
 | Signal source | Fusion Markets via TV broker panel | Current working setup; user trades in TV's broker panel. |
-| Broker support | Fusion now, pluggable adapter later | "Local now, monetize later" — additive, not a rewrite. |
+| Broker support | Fusion now, pluggable adapter later | Additive (new adapter), not a rewrite. |
 | Persistence | SQLite (replaces PostgreSQL) | Single user needs no DB server; ports the `trades` schema. |
 | Queue | In-process `asyncio` queue (replaces Redis) | One user, one process — pub/sub is overkill. |
 | Process model | One process (proxy + worker + UI + tray) | Eliminates two-terminal setup. |
 | UI | FastAPI + `pywebview` on WebView2 + `pystray` | Modern UI, lean bundle (WebView2 preinstalled), reusable as future cloud dashboard. |
 | UI layout | Sidebar nav (Dashboard/Trades/Symbols/Settings/Logs) | Product-like, scales with features. |
-| Monetization | Pure seams/stubs (license, update, telemetry, errors) | Lowest commitment; nothing external wired during local testing. |
+| Distribution | Open-source; community repo, `v2-desktop` branch; `main` stays v1 | Keep the 77-star audience; zero disruption to existing users. |
+| Monetization | Fully open; soft (donations/sponsorship/support). License/update/telemetry seams are OPTIONAL stubs. | No closed-source; seams kept only as cheap future options. |
 | Packaging | PyInstaller one-folder → Inno Setup `.exe` | Standard, no Docker, signable later. |
 
 ## Architecture
@@ -171,10 +180,14 @@ logs at `%APPDATA%/TV2MT5/logs/tv2mt5.log` (implemented in Plan 1).
 - Code signing and GitHub-Releases-based auto-update are deferred (Updater seam
   exists for later).
 
-## Future (monetization path, not in scope now)
+## Future (open-source roadmap, not in scope now)
 
-- Real `LicenseService`: Ed25519-signed offline keys, public key embedded in app.
-- Real `Updater`: GitHub Releases + static `version.json`.
-- Real `Telemetry`/`ErrorReporter`: Sentry + PostHog free tiers.
-- Cloud config sync + the FastAPI JSON API repointed at a hosted backend.
-- Additional `BrokerAdapter` implementations.
+- `Updater`: GitHub Releases + static `version.json` (free auto-update for the OSS app).
+- Additional `BrokerAdapter` implementations (more TradingView-integrated brokers).
+- Optional `Telemetry`/`ErrorReporter`: opt-in Sentry/PostHog free tiers to diagnose
+  remote failures without users filing issues.
+- Promote `v2-desktop` → `main` as the v2.0 major release (tag/branch v1, migration notes).
+
+**Soft monetization (optional, later):** GitHub Sponsors / donations / paid support.
+The `LicenseService` seam (e.g. Ed25519-signed offline keys) stays available if a paid
+"Pro" tier is ever desired, but the project is open-source by default — no closed code.
