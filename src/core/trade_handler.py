@@ -6,7 +6,7 @@ from typing import Any, Dict
 import MetaTrader5 as mt5
 
 from src.utils.database_handler import DatabaseHandler
-from src.utils.queue_handler import RedisQueue
+from app.queue.inproc_queue import InProcQueue
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -16,9 +16,9 @@ logging.basicConfig(
 logger = logging.getLogger('TradeHandler')
 
 class TradeHandler:
-    def __init__(self):
-        self.db = DatabaseHandler()
-        self.queue = RedisQueue()
+    def __init__(self, queue=None, db=None):
+        self.db = db if db is not None else DatabaseHandler()
+        self.queue = queue if queue is not None else InProcQueue()
         self.pending_orders = {}  # Track order->execution mapping
         self.loop = asyncio.get_event_loop()
     

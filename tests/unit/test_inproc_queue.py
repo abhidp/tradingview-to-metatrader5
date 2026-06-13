@@ -37,3 +37,19 @@ async def test_get_queue_status_reports_pending_count():
     status = queue.get_queue_status()
     assert status["pending"] == 1
     queue.cleanup()
+
+
+async def test_trade_handler_accepts_injected_queue(temp_db_path):
+    from src.models.database import init_db
+    from src.utils.database_handler import DatabaseHandler
+    from src.core.trade_handler import TradeHandler
+
+    init_db()
+    queue = InProcQueue()
+    db = DatabaseHandler()
+
+    handler = TradeHandler(queue=queue, db=db)
+    assert handler.queue is queue
+    assert handler.db is db
+    queue.cleanup()
+    db.cleanup()
