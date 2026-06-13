@@ -2,17 +2,14 @@
 
 import asyncio
 import logging
-import os
 import traceback
 from contextlib import contextmanager
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, text, update
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.pool import QueuePool
+from sqlalchemy import text, update
 
+from src.config.database import get_session_factory
 from src.models.database import Trade
 
 logger = logging.getLogger('DatabaseHandler')
@@ -20,41 +17,15 @@ logger = logging.getLogger('DatabaseHandler')
 class DatabaseHandler:
     def __init__(self):
         try:
-            # Load environment variables
-            load_dotenv()
-            
-            # Construct database URL
-            db_url = (
-                f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@"
-                f"{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
-            )
-            
-            # Create engine with connection pooling
-            self.engine = create_engine(
-                db_url,
-                poolclass=QueuePool,
-                pool_size=20,
-                max_overflow=10,
-                pool_timeout=30,
-                pool_recycle=1800,
-                pool_pre_ping=True,
-                connect_args={
-                    "connect_timeout": 10,
-                    "application_name": "TradingView Copier"
-                }
-            )
-            
-            # Create scoped session factory
-            self.SessionLocal = scoped_session(
-                sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
-            )
-            
-            # Initialize thread pool for async operations
+            # Shared SQLite session factory (see src/config/database.py).
+            self.SessionLocal = get_session_factory()
+
+            # Event loop for run_in_executor-based async wrappers.
             self.loop = asyncio.get_event_loop()
-            
+
             # Test connection
             self._test_connection()
-            
+
         except Exception as e:
             logger.error(f"Error initializing DatabaseHandler: {e}")
             logger.error(traceback.format_exc())
@@ -85,7 +56,11 @@ class DatabaseHandler:
             raise
         finally:
             session.close()
-            self.SessionLocal.remove()
+            try:
+                self.SessionLocal.remove()
+            except AttributeError:
+                # remove() only exists on scoped_session; plain sessionmaker is fine.
+                pass
             # logger.debug("Database session closed")
     
     def save_trade(self, trade_data: Dict[str, Any]) -> None:
@@ -196,14 +171,13 @@ class DatabaseHandler:
             raise
     
     def cleanup(self):
-        """Cleanup database connections."""
+        """Release this handler's scoped session; the engine is process-shared."""
         try:
-            logger.info("Cleaning up database connections")
-            self.engine.dispose()
-            logger.info("Database connections cleaned up successfully")
-        except Exception as e:
-            logger.error(f"Error during cleanup: {e}")
-            logger.error(traceback.format_exc())
+            self.SessionLocal.remove()
+        except Exception:
+            # remove() only exists on scoped_session; plain sessionmaker has no-op.
+            pass
+        logger.info("DatabaseHandler cleaned up")
 
     async def async_save_trade(self, trade_data: Dict[str, Any]) -> None:
         """Save trade to database asynchronously."""

@@ -43,3 +43,40 @@ def test_init_db_creates_trades_table(temp_db_path):
     init_db()
     inspector = inspect(get_engine())
     assert "trades" in inspector.get_table_names()
+
+
+import asyncio  # noqa: E402
+from datetime import datetime  # noqa: E402
+
+
+async def test_database_handler_save_and_get(temp_db_path):
+    from src.models.database import init_db
+    from src.utils.database_handler import DatabaseHandler
+
+    init_db()
+    db = DatabaseHandler()
+
+    trade_data = {
+        "trade_id": "TV_TEST_1",
+        "order_id": "O1",
+        "instrument": "EURUSD",
+        "side": "buy",
+        "quantity": "0.10",
+        "type": "market",
+        "ask_price": "1.1000",
+        "bid_price": "1.0999",
+        "take_profit": None,
+        "stop_loss": None,
+        "status": "pending",
+        "tv_request": {"raw": "req"},
+        "tv_response": {"raw": "resp"},
+        "created_at": datetime.utcnow(),
+    }
+
+    await db.async_save_trade(trade_data)
+    fetched = await db.async_get_trade("TV_TEST_1")
+
+    assert fetched is not None
+    assert fetched["instrument"] == "EURUSD"
+    assert fetched["side"] == "buy"
+    db.cleanup()
