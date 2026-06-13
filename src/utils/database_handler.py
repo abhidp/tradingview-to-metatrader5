@@ -20,9 +20,6 @@ class DatabaseHandler:
             # Shared SQLite session factory (see src/config/database.py).
             self.SessionLocal = get_session_factory()
 
-            # Event loop for run_in_executor-based async wrappers.
-            self.loop = asyncio.get_event_loop()
-
             # Test connection
             self._test_connection()
 
@@ -56,12 +53,6 @@ class DatabaseHandler:
             raise
         finally:
             session.close()
-            try:
-                self.SessionLocal.remove()
-            except AttributeError:
-                # remove() only exists on scoped_session; plain sessionmaker is fine.
-                pass
-            # logger.debug("Database session closed")
     
     def save_trade(self, trade_data: Dict[str, Any]) -> None:
         """Save trade to database with enhanced error handling."""
@@ -209,7 +200,7 @@ class DatabaseHandler:
                     logger.error(traceback.format_exc())
                     raise
 
-        await self.loop.run_in_executor(None, _save_trade)
+        await asyncio.get_running_loop().run_in_executor(None, _save_trade)
 
     async def async_update_trade_status(self, trade_id: str, status: str, update_data: Dict[str, Any]) -> None:
         """Update trade status asynchronously."""
@@ -241,7 +232,7 @@ class DatabaseHandler:
                     logger.error(traceback.format_exc())
                     raise
 
-        await self.loop.run_in_executor(None, _update_trade)
+        await asyncio.get_running_loop().run_in_executor(None, _update_trade)
 
     async def async_get_trade(self, trade_id: str) -> Optional[Dict[str, Any]]:
         """Get trade by ID asynchronously."""
@@ -274,7 +265,7 @@ class DatabaseHandler:
                     logger.error(traceback.format_exc())
                     raise
 
-        return await self.loop.run_in_executor(None, _get_trade)
+        return await asyncio.get_running_loop().run_in_executor(None, _get_trade)
 
     async def async_get_trade_by_position(self, position_id: str) -> Optional[Dict[str, Any]]:
         """Get trade by position ID asynchronously."""
@@ -306,7 +297,7 @@ class DatabaseHandler:
                     logger.error(f"Error in async get trade by position: {e}")
                     raise
 
-        return await self.loop.run_in_executor(None, _get_trade)
+        return await asyncio.get_running_loop().run_in_executor(None, _get_trade)
 
     async def async_get_latest_active_trade(self) -> Optional[Dict[str, Any]]:
         """Get the most recent active trade."""
@@ -342,7 +333,7 @@ class DatabaseHandler:
                     logger.error(f"Error in async get latest active trade: {e}")
                     raise
 
-        return await self.loop.run_in_executor(None, _get_trade)
+        return await asyncio.get_running_loop().run_in_executor(None, _get_trade)
 
     async def async_get_trade_by_mt5_ticket(self, mt5_ticket: str) -> Optional[Dict[str, Any]]:
         """Get trade by MT5 ticket asynchronously."""
@@ -376,4 +367,4 @@ class DatabaseHandler:
                     logger.error(traceback.format_exc())
                     raise
 
-        return await self.loop.run_in_executor(None, _get_trade)
+        return await asyncio.get_running_loop().run_in_executor(None, _get_trade)
