@@ -15,6 +15,23 @@ from app.paths import get_data_dir
 _configured = False
 
 
+class _DropConnectionResetNoise(logging.Filter):
+    """Drop the benign Windows Proactor 'ConnectionResetError [WinError 10054]'.
+
+    When a client drops a proxied connection, asyncio's Proactor raises
+    ConnectionResetError in _call_connection_lost (the socket is already gone),
+    which mitmproxy re-logs as 'Unhandled error in task' at ERROR. It's harmless
+    OS behavior. This filter drops ONLY records whose exception is a
+    ConnectionResetError — every other record (real errors) passes through.
+    Attached at the handler level so it catches the record regardless of which
+    logger emitted it (asyncio / mitmproxy.master).
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        exc = record.exc_info[1] if record.exc_info else None
+        return not isinstance(exc, ConnectionResetError)
+
+
 def get_log_dir() -> Path:
     """Return (and create) the directory holding log files."""
     log_dir = get_data_dir() / "logs"
@@ -78,6 +95,11 @@ def setup_logging(level: int = logging.INFO) -> Path:
 
     console_handler = logging.StreamHandler(real_stdout)
     console_handler.setFormatter(logging.Formatter("%(message)s"))
+
+    # Drop benign Windows connection-reset tracebacks on both sinks.
+    noise_filter = _DropConnectionResetNoise()
+    console_handler.addFilter(noise_filter)
+    file_handler.addFilter(noise_filter)
 
     root = logging.getLogger()
     root.setLevel(level)
