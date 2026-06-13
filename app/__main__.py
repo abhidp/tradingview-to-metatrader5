@@ -1,9 +1,9 @@
 """`python -m app` — launch the single-process TV2MT5 engine."""
 import asyncio
-import logging
 import sys
 
 from app.engine import run_engine
+from app.logging_setup import setup_logging
 
 
 def _force_utf8_console() -> None:
@@ -22,7 +22,7 @@ def _force_utf8_console() -> None:
 
 
 _force_utf8_console()
-logging.basicConfig(level=logging.INFO, format="%(message)s")
+setup_logging()
 
 
 def main() -> None:
