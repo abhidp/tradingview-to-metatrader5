@@ -35,5 +35,5 @@ async def test_get_queue_status_reports_pending_count():
     queue = InProcQueue()
     await queue.async_push_trade({"trade_id": "T2"})
     status = queue.get_queue_status()
-    assert status["pending"] >= 0
+    assert status["pending"] == 1
     queue.cleanup()

@@ -51,6 +51,15 @@ class InProcQueue:
         """Register the message handler and start the consumer task."""
         self._callback = callback
         self._consumer_task = asyncio.ensure_future(self._consume())
+        self._consumer_task.add_done_callback(self._on_consumer_done)
+
+    def _on_consumer_done(self, task: asyncio.Task) -> None:
+        """Log if the consumer task died unexpectedly (not via cancel)."""
+        if task.cancelled():
+            return
+        exc = task.exception()
+        if exc is not None:
+            self.logger.error(f"Consumer task died unexpectedly: {exc}")
 
     async def _consume(self) -> None:
         while True:
