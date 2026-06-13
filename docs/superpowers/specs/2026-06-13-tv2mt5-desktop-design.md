@@ -65,9 +65,9 @@ Single Python process, one `asyncio` event loop, hosting:
 │  Seams (stubbed): LicenseService · Updater ·              │
 │                   Telemetry · ErrorReporter                │
 └─────────────────────────────────────────────────────────┘
-        │ auto-sets Windows system proxy on Start
-        │ reverts on Stop
-   TradingView (browser/desktop) traffic → localhost proxy
+        │ PREFERRED: TradingView desktop app-level proxy → 127.0.0.1:8080 (scoped, no system change)
+        │ FALLBACK: app sets/reverts Windows system proxy (browser-based TV users)
+   TradingView (desktop/browser) traffic → embedded mitmproxy (127.0.0.1:8080)
 ```
 
 ### Components
@@ -85,7 +85,10 @@ Single Python process, one `asyncio` event loop, hosting:
 - `app/ui/` — web frontend (sidebar nav: Dashboard/Trades/Symbols/Settings/Logs).
 - `app/tray.py` — pystray icon (Start/Stop/Open/Quit + status).
 - `app/wizard/` — first-run onboarding logic (cert, MT5 detect, TV auto-detect).
-- `app/proxy_manager.py` — set/revert Windows system proxy around Start/Stop.
+- `app/proxy_manager.py` — proxy routing. PREFERRED: guide/set the TradingView
+  desktop app's own proxy to `127.0.0.1:8080` (HTTP, no auth) — scoped to TradingView,
+  no system-wide change, nothing to revert. FALLBACK (browser-based TV): set/revert
+  the Windows system proxy around Start/Stop.
 - `app/storage/sqlite_store.py` — SQLite persistence (replaces Postgres handler).
 - `app/queue/inproc_queue.py` — asyncio queue (replaces Redis pub/sub).
 - `app/adapters/base.py` — `BrokerAdapter` interface.
@@ -130,8 +133,14 @@ class ErrorReporter(Protocol):
 5. **Symbols** — auto-suggest default suffix (e.g. `.r`); advanced/optional overrides.
 6. **Done** — Start Copying.
 
-**Automatic, no user action:** Windows system proxy set on Start / reverted on
-Stop; SQLite + queue in-process; local rotating logs.
+**Proxy routing (wizard step):** PREFERRED is the TradingView desktop app's own
+proxy setting pointed at `127.0.0.1:8080` — scoped to TradingView, no system-wide
+change. The wizard shows these exact values (type **HTTP**, host `127.0.0.1`, port
+`8080`, no username/password) and can verify connectivity. FALLBACK for browser-based
+TradingView: the app sets the Windows system proxy on Start and reverts it on Stop.
+
+**Automatic, no user action:** SQLite + queue in-process; console + rotating file
+logs at `%APPDATA%/TV2MT5/logs/tv2mt5.log` (implemented in Plan 1).
 
 ## Error Handling
 
@@ -139,8 +148,11 @@ Stop; SQLite + queue in-process; local rotating logs.
   proxy not set) surface as **clear UI banner states**, never raw stack traces.
 - Each copied trade shows explicit ✓ / ✗ with a human-readable reason.
 - All errors written to a local rotating log file, viewable in the Logs tab.
-- On Stop/crash, the proxy_manager reverts Windows proxy settings so the user's
-  internet is never left broken.
+- When the Windows system-proxy fallback is used, the proxy_manager reverts it on
+  Stop/crash so the user's internet is never left broken. The TradingView app-level
+  proxy (preferred path) needs no revert — it only affects TradingView, though the
+  user should clear it in TradingView when not running the copier (else TradingView
+  can't reach the network while the engine is stopped).
 
 ## Testing
 
