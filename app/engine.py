@@ -43,7 +43,7 @@ async def run_engine(listen_host: str = "127.0.0.1", listen_port: int = 8080) ->
 
     init_db()
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     queue = InProcQueue()
     db = DatabaseHandler()
 
@@ -58,7 +58,10 @@ async def run_engine(listen_host: str = "127.0.0.1", listen_port: int = 8080) ->
     # Interceptor addon shares the trade handler.
     TradingViewInterceptor._instance = None
     TradingViewInterceptor._initialized = False
-    interceptor = TradingViewInterceptor(trade_handler=trade_handler)
+    # sync_instruments=False: at cold start there is no auth token yet, so the
+    # network instrument-sync can't run anyway; avoid the confusing startup error
+    # and any risk of a blocking request stalling the loop before the proxy listens.
+    interceptor = TradingViewInterceptor(trade_handler=trade_handler, sync_instruments=False)
 
     master = build_master(interceptor, listen_host=listen_host, listen_port=listen_port)
 
@@ -70,6 +73,7 @@ async def run_engine(listen_host: str = "127.0.0.1", listen_port: int = 8080) ->
     finally:
         worker.running = False
         worker_task.cancel()
+        await asyncio.gather(worker_task, return_exceptions=True)
         queue.cleanup()
         db.cleanup()
         logger.info("Engine stopped")

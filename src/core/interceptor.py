@@ -254,5 +254,3 @@ class TradingViewInterceptor:
                     
             except Exception as e:
                 print(f"❌ Error processing response: {e}")
-
-addons = [TradingViewInterceptor()]

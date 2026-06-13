@@ -69,7 +69,6 @@ class MT5Worker:
         """
         self.loop = loop
         self.queue = queue
-        self.queue.loop = loop
         self.db = db
 
         self.mt5 = MT5Service(
