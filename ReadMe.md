@@ -1,3 +1,24 @@
+> # 🚧 You're on `v2-desktop` — the in-progress rewrite
+>
+> **v2** turns TV2MT5 into a single self-contained Windows app: **no Docker, no
+> PostgreSQL, no Redis, no two terminals.** One process runs the embedded proxy + the
+> MT5 worker on an embedded SQLite database.
+>
+> - 🟢 **Want the stable version?** Use the [`main`](../../tree/main) branch (current released v1).
+> - 📍 **Status:** foundation complete & live-verified (bidirectional TV↔MT5 copy). Friendly UI + one-click installer are next — see the [roadmap](docs/superpowers/plans/2026-06-13-tv2mt5-desktop-plan-roadmap.md) and [design spec](docs/superpowers/specs/2026-06-13-tv2mt5-desktop-design.md).
+> - 🆓 Still **100% free & open-source** (MIT). Support via the donation links below.
+>
+> ### Quick start (v2 dev build)
+> 1. Python 3.11, your **MT5 terminal logged in**, and the proxy cert trusted: `python src/scripts/install_certificate.py`
+> 2. `pip install -r requirements.txt`, then copy `.env.template` → `.env` and fill in your MT5 + TradingView details.
+> 3. Start everything (one process): **`python run.py start`**
+> 4. In **TradingView's** proxy/network settings, set an **HTTP proxy** to `127.0.0.1:8080` (no system-wide proxy needed).
+> 5. Trade on TradingView → it mirrors to MT5. Logs live at `%APPDATA%\TV2MT5\logs\tv2mt5.log`.
+>
+> When the engine isn't running, clear the proxy in TradingView so it can reach the network.
+>
+> ---
+
 # TradingView to MetaTrader5 (TV2MT5)
 > ⚡ A lightening-fast trade copier that works on your local windows machine
 
