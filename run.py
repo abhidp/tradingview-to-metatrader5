@@ -27,6 +27,10 @@ class Runner:
         """Start the MT5 worker."""
         subprocess.run(["python", "src/scripts/start_worker.py"])
 
+    def run_app(self):
+        """Start the unified single-process engine (no Docker/Redis/Postgres)."""
+        subprocess.run([sys.executable, "-m", "app"])
+
     def update_requirements(self):
         """Update requirements.txt."""
         subprocess.run(["python", "src/scripts/generate_requirements.py"])
@@ -47,10 +51,6 @@ class Runner:
     def test_db(self):
         """Test database connection."""
         subprocess.run([sys.executable, "-m", "tests.infrastructure.test_db"])
-
-    def test_redis(self):
-        """Test Redis connection."""
-        subprocess.run([sys.executable, "-m", "tests.infrastructure.test_redis"])
 
     def test_mt5(self):
         """Test MT5 connection."""
@@ -81,26 +81,21 @@ class Runner:
             print(f"Error running tests: {e}")
             sys.exit(1)
 
-    def clean_redis(self):
-        """Clean Redis data."""
-        subprocess.run(["python", "src/scripts/clean_redis.py"])
-
     def show_help(self):
         """Show help message."""
         print("\nAvailable commands:")
         print("-" * 50)
         commands = {
+            "start": "Start the unified single-process app (proxy + worker)",
             "proxy": "Start the TradingView proxy server",
             "worker": "Start the MT5 worker",
             "update-reqs": "Update requirements.txt",
             "symbols": "List all MT5 symbols",
             "symbols-help": "Show symbol management commands",
             "test-db": "Test database connection",
-            "test-redis": "Test Redis connection",
             "test-mt5": "Test MT5 connection",
             "test-tv": "Test TradingView service",
             "test-all": "Run all infrastructure tests",
-            "clean-redis": "Clean Redis data",
             "help": "Show this help message"
         }
         for cmd, desc in commands.items():
@@ -161,17 +156,16 @@ def main():
 
     # Command mapping
     commands = {
+        'start': runner.run_app,
         'proxy': runner.run_proxy,
         'worker': runner.run_worker,
         'update-reqs': runner.update_requirements,
         'symbols': runner.list_symbols,
         'symbols-help': runner.manage_symbols,
         'test-db': runner.test_db,
-        'test-redis': runner.test_redis,
         'test-mt5': runner.test_mt5,
         'test-tv': runner.test_tv,
         'test-all': runner.test_all,
-        'clean-redis': runner.clean_redis,
         'token-monitor': runner.run_token_monitor,
         'help': runner.show_help
     }

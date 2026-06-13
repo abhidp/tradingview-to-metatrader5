@@ -48,8 +48,3 @@ def get_session_factory() -> sessionmaker:
         )
     return _SessionFactory
 
-
-# Backwards-compatible name used by src/models/database.py.
-# Built without get_data_dir() so importing this module has no filesystem side effect;
-# the directory is created lazily by get_engine() -> _build_url() on first real use.
-DATABASE_URL = f"sqlite:///{get_db_path().as_posix()}"
