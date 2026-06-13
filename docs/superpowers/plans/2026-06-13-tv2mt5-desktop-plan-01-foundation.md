@@ -862,10 +862,14 @@ git commit -m "refactor: allow injecting TradeHandler into interceptor"
 
 - [ ] **Step 1: Write the failing test for the master factory**
 
-Append to `tests/unit/test_engine_factory.py`:
+Append to `tests/unit/test_engine_factory.py`. NOTE: the test is `async` because
+mitmproxy 11's `Master.__init__` calls `asyncio.get_running_loop()` (and creates an
+`asyncio.Event`) at construction time, so a `DumpMaster` can only be built inside a
+running event loop. This matches production: Task 11 calls `build_master` from inside
+the already-running loop of `run_engine`. `build_master` itself stays synchronous.
 
 ```python
-def test_build_master_configures_listen_options(monkeypatch):
+async def test_build_master_configures_listen_options(monkeypatch):
     monkeypatch.setenv("TV_BROKER_URL", "broker.example.com")
     monkeypatch.setenv("TV_ACCOUNT_ID", "999")
 
@@ -904,6 +908,10 @@ def build_master(addon, listen_host: str = "127.0.0.1", listen_port: int = 8080)
     """Build an embedded mitmproxy DumpMaster with our interceptor addon.
 
     Returns the configured master without running it, so it is unit-testable.
+    MUST be called from within a running asyncio event loop: mitmproxy 11's
+    Master.__init__ calls asyncio.get_running_loop() at construction. Task 11's
+    run_engine() satisfies this (it is async); the unit test is async for the
+    same reason.
     """
     opts = Options(
         listen_host=listen_host,
