@@ -1,41 +1,53 @@
+"""SQLite database configuration and shared engine/session factory.
+
+This module replaces the previous PostgreSQL configuration. A single SQLite
+file (see app.paths.get_db_path) backs the whole application. The engine is
+created lazily so tests can point TV2MT5_DB_PATH at a temp file first.
+"""
 import logging
-import os
-from pathlib import Path
 
-from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
+from sqlalchemy.orm import sessionmaker
 
-# Load environment variables from .env file
-env_path = Path(__file__).parent.parent.parent / '.env'
-load_dotenv(env_path)
+from app.paths import get_data_dir, get_db_path
 
 logger = logging.getLogger(__name__)
 
-def get_env_var(key: str) -> str:
-    """Get environment variable with proper error handling."""
-    value = os.getenv(key)
-    if value is None:
-        raise ValueError(f"Missing required environment variable: {key}")
-    return value
+_engine: Engine | None = None
+_SessionFactory: sessionmaker | None = None
 
-# Database configuration with required environment variables
-DB_CONFIG = {
-    'host': get_env_var('DB_HOST'),
-    'port': get_env_var('DB_PORT'),
-    'database': get_env_var('DB_NAME'),
-    'user': get_env_var('DB_USER'),
-    'password': get_env_var('DB_PASSWORD')
-}
 
-# Construct database URL with retry parameters
-DATABASE_URL = (
-    f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}"
-    f"@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}"
-    "?connect_timeout=10"  # Add connection timeout
-)
+def _build_url() -> str:
+    get_data_dir()  # ensure parent directory exists
+    db_path = get_db_path().as_posix()
+    return f"sqlite:///{db_path}"
 
-# Log connection details (excluding sensitive info)
-logger.info("Database Connection Details:")
-logger.info(f"Host: {DB_CONFIG['host']}")
-logger.info(f"Port: {DB_CONFIG['port']}")
-logger.info(f"Database: {DB_CONFIG['database']}")
-logger.info(f"User: {DB_CONFIG['user']}")
+
+def get_engine() -> Engine:
+    """Return the process-wide SQLite engine, creating it on first use."""
+    global _engine
+    if _engine is None:
+        url = _build_url()
+        logger.info("Opening SQLite database at %s", url)
+        _engine = create_engine(
+            url,
+            future=True,
+            # SQLite + our threadpool executor: connections cross threads.
+            connect_args={"check_same_thread": False},
+        )
+    return _engine
+
+
+def get_session_factory() -> sessionmaker:
+    """Return a sessionmaker bound to the shared SQLite engine."""
+    global _SessionFactory
+    if _SessionFactory is None:
+        _SessionFactory = sessionmaker(
+            autocommit=False, autoflush=False, bind=get_engine(), future=True
+        )
+    return _SessionFactory
+
+
+# Backwards-compatible name used by src/models/database.py.
+DATABASE_URL = _build_url()
