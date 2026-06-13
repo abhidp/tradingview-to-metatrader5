@@ -8,6 +8,19 @@ from mitmproxy.tools.dump import DumpMaster
 logger = logging.getLogger('Engine')
 
 
+def quiet_proxy_noise() -> None:
+    """Silence benign, high-volume proxy chatter so real events stay readable.
+
+    - asyncio (proactor) logs a ConnectionResetError [WinError 10054] traceback
+      every time a client drops a connection — pure noise on Windows.
+    - mitmproxy logs every 'client connect'/'server connect'/'client disconnect'
+      at INFO. We keep WARNING+ (genuine problems) but drop the per-connection spam.
+    This mirrors the old two-terminal setup's `--quiet console_output_level=error`.
+    """
+    logging.getLogger("asyncio").setLevel(logging.CRITICAL)
+    logging.getLogger("mitmproxy").setLevel(logging.WARNING)
+
+
 def build_master(addon, listen_host: str = "127.0.0.1", listen_port: int = 8080) -> DumpMaster:
     """Build an embedded mitmproxy DumpMaster with our interceptor addon.
 
@@ -41,6 +54,7 @@ async def run_engine(listen_host: str = "127.0.0.1", listen_port: int = 8080) ->
     from src.workers.mt5_worker import MT5Worker
     from app.queue.inproc_queue import InProcQueue
 
+    quiet_proxy_noise()
     init_db()
 
     loop = asyncio.get_running_loop()
