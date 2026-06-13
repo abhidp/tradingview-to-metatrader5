@@ -207,7 +207,7 @@ class TradeHandler:
             # Update status asynchronously
             close_status = 'closing' if is_partial else 'closed'
             status_update = {
-                'close_requested_at': datetime.utcnow().isoformat(),
+                'close_requested_at': datetime.utcnow(),
                 'is_closed': not is_partial  # Only mark as closed for full closes
             }
             await self.db.async_update_trade_status(

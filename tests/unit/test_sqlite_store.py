@@ -80,3 +80,41 @@ async def test_database_handler_save_and_get(temp_db_path):
     assert fetched["instrument"] == "EURUSD"
     assert fetched["side"] == "buy"
     db.cleanup()
+
+
+async def test_update_trade_status_accepts_datetime_for_datetime_columns(temp_db_path):
+    """Regression: close/closed_at status writes must pass datetime objects, not
+    ISO strings. SQLite DateTime columns reject strings (Postgres tolerated them)."""
+    import pytest
+    from datetime import datetime, timezone
+
+    from src.models.database import init_db
+    from src.utils.database_handler import DatabaseHandler
+
+    init_db()
+    db = DatabaseHandler()
+    base = {
+        "trade_id": "TV_CLOSE_1", "order_id": "O9", "instrument": "BTCUSD",
+        "side": "buy", "quantity": "0.01", "type": "market",
+        "ask_price": "60000", "bid_price": "59990",
+        "status": "pending", "tv_request": {}, "tv_response": {},
+        "created_at": datetime.utcnow(),
+    }
+    await db.async_save_trade(base)
+
+    # datetime OBJECT works (the fixed code path)
+    await db.async_update_trade_status(
+        "TV_CLOSE_1", "closed",
+        {"is_closed": True,
+         "close_requested_at": datetime.utcnow(),
+         "closed_at": datetime.now(timezone.utc)},
+    )
+    fetched = await db.async_get_trade("TV_CLOSE_1")
+    assert fetched["status"] == "closed"
+
+    # ISO STRING must raise — documents why .isoformat() was the bug
+    with pytest.raises(Exception):
+        await db.async_update_trade_status(
+            "TV_CLOSE_1", "closed", {"closed_at": "2020-01-01T00:00:00"}
+        )
+    db.cleanup()

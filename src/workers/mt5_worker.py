@@ -138,10 +138,10 @@ class MT5Worker:
                     'failed',
                     {
                         'error_message': str(e),
-                        'closed_at': datetime.now(timezone.utc).isoformat()
+                        'closed_at': datetime.now(timezone.utc)
                     }
                 )
-    
+
     async def _handle_new_position(self, trade_data: Dict[str, Any], trade_id: str, start_time: int) -> None:
         """Handle opening a new position."""
         position_id = trade_data.get('execution_data', {}).get('positionId', 'N/A')
@@ -205,7 +205,7 @@ class MT5Worker:
                     'mt5_response': result,
                     'execution_time_ms': int(time.time() * 1000) - start_time,
                     'is_closed': not is_partial,
-                    'closed_at': datetime.now(timezone.utc).isoformat() if not is_partial else None
+                    'closed_at': datetime.now(timezone.utc) if not is_partial else None
                 }
                 
                 mt5_ticket = str(trade_data.get('mt5_ticket'))
@@ -236,10 +236,10 @@ class MT5Worker:
                     'failed',
                     {
                         'error_message': str(e),
-                        'closed_at': datetime.now(timezone.utc).isoformat()
+                        'closed_at': datetime.now(timezone.utc)
                     }
                 )
-    
+
     async def _handle_position_update(self, trade_data: Dict[str, Any], trade_id: str, start_time: int) -> None:
         """Handle updating TP/SL for an existing position."""
         try:
@@ -292,7 +292,7 @@ class MT5Worker:
                 'failed',
                 {
                     'error_message': str(e),
-                    'closed_at': datetime.now(timezone.utc).isoformat()
+                    'closed_at': datetime.now(timezone.utc)
                 }
             )
 
@@ -342,7 +342,7 @@ class MT5Worker:
             # First update database status
             await self.db.async_update_trade_status(trade['trade_id'], 'closed', {
                 'is_closed': True,
-                'closed_at': datetime.now(timezone.utc).isoformat()
+                'closed_at': datetime.now(timezone.utc)
             })
 
             # Log position details
@@ -365,7 +365,7 @@ class MT5Worker:
             if 'trade' in locals() and trade:
                 await self.db.async_update_trade_status(trade['trade_id'], 'failed', {
                     'error_message': str(e),
-                    'closed_at': datetime.now(timezone.utc).isoformat()
+                    'closed_at': datetime.now(timezone.utc)
                 })
     
     async def run_async(self):
