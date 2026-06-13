@@ -28,18 +28,18 @@ class TradingViewInterceptor:
     _instance = None
     _initialized = False
 
-    def __new__(cls):
+    def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super(TradingViewInterceptor, cls).__new__(cls)
         return cls._instance
 
-
-    def __init__(self):
+    def __init__(self, trade_handler=None, sync_instruments=True):
         if not self._initialized:  # Only initialize once
             self.base_path = f"{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
-            self.trade_handler = TradeHandler()
+            self.trade_handler = trade_handler if trade_handler is not None else TradeHandler()
             self.token_manager = GLOBAL_TOKEN_MANAGER
-            self._sync_instruments_sync()
+            if sync_instruments:
+                self._sync_instruments_sync()
 
             broker_url = os.getenv('TV_BROKER_URL', 'Unknown Broker')
             account_id = os.getenv('TV_ACCOUNT_ID', 'Unknown Account')
