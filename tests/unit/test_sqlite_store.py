@@ -32,3 +32,14 @@ def test_get_engine_creates_sqlite_file(temp_db_path):
         assert session.execute(text("SELECT 1")).scalar() == 1
     finally:
         session.close()
+
+
+def test_init_db_creates_trades_table(temp_db_path):
+    from sqlalchemy import inspect
+
+    from src.config.database import get_engine
+    from src.models.database import init_db
+
+    init_db()
+    inspector = inspect(get_engine())
+    assert "trades" in inspector.get_table_names()

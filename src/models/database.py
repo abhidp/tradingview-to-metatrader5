@@ -1,45 +1,17 @@
 import logging
-import time
 from datetime import datetime
 
 from sqlalchemy import (JSON, Boolean, Column, DateTime, Integer, Numeric,
-                        String, Text, create_engine, text)
-from sqlalchemy.exc import OperationalError
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+                        String, Text)
+from sqlalchemy.orm import declarative_base
 
-from src.config.database import DATABASE_URL
+from src.config.database import get_engine, get_session_factory
 
 logger = logging.getLogger(__name__)
 
-# Create SQLAlchemy engine with retries
-def create_db_engine(retries=5, delay=2):
-    """Create database engine with retry logic."""
-    for attempt in range(retries):
-        try:
-            engine = create_engine(
-                DATABASE_URL,
-                pool_size=20,
-                max_overflow=10,
-                pool_timeout=30,
-                pool_recycle=1800,
-                pool_pre_ping=True  # Add connection health check
-            )
-            # Test connection using proper SQLAlchemy syntax
-            with engine.connect() as conn:
-                conn.execute(text("SELECT 1"))
-                conn.commit()
-            return engine
-        except OperationalError as e:
-            if attempt == retries - 1:
-                logger.error(f"Failed to connect to database after {retries} attempts: {e}")
-                raise
-            logger.warning(f"Database connection attempt {attempt + 1} failed, retrying in {delay} seconds...")
-            time.sleep(delay)
-            
-# Create engine with retry logic
-engine = create_db_engine()
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Shared SQLite engine + session factory (see src/config/database.py).
+engine = get_engine()
+SessionLocal = get_session_factory()
 
 # Create base class for declarative models
 Base = declarative_base()
