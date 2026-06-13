@@ -16,7 +16,11 @@ def temp_db_path(tmp_path, monkeypatch):
     """Point the app at a throwaway SQLite file for the duration of a test."""
     db_file = tmp_path / "test_tv2mt5.db"
     monkeypatch.setenv("TV2MT5_DB_PATH", str(db_file))
-    return db_file
+    yield db_file
+    # Reset the lazy engine singletons so each test gets a fresh engine.
+    import src.config.database as _db
+    _db._engine = None
+    _db._SessionFactory = None
 
 
 @pytest.fixture
