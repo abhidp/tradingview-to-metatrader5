@@ -43,3 +43,11 @@ def test_get_symbol_settings_defaults(temp_db_path, monkeypatch):
     suffix, mapping = get_symbol_settings()
     assert suffix == ".a"
     assert mapping == {}
+
+
+def test_get_symbol_settings_honors_empty_suffix_from_store(temp_db_path, monkeypatch):
+    monkeypatch.delenv("MT5_DEFAULT_SUFFIX", raising=False)
+    store = SettingsStore()
+    store.set("symbols.default_suffix", "")  # explicit "no suffix"
+    suffix, _ = get_symbol_settings()
+    assert suffix == ""  # must be honored, not overridden by the .a default
