@@ -149,3 +149,12 @@ class EngineController:
         if self._error is None:
             self._state = EngineState.STOPPED
         return self.status()
+
+    async def restart(self) -> Status:
+        """Stop (if running) then start — used to apply settings changes.
+
+        stop() fully releases the proxy port before start() re-checks it, so this
+        avoids a client-side stop/start race.
+        """
+        await self.stop()
+        return await self.start()

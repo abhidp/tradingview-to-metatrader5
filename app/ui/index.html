@@ -11,9 +11,9 @@
     <nav class="sidebar">
       <div class="brand">TV2MT5</div>
       <a class="nav-item active" data-view="dashboard">Dashboard</a>
-      <a class="nav-item soon">Trades <span>soon</span></a>
-      <a class="nav-item soon">Symbols <span>soon</span></a>
-      <a class="nav-item soon">Settings <span>soon</span></a>
+      <a class="nav-item" data-view="trades">Trades</a>
+      <a class="nav-item" data-view="symbols">Symbols</a>
+      <a class="nav-item" data-view="settings">Settings</a>
       <a class="nav-item" data-view="logs">Logs</a>
     </nav>
 
@@ -33,6 +33,63 @@
           <div class="lab">RECENT ACTIVITY</div>
           <ul id="recent" class="recent"></ul>
         </div>
+      </section>
+
+      <section id="view-trades" class="view hidden">
+        <div class="topbar">
+          <div class="lab">TRADES</div>
+          <select id="trades-status">
+            <option value="">All</option>
+            <option value="completed">Completed</option>
+            <option value="failed">Failed</option>
+            <option value="pending">Pending</option>
+          </select>
+        </div>
+        <table class="grid">
+          <thead><tr><th>Time</th><th>Side</th><th>Instrument</th><th>Qty</th><th>Status</th><th>MT5#</th></tr></thead>
+          <tbody id="trades-body"></tbody>
+        </table>
+        <div class="pager">
+          <button id="trades-prev" class="btn ghost">‹ Prev</button>
+          <span id="trades-range" class="lab"></span>
+          <button id="trades-next" class="btn ghost">Next ›</button>
+        </div>
+      </section>
+
+      <section id="view-symbols" class="view hidden">
+        <div class="lab">SYMBOLS</div>
+        <div id="symbols-banner" class="banner hidden"></div>
+        <label class="field">Default suffix
+          <input id="sym-suffix" type="text" placeholder=".r" />
+        </label>
+        <div class="lab">TradingView → MT5 overrides</div>
+        <div id="sym-map"></div>
+        <button id="sym-add" class="btn ghost">+ Add row</button>
+        <div><button id="sym-save" class="btn start">Save</button></div>
+      </section>
+
+      <section id="view-settings" class="view hidden">
+        <div class="lab">SETTINGS</div>
+        <div id="settings-banner" class="banner hidden"></div>
+        <label class="field">MT5 account
+          <input id="set-account" type="number" />
+        </label>
+        <label class="field">MT5 password
+          <input id="set-password" type="password" placeholder="•••••• (unchanged)" />
+        </label>
+        <label class="field">MT5 server
+          <input id="set-server" type="text" />
+        </label>
+        <label class="field">MT5 terminal path
+          <input id="set-terminal" type="text" />
+        </label>
+        <label class="field">TradingView broker (auto-detected)
+          <input id="set-tv-broker" type="text" disabled />
+        </label>
+        <label class="field">TradingView account (auto-detected)
+          <input id="set-tv-account" type="text" disabled />
+        </label>
+        <div><button id="set-save" class="btn start">Save</button></div>
       </section>
 
       <section id="view-logs" class="view hidden">
