@@ -53,9 +53,15 @@ async def run_engine(listen_host: str = "127.0.0.1", listen_port: int = 8080) ->
     from src.core.interceptor import TradingViewInterceptor
     from src.workers.mt5_worker import MT5Worker
     from app.queue.inproc_queue import InProcQueue
+    from app.storage.settings_store import SettingsStore
+    from app.adapters.fusion_markets import FusionMarketsAdapter
 
     quiet_proxy_noise()
     init_db()
+
+    # Settings store is the source of truth; seed once from any existing .env.
+    store = SettingsStore()
+    store.seed_from_env_once()
 
     loop = asyncio.get_running_loop()
     queue = InProcQueue()
@@ -69,13 +75,16 @@ async def run_engine(listen_host: str = "127.0.0.1", listen_port: int = 8080) ->
     worker.init_inproc(loop=loop, queue=queue, db=db)
     queue.subscribe(worker.handle_message)
 
-    # Interceptor addon shares the trade handler.
+    # Broker adapter owns flow matching + broker-target auto-detect.
+    adapter = FusionMarketsAdapter(store=store)
+
+    # Interceptor addon shares the trade handler and adapter.
     TradingViewInterceptor._instance = None
     TradingViewInterceptor._initialized = False
     # sync_instruments=False: at cold start there is no auth token yet, so the
     # network instrument-sync can't run anyway; avoid the confusing startup error
     # and any risk of a blocking request stalling the loop before the proxy listens.
-    interceptor = TradingViewInterceptor(trade_handler=trade_handler, sync_instruments=False)
+    interceptor = TradingViewInterceptor(trade_handler=trade_handler, adapter=adapter, sync_instruments=False)
 
     master = build_master(interceptor, listen_host=listen_host, listen_port=listen_port)
 
