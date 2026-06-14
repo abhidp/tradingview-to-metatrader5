@@ -77,8 +77,6 @@ def test_no_target_never_matches(temp_db_path):
     assert adapter.matches(_Flow("https://broker.example.com/accounts/999/orders?requestId=x", "POST")) is False
 
 
-from app.adapters.base import AccountInfo
-
 TV_HEADERS = {"referer": "https://www.tradingview.com/", "origin": "https://www.tradingview.com"}
 
 
@@ -89,6 +87,16 @@ def test_detect_account_from_tradingview_flow(temp_db_path):
     info = a.detect_account(flow)
     assert info is not None
     assert info.broker_url == "broker.example.com"
+    assert info.account_id == "424242"
+
+
+def test_detect_account_from_origin_only_header(temp_db_path):
+    # Only the origin header carries tradingview.com (no referer).
+    a = FusionMarketsAdapter(store=SettingsStore())
+    flow = _Flow("https://broker.example.com/accounts/424242/orders?locale=en",
+                 "POST", {"origin": "https://www.tradingview.com"})
+    info = a.detect_account(flow)
+    assert info is not None
     assert info.account_id == "424242"
 
 

@@ -19,6 +19,12 @@ _ACCOUNT_RE = re.compile(r"https?://(?P<host>[^/]+)/accounts/(?P<acct>\d+)/")
 
 
 def _is_tradingview(flow) -> bool:
+    """True if the flow looks TradingView-originated.
+
+    Gates broker-target auto-detection only (not authentication), so a loose
+    substring check on referer/origin is an acceptable trade-off; spoofing it
+    at worst mis-detects an endpoint, never grants trust.
+    """
     headers = getattr(flow.request, "headers", {}) or {}
     referer = headers.get("referer", "") or ""
     origin = headers.get("origin", "") or ""
