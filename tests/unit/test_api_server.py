@@ -112,3 +112,48 @@ def test_index_is_served(temp_db_path):
     assert r.status_code == 200
     assert "TV2MT5" in r.text
     assert "Dashboard" in r.text
+
+
+def test_settings_get_redacts_and_put_writes(temp_db_path):
+    from app.storage.settings_store import SettingsStore
+    client, _ = _client(temp_db_path)
+    SettingsStore().set_secret("mt5.password", "secret")
+
+    r = client.get("/api/settings")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["mt5"]["password_set"] is True
+    assert "secret" not in r.text
+
+    r = client.put("/api/settings", json={"mt5": {"account": "777", "server": "Live"}})
+    assert r.status_code == 200
+    assert SettingsStore().get_int("mt5.account") == 777
+
+
+def test_settings_put_rejects_bad_account(temp_db_path):
+    client, _ = _client(temp_db_path)
+    r = client.put("/api/settings", json={"mt5": {"account": "abc"}})
+    assert r.status_code == 400
+
+
+def test_symbols_get_put(temp_db_path):
+    client, _ = _client(temp_db_path)
+    r = client.put("/api/symbols", json={"default_suffix": ".r", "map": {"USTEC": "NAS100"}})
+    assert r.status_code == 200
+    r = client.get("/api/symbols")
+    assert r.json() == {"default_suffix": ".r", "map": {"USTEC": "NAS100"}}
+
+
+def test_symbols_put_rejects_bad_map(temp_db_path):
+    client, _ = _client(temp_db_path)
+    r = client.put("/api/symbols", json={"default_suffix": ".r", "map": [1, 2]})
+    assert r.status_code == 400
+
+
+def test_restart_endpoint(temp_db_path):
+    client, _ = _client(temp_db_path)
+    client.post("/api/engine/start")
+    r = client.post("/api/engine/restart")
+    assert r.status_code == 200
+    assert r.json()["engine"] == "running"
+    client.post("/api/engine/stop")

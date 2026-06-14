@@ -3,11 +3,13 @@ import logging
 from pathlib import Path
 from typing import Callable, Optional
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import Body, FastAPI, HTTPException, Query
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.engine_controller import EngineController, ProxyPortInUseError
+from app.api.config_api import (SettingsValidationError, get_settings,
+                                get_symbols, update_settings, update_symbols)
 from app.api.logs import read_log_tail
 from app.api.trades import query_trades
 from app.paths import get_data_dir
@@ -36,6 +38,38 @@ def create_app(controller: EngineController, focus_callback: Optional[Callable] 
     @app.post("/api/engine/stop")
     async def stop_engine():
         return (await controller.stop()).to_dict()
+
+    @app.post("/api/engine/restart")
+    async def restart_engine():
+        try:
+            status = await controller.restart()
+        except ProxyPortInUseError as e:
+            raise HTTPException(status_code=409, detail=str(e))
+        return status.to_dict()
+
+    @app.get("/api/settings")
+    def read_settings():
+        return get_settings()
+
+    @app.put("/api/settings")
+    def write_settings(payload: dict = Body(...)):
+        try:
+            update_settings(payload)
+        except SettingsValidationError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        return {"ok": True}
+
+    @app.get("/api/symbols")
+    def read_symbols():
+        return get_symbols()
+
+    @app.put("/api/symbols")
+    def write_symbols(payload: dict = Body(...)):
+        try:
+            update_symbols(payload)
+        except SettingsValidationError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        return {"ok": True}
 
     @app.get("/api/logs")
     def get_logs(after: int = Query(0, ge=0)):
