@@ -54,3 +54,21 @@ def update_settings(data: dict) -> None:
     password = mt5.get("password")
     if password:
         s.set_secret("mt5.password", password)
+
+
+def get_symbols() -> dict:
+    s = SettingsStore()
+    suffix = s.get("symbols.default_suffix")
+    mapping = s.get_json("symbols.map", {}) or {}
+    return {"default_suffix": suffix if suffix is not None else "", "map": mapping}
+
+
+def update_symbols(data: dict) -> None:
+    """Write the default suffix + the TV->MT5 symbol map. Raises on a bad map."""
+    s = SettingsStore()
+    mapping = data.get("map", {})
+    if not isinstance(mapping, dict):
+        raise SettingsValidationError("Symbol map must be an object of TV->MT5 pairs")
+    clean = {str(k): str(v) for k, v in mapping.items()}
+    s.set("symbols.default_suffix", data.get("default_suffix", "") or "")
+    s.set("symbols.map", json.dumps(clean))

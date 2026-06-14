@@ -53,3 +53,28 @@ def test_update_settings_ignores_tv_target(temp_db_path):
     update_settings({"tv": {"broker_url": "evil", "account_id": "0"}, "mt5": {"server": "S"}})
     s = SettingsStore()
     assert s.get("tv.broker_url") is None
+
+
+def test_symbols_roundtrip(temp_db_path):
+    from app.api.config_api import get_symbols, update_symbols
+
+    update_symbols({"default_suffix": ".r", "map": {"USTEC": "NAS100", "DE40": "DAX40"}})
+    out = get_symbols()
+    assert out["default_suffix"] == ".r"
+    assert out["map"] == {"USTEC": "NAS100", "DE40": "DAX40"}
+
+
+def test_symbols_defaults_when_unset(temp_db_path):
+    from app.api.config_api import get_symbols
+
+    out = get_symbols()
+    assert out["default_suffix"] == ""
+    assert out["map"] == {}
+
+
+def test_update_symbols_rejects_non_dict_map(temp_db_path):
+    import pytest
+    from app.api.config_api import SettingsValidationError, update_symbols
+
+    with pytest.raises(SettingsValidationError):
+        update_symbols({"default_suffix": ".r", "map": ["not", "a", "dict"]})
