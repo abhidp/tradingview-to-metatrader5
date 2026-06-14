@@ -157,3 +157,11 @@ def test_restart_endpoint(temp_db_path):
     assert r.status_code == 200
     assert r.json()["engine"] == "running"
     client.post("/api/engine/stop")
+
+
+def test_index_has_all_tabs(temp_db_path):
+    client, _ = _client(temp_db_path)
+    html = client.get("/").text
+    for view in ("view-trades", "view-symbols", "view-settings"):
+        assert view in html
+    assert "soon" not in html  # future-tab placeholders removed
