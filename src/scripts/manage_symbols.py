@@ -24,7 +24,10 @@ current_dir = Path(__file__).resolve().parent
 project_root = current_dir.parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.config.mt5_config import MT5_CONFIG
+from src.config.mt5_config import get_mt5_config
+
+# Snapshot config at import; these standalone tools/scripts are short-lived.
+MT5_CONFIG = get_mt5_config()
 from src.config.mt5_symbol_config import SymbolMapper
 
 

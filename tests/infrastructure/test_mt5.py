@@ -4,7 +4,10 @@ import logging
 
 import MetaTrader5 as mt5
 
-from src.config.mt5_config import MT5_CONFIG
+from src.config.mt5_config import get_mt5_config
+
+# Snapshot config at import; these standalone tools/scripts are short-lived.
+MT5_CONFIG = get_mt5_config()
 from src.services.mt5_service import MT5Service
 
 logging.basicConfig(level=logging.INFO)
