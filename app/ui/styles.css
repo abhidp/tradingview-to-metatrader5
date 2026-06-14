@@ -27,7 +27,10 @@ body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; color: #1f2430
 .panel { background: #fff; border: 1px solid #e1e5ea; border-radius: 8px; padding: 12px; }
 .recent { list-style: none; margin: 8px 0 0; padding: 0; font-family: Consolas, monospace; font-size: 12px; }
 .recent li { padding: 3px 0; border-bottom: 1px solid #f0f2f5; }
-.logbox { background: #11151c; color: #d6dde8; font-family: Consolas, monospace; font-size: 12px; padding: 12px; border-radius: 8px; height: 70vh; overflow: auto; white-space: pre-wrap; }
+/* Logs view fills the window: the section becomes a flex column (only when
+   visible, so .hidden still wins), and the logbox grows to fill the space. */
+#view-logs:not(.hidden) { display: flex; flex-direction: column; height: calc(100vh - 36px); }
+.logbox { background: #11151c; color: #d6dde8; font-family: Consolas, monospace; font-size: 12px; padding: 12px; border-radius: 8px; flex: 1; min-height: 0; margin-top: 8px; overflow: auto; white-space: pre-wrap; }
 .grid { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e1e5ea; border-radius: 8px; overflow: hidden; }
 .grid th, .grid td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #f0f2f5; font-size: 13px; }
 .grid th { background: #f5f7fa; color: #6b7484; font-size: 11px; text-transform: uppercase; }
