@@ -6,7 +6,10 @@ through a SecretBox (plaintext by default).
 """
 import json
 import logging
+import os
 from typing import Optional
+
+from dotenv import load_dotenv
 
 from sqlalchemy import Column, String, Text
 from sqlalchemy.orm import declarative_base
@@ -26,6 +29,19 @@ class Settings(SettingsBase):
     __tablename__ = "settings"
     key = Column(String, primary_key=True)
     value = Column(Text)
+
+
+# Maps a .env variable -> (settings key, is_secret).
+_ENV_MAP = {
+    "TV_BROKER_URL": ("tv.broker_url", False),
+    "TV_ACCOUNT_ID": ("tv.account_id", False),
+    "MT5_ACCOUNT": ("mt5.account", False),
+    "MT5_PASSWORD": ("mt5.password", True),
+    "MT5_SERVER": ("mt5.server", False),
+    "MT5_TERMINAL_PATH": ("mt5.terminal_path", False),
+    "MT5_DEFAULT_SUFFIX": ("symbols.default_suffix", False),
+    "MT5_SYMBOL_MAP": ("symbols.map", False),
+}
 
 
 class SettingsStore:
@@ -112,3 +128,24 @@ class SettingsStore:
             return out
         finally:
             session.close()
+
+    def seed_from_env_once(self) -> bool:
+        """Import .env values into the store on first run only.
+
+        Returns True if it seeded this call, False if already seeded. After
+        seeding, the store is authoritative and .env is neither read nor needed.
+        """
+        if self.get_bool("meta.seeded"):
+            return False
+        load_dotenv()
+        for env_var, (key, is_secret) in _ENV_MAP.items():
+            value = os.getenv(env_var)
+            if value is None or value == "":
+                continue
+            if is_secret:
+                self.set_secret(key, value)
+            else:
+                self.set(key, value)
+        self.set("meta.seeded", "1")
+        logger.info("Seeded settings from .env (first run)")
+        return True

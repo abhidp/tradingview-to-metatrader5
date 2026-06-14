@@ -57,3 +57,36 @@ def test_get_int_falls_back_on_non_integer(temp_db_path):
     store = SettingsStore()
     store.set("mt5.account", "notanumber")
     assert store.get_int("mt5.account", 0) == 0
+
+
+def test_seed_from_env_once_imports_keys(temp_db_path, monkeypatch):
+    monkeypatch.setenv("TV_BROKER_URL", "broker.example.com")
+    monkeypatch.setenv("TV_ACCOUNT_ID", "999")
+    monkeypatch.setenv("MT5_ACCOUNT", "123456")
+    monkeypatch.setenv("MT5_PASSWORD", "hunter2")
+    monkeypatch.setenv("MT5_SERVER", "Demo-Server")
+    monkeypatch.setenv("MT5_TERMINAL_PATH", "C:/mt5/terminal64.exe")
+    monkeypatch.setenv("MT5_DEFAULT_SUFFIX", ".r")
+    monkeypatch.setenv("MT5_SYMBOL_MAP", '{"BTCUSD": "BTCUSD.r"}')
+
+    store = SettingsStore()
+    seeded = store.seed_from_env_once()
+
+    assert seeded is True
+    assert store.get("tv.broker_url") == "broker.example.com"
+    assert store.get_int("mt5.account") == 123456
+    assert store.get_secret("mt5.password") == "hunter2"
+    assert store.get("symbols.default_suffix") == ".r"
+    assert store.get_json("symbols.map") == {"BTCUSD": "BTCUSD.r"}
+    assert store.get_bool("meta.seeded") is True
+
+
+def test_seed_from_env_once_is_idempotent(temp_db_path, monkeypatch):
+    monkeypatch.setenv("MT5_SERVER", "First")
+    store = SettingsStore()
+    assert store.seed_from_env_once() is True
+
+    # A later run with a different env must NOT clobber stored/edited values.
+    monkeypatch.setenv("MT5_SERVER", "Second")
+    assert store.seed_from_env_once() is False
+    assert store.get("mt5.server") == "First"
