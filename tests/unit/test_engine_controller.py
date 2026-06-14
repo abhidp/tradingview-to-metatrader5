@@ -98,3 +98,32 @@ async def test_start_raises_when_proxy_port_busy(temp_db_path):
         assert c.status().engine == EngineState.STOPPED
     finally:
         s.close()
+
+
+async def test_error_is_reported_and_can_restart(temp_db_path):
+    class _FailingRunner:
+        def __init__(self, listen_host="127.0.0.1", listen_port=8080):
+            pass
+        async def serve(self):
+            raise RuntimeError("MT5 connection refused")
+        def shutdown(self):
+            pass
+        def mt5_connected(self):
+            return False
+        def tv_connected(self):
+            return False
+
+    seq = [_FailingRunner, _FakeRunner]
+
+    def factory(**kwargs):
+        return seq.pop(0)(**kwargs)
+
+    c = EngineController(runner_factory=factory, listen_port=0)
+    s = await c.start()
+    assert s.engine == EngineState.ERROR
+    assert s.error and "MT5 connection refused" in s.error  # specific reason preserved
+
+    # ERROR is recoverable: a second start() retries with a healthy runner.
+    s = await c.start()
+    assert s.engine == EngineState.RUNNING
+    await c.stop()

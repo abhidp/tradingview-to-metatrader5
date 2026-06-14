@@ -110,9 +110,14 @@ class EngineController:
         # Let wiring begin; catch an immediate failure before reporting RUNNING.
         await asyncio.sleep(0.1)
         if self._task.done():
-            exc = self._task.exception()
-            self._state = EngineState.ERROR
-            self._error = str(exc) if exc else "engine exited during startup"
+            # The task finished during startup. If _serve() already recorded an
+            # ERROR with a specific reason, keep it; otherwise report a generic
+            # early-exit. (start() can be called again to retry from ERROR — it
+            # replaces the runner/task, since ERROR is not in the no-op guard.)
+            if self._state != EngineState.ERROR:
+                exc = self._task.exception()
+                self._state = EngineState.ERROR
+                self._error = str(exc) if exc else "engine exited during startup"
         else:
             self._state = EngineState.RUNNING
         return self.status()
