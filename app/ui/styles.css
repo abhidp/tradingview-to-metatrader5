@@ -28,3 +28,16 @@ body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; color: #1f2430
 .recent { list-style: none; margin: 8px 0 0; padding: 0; font-family: Consolas, monospace; font-size: 12px; }
 .recent li { padding: 3px 0; border-bottom: 1px solid #f0f2f5; }
 .logbox { background: #11151c; color: #d6dde8; font-family: Consolas, monospace; font-size: 12px; padding: 12px; border-radius: 8px; height: 70vh; overflow: auto; white-space: pre-wrap; }
+.grid { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e1e5ea; border-radius: 8px; overflow: hidden; }
+.grid th, .grid td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #f0f2f5; font-size: 13px; }
+.grid th { background: #f5f7fa; color: #6b7484; font-size: 11px; text-transform: uppercase; }
+.pager { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.btn.ghost { background: #e8ecf2; color: #1f2430; }
+.btn:disabled { opacity: .5; cursor: default; }
+.field { display: block; margin: 10px 0; font-size: 12px; color: #6b7484; }
+.field input { display: block; width: 360px; max-width: 100%; margin-top: 4px; padding: 7px 9px; border: 1px solid #cfd6e4; border-radius: 5px; font-size: 14px; color: #1f2430; }
+.field input:disabled { background: #eef1f5; color: #6b7484; }
+.map-row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+.map-row input { padding: 6px 8px; border: 1px solid #cfd6e4; border-radius: 5px; }
+.banner.ok { background: #e6f4ea; color: #137333; }
+select#trades-status { padding: 6px 10px; border: 1px solid #cfd6e4; border-radius: 5px; }

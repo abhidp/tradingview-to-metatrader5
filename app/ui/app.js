@@ -10,6 +10,7 @@ async function refreshStatus() {
     pill.className = 'pill ' + (s.engine === 'running' ? 'run' : (s.engine === 'error' ? 'stop' : (s.engine === 'starting' || s.engine === 'stopping' ? 'busy' : 'stop')));
     pill.textContent = '● ' + s.engine.charAt(0).toUpperCase() + s.engine.slice(1);
     const running = s.engine === 'running';
+    window._engineRunning = running;
     btn.textContent = running ? '■ Stop' : '▶ Start Copying';
     btn.className = 'btn ' + (running ? 'stop' : 'start');
     btn.disabled = (s.engine === 'starting' || s.engine === 'stopping');
@@ -105,3 +106,89 @@ async function loadTrades() {
 $('trades-status').addEventListener('change', () => { tradesOffset = 0; loadTrades(); });
 $('trades-prev').addEventListener('click', () => { tradesOffset = Math.max(0, tradesOffset - TRADES_PAGE); loadTrades(); });
 $('trades-next').addEventListener('click', () => { tradesOffset += TRADES_PAGE; loadTrades(); });
+
+// --- Symbols tab ---
+function symbolRow(tv = '', mt5 = '') {
+  const div = document.createElement('div');
+  div.className = 'map-row';
+  div.innerHTML = `<input class="map-tv" placeholder="BTCUSD" value="${tv}" />
+    <span>→</span>
+    <input class="map-mt5" placeholder="BTCUSD.r" value="${mt5}" />
+    <button class="btn ghost map-del">✕</button>`;
+  div.querySelector('.map-del').addEventListener('click', () => div.remove());
+  return div;
+}
+
+async function loadSymbols() {
+  try {
+    const d = await (await fetch('/api/symbols')).json();
+    $('sym-suffix').value = d.default_suffix || '';
+    const box = $('sym-map');
+    box.innerHTML = '';
+    Object.entries(d.map || {}).forEach(([tv, mt5]) => box.appendChild(symbolRow(tv, mt5)));
+  } catch (e) {}
+}
+
+$('sym-add').addEventListener('click', () => $('sym-map').appendChild(symbolRow()));
+
+$('sym-save').addEventListener('click', async () => {
+  const map = {};
+  document.querySelectorAll('#sym-map .map-row').forEach(r => {
+    const tv = r.querySelector('.map-tv').value.trim();
+    const mt5 = r.querySelector('.map-mt5').value.trim();
+    if (tv) map[tv] = mt5;
+  });
+  const body = { default_suffix: $('sym-suffix').value.trim(), map };
+  const r = await fetch('/api/symbols', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  showSaveResult($('symbols-banner'), r);
+});
+
+// --- Settings tab ---
+async function loadSettings() {
+  try {
+    const d = await (await fetch('/api/settings')).json();
+    $('set-account').value = d.mt5.account ?? '';
+    $('set-server').value = d.mt5.server || '';
+    $('set-terminal').value = d.mt5.terminal_path || '';
+    $('set-password').value = '';
+    $('set-password').placeholder = d.mt5.password_set ? '•••••• (unchanged)' : 'not set';
+    $('set-tv-broker').value = d.tv.broker_url || '';
+    $('set-tv-account').value = d.tv.account_id || '';
+  } catch (e) {}
+}
+
+$('set-save').addEventListener('click', async () => {
+  const mt5 = {
+    account: $('set-account').value.trim(),
+    server: $('set-server').value.trim(),
+    terminal_path: $('set-terminal').value.trim(),
+  };
+  const pw = $('set-password').value;
+  if (pw) mt5.password = pw;
+  const r = await fetch('/api/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mt5 }) });
+  showSaveResult($('settings-banner'), r, true);
+});
+
+// --- shared save-result + restart banner ---
+async function showSaveResult(banner, resp, reload) {
+  if (!resp.ok) {
+    const j = await resp.json().catch(() => ({}));
+    banner.textContent = j.detail || 'Save failed';
+    banner.className = 'banner';
+    return;
+  }
+  if (reload) loadSettings();
+  if (window._engineRunning) {
+    banner.innerHTML = 'Saved — restart the engine to apply. <button id="restart-now" class="btn start">Restart engine</button>';
+    banner.className = 'banner ok';
+    $('restart-now').addEventListener('click', async () => {
+      banner.textContent = 'Restarting…';
+      await fetch('/api/engine/restart', { method: 'POST' });
+      refreshStatus();
+      banner.textContent = 'Engine restarted.';
+    });
+  } else {
+    banner.textContent = 'Saved.';
+    banner.className = 'banner ok';
+  }
+}
