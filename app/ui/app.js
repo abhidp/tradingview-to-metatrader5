@@ -1,4 +1,5 @@
 const $ = (id) => document.getElementById(id);
+function esc(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 let logCursor = 0;
 
 function dot(on) { return on ? '<span class="dot-on">●</span>' : '<span class="dot-off">○</span>'; }
@@ -26,7 +27,7 @@ async function refreshTrades() {
   try {
     const d = await (await fetch('/api/trades?limit=10')).json();
     $('recent').innerHTML = (d.trades || []).map(t =>
-      `<li>${t.created_at ? t.created_at.slice(11, 19) : ''} ${t.side || ''} ${t.instrument || ''} x${t.quantity || ''} — ${t.status || ''}</li>`
+      `<li>${t.created_at ? t.created_at.slice(11, 19) : ''} ${esc(t.side)} ${esc(t.instrument)} x${esc(t.quantity)} — ${esc(t.status)}</li>`
     ).join('') || '<li>No trades yet</li>';
   } catch (e) {}
 }
@@ -88,11 +89,11 @@ async function loadTrades() {
     const rows = d.trades || [];
     $('trades-body').innerHTML = rows.map(t => `<tr>
       <td>${t.created_at ? t.created_at.replace('T', ' ').slice(0, 19) : ''}</td>
-      <td>${t.side || ''}</td>
-      <td>${t.instrument || ''}</td>
-      <td>${t.quantity || ''}</td>
-      <td>${t.status || ''}</td>
-      <td>${t.mt5_ticket || ''}</td>
+      <td>${esc(t.side)}</td>
+      <td>${esc(t.instrument)}</td>
+      <td>${esc(t.quantity)}</td>
+      <td>${esc(t.status)}</td>
+      <td>${esc(t.mt5_ticket)}</td>
     </tr>`).join('') || '<tr><td colspan="6">No trades</td></tr>';
     const total = d.total || 0;
     const from = total ? tradesOffset + 1 : 0;
@@ -111,15 +112,18 @@ $('trades-next').addEventListener('click', () => { tradesOffset += TRADES_PAGE; 
 function symbolRow(tv = '', mt5 = '') {
   const div = document.createElement('div');
   div.className = 'map-row';
-  div.innerHTML = `<input class="map-tv" placeholder="BTCUSD" value="${tv}" />
+  div.innerHTML = `<input class="map-tv" placeholder="BTCUSD" />
     <span>→</span>
-    <input class="map-mt5" placeholder="BTCUSD.r" value="${mt5}" />
+    <input class="map-mt5" placeholder="BTCUSD.r" />
     <button class="btn ghost map-del">✕</button>`;
+  div.querySelector('.map-tv').value = tv;
+  div.querySelector('.map-mt5').value = mt5;
   div.querySelector('.map-del').addEventListener('click', () => div.remove());
   return div;
 }
 
 async function loadSymbols() {
+  $('symbols-banner').classList.add('hidden');
   try {
     const d = await (await fetch('/api/symbols')).json();
     $('sym-suffix').value = d.default_suffix || '';
@@ -145,6 +149,7 @@ $('sym-save').addEventListener('click', async () => {
 
 // --- Settings tab ---
 async function loadSettings() {
+  $('settings-banner').classList.add('hidden');
   try {
     const d = await (await fetch('/api/settings')).json();
     $('set-account').value = d.mt5.account ?? '';
