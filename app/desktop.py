@@ -7,6 +7,7 @@ Process model (Plan 3a):
 Single-instance guard: bind the control port; if taken, focus the running app and exit.
 """
 import asyncio
+import ctypes
 import logging
 import os
 import threading
@@ -26,6 +27,55 @@ logger = logging.getLogger("Desktop")
 _window = None
 _api_loop = None
 _server = None
+_controller = None
+_tray = None
+_quitting = False
+_ctrl_handler_ref = None
+
+
+def _quit() -> None:
+    """Stop the engine cleanly, remove the tray icon, and terminate the process.
+
+    Shared by tray Quit and the console Ctrl+C handler. The engine stop releases
+    the proxy port + MT5 link gracefully; os._exit then guarantees termination
+    (pywebview + WinForms/.NET + WebView2 keep the process alive after the window
+    is destroyed, so a normal return would hang).
+    """
+    global _quitting
+    if _quitting:  # guard against tray Quit and Ctrl+C racing
+        return
+    _quitting = True
+    if _api_loop is not None and _api_loop.is_running() and _controller is not None:
+        try:
+            asyncio.run_coroutine_threadsafe(_controller.stop(), _api_loop).result(timeout=5.0)
+        except Exception:
+            pass
+    if _tray is not None:
+        try:
+            _tray.stop()
+        except Exception:
+            pass
+    os._exit(0)
+
+
+def _install_console_ctrl_handler() -> None:
+    """Make Ctrl+C / Ctrl+Break / console-close exit the app from the terminal.
+
+    webview.start() blocks the main thread in native GUI code, so Python's SIGINT
+    handler never runs. A Win32 console control handler runs on its own OS thread,
+    so it fires regardless and drives the clean shutdown in _quit().
+    """
+    if os.name != "nt":
+        return
+    global _ctrl_handler_ref
+    HANDLER = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.c_uint)
+
+    def _on_ctrl(ctrl_type):  # 0=C_EVENT 1=BREAK 2=CLOSE 5=LOGOFF 6=SHUTDOWN
+        _quit()
+        return True
+
+    _ctrl_handler_ref = HANDLER(_on_ctrl)  # keep a reference so it isn't GC'd
+    ctypes.windll.kernel32.SetConsoleCtrlHandler(_ctrl_handler_ref, True)
 
 
 def _configure_webview_env() -> None:
@@ -68,7 +118,7 @@ def _focus_window() -> None:
 
 
 def main() -> None:
-    global _window
+    global _window, _controller, _tray
     _configure_webview_env()
     setup_logging()
 
@@ -85,33 +135,16 @@ def main() -> None:
     # is tiny and the is_another_instance_running check above already gated us.
     lock.close()
 
-    controller = EngineController()
+    _controller = EngineController()
 
-    api_thread = threading.Thread(target=_run_api, args=(controller,), daemon=True)
+    api_thread = threading.Thread(target=_run_api, args=(_controller,), daemon=True)
     api_thread.start()
 
-    def on_quit(icon):
-        # 1) Stop the engine cleanly first so the proxy port + MT5 link release
-        #    gracefully (not on abrupt exit).
-        if _api_loop is not None and _api_loop.is_running():
-            try:
-                asyncio.run_coroutine_threadsafe(controller.stop(), _api_loop).result(timeout=5.0)
-            except Exception:
-                pass
-        # 2) Remove the tray icon so it doesn't linger as a "ghost" in the notify area.
-        try:
-            icon.stop()
-        except Exception:
-            pass
-        # 3) Force-terminate. pywebview + WinForms/.NET (pythonnet) + the WebView2
-        #    runtime keep the process alive after the window is destroyed
-        #    (webview.start() does not return cleanly), so a normal return would
-        #    leave the process hung. The engine is already torn down, so exiting
-        #    hard here is safe and guarantees a clean quit.
-        os._exit(0)
+    # Ctrl+C / Ctrl+Break in the launching terminal exits cleanly (see _quit).
+    _install_console_ctrl_handler()
 
-    tray = build_tray(on_open=_focus_window, on_quit=on_quit)
-    tray_thread = threading.Thread(target=tray.run, daemon=True)
+    _tray = build_tray(on_open=_focus_window, on_quit=lambda icon: _quit())
+    tray_thread = threading.Thread(target=_tray.run, daemon=True)
     tray_thread.start()
 
     _window = webview.create_window(
