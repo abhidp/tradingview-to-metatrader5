@@ -24,6 +24,12 @@ def test_accepts_numbers_and_decimals():
     assert fmt_num(Decimal("0.030")) == "0.03"
 
 
+def test_zero_renders_as_zero_not_empty():
+    assert fmt_num(0) == "0"
+    assert fmt_num(0.0) == "0"
+    assert fmt_num("0.0000000000") == "0"
+
+
 def test_empty_and_none_and_unparsable():
     assert fmt_num(None) == ""
     assert fmt_num("") == ""
