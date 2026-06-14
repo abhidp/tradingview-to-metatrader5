@@ -44,6 +44,11 @@ async function refreshLogs() {
   } catch (e) {}
 }
 
+$('logs-bottom').addEventListener('click', () => {
+  const box = $('logbox');
+  box.scrollTop = box.scrollHeight;
+});
+
 $('toggle-btn').addEventListener('click', async () => {
   const running = $('toggle-btn').className.includes('stop');
   const url = running ? '/api/engine/stop' : '/api/engine/start';
