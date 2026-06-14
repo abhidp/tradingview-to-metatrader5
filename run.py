@@ -27,13 +27,34 @@ class Runner:
         """Start the MT5 worker."""
         subprocess.run(["python", "src/scripts/start_worker.py"])
 
+    @staticmethod
+    def _resolve_python(root: Path) -> str:
+        """Return the project venv's Python interpreter under `root`, or fall back
+        to the current interpreter.
+
+        The single-process and desktop apps need the venv-installed deps
+        (mitmproxy, pywebview, ...). Resolving the venv interpreter here lets
+        `python run.py desktop` work even when run.py is launched with a bare
+        system Python that lacks those deps.
+        """
+        for candidate in (
+            root / "venv" / "Scripts" / "python.exe",  # Windows venv layout
+            root / "venv" / "bin" / "python",          # POSIX venv layout
+        ):
+            if candidate.exists():
+                return str(candidate)
+        return sys.executable
+
+    def _project_python(self) -> str:
+        return self._resolve_python(Path(__file__).resolve().parent)
+
     def run_app(self):
         """Start the unified single-process engine (no Docker/Redis/Postgres)."""
-        subprocess.run([sys.executable, "-m", "app"])
+        subprocess.run([self._project_python(), "-m", "app"])
 
     def run_desktop(self):
         """Launch the desktop app (window + tray + Start/Stop)."""
-        subprocess.run([sys.executable, "-m", "app.desktop"])
+        subprocess.run([self._project_python(), "-m", "app.desktop"])
 
     def update_requirements(self):
         """Update requirements.txt."""
