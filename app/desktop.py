@@ -119,6 +119,7 @@ def main() -> None:
         f"http://{CONTROL_HOST}:{CONTROL_PORT}/",
         width=900,
         height=620,
+        text_select=True,  # allow selecting/copying log + dashboard text (pywebview defaults to False)
     )
 
     def _on_closing():
