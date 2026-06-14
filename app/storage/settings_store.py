@@ -54,6 +54,9 @@ class SettingsStore:
             else:
                 row.value = str(value)
             session.commit()
+        except Exception:
+            session.rollback()
+            raise
         finally:
             session.close()
 
@@ -61,7 +64,13 @@ class SettingsStore:
 
     def get_int(self, key: str, default: Optional[int] = None) -> Optional[int]:
         raw = self.get(key)
-        return default if raw is None else int(raw)
+        if raw is None:
+            return default
+        try:
+            return int(raw)
+        except (ValueError, TypeError):
+            logger.warning("Non-integer value for %s; using default", key)
+            return default
 
     def get_bool(self, key: str, default: bool = False) -> bool:
         raw = self.get(key)

@@ -51,3 +51,9 @@ def test_all_redacts_secret_keys(temp_db_path):
     dumped = store.all(redact_secrets=True)
     assert dumped["mt5.server"] == "Demo"
     assert dumped["mt5.password"] == "***"
+
+
+def test_get_int_falls_back_on_non_integer(temp_db_path):
+    store = SettingsStore()
+    store.set("mt5.account", "notanumber")
+    assert store.get_int("mt5.account", 0) == 0
