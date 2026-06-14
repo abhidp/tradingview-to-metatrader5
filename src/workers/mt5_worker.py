@@ -11,6 +11,7 @@ from src.services.mt5_service import MT5Service, find_mt5_terminals
 from src.services.tradingview_service import TradingViewService
 from src.utils.database_handler import DatabaseHandler
 from app.queue.inproc_queue import InProcQueue
+from src.utils.number_format import fmt_num
 from src.utils.token_manager import GLOBAL_TOKEN_MANAGER
 
 logger = logging.getLogger('MT5Worker')
@@ -163,7 +164,7 @@ class MT5Worker:
             direction_emoji = "BUY🔼" if direction == 'buy' else "SELL🔻"
             execution_price = result.get('price') or trade_data.get('execution_data', {}).get('price', 0.0)
 
-            print(f"✔  Position OPENED: {direction_emoji} {result.get('symbol')} x {result.get('volume')} @ {execution_price}")
+            print(f"✔  Position OPENED: {direction_emoji} {result.get('symbol')} x {fmt_num(result.get('volume'))} @ {fmt_num(execution_price)}")
             print(f"🔗 References: TV# {position_id} --> MT5# {mt5_ticket}")
             
             if result.get('take_profit') or result.get('stop_loss'):
@@ -216,12 +217,12 @@ class MT5Worker:
                 direction_emoji = "SELL🔻" if direction == 'buy' else "BUY🔼"
                 execution_price = result.get('price') or trade_data.get('execution_data', {}).get('price', 0.0)
 
-                print(f"{'🛡  Position partially closed' if is_partial else '📌 Position CLOSED'}: {direction_emoji} {result.get('symbol')} {result.get('volume')} @ {execution_price}")
+                print(f"{'🛡  Position partially closed' if is_partial else '📌 Position CLOSED'}: {direction_emoji} {result.get('symbol')} {fmt_num(result.get('volume'))} @ {fmt_num(execution_price)}")
                 print(f"🔗 References: TV# {position_id} --> MT5# {mt5_ticket}")
                 
                 if is_partial:
                     remaining = result.get('remaining_volume', 0)
-                    print(f"🔳 Remaining volume: {remaining}")
+                    print(f"🔳 Remaining volume: {fmt_num(remaining)}")
                     
                     
                 print(f"⚡ Execution time: {update_data['execution_time_ms']}ms\n")
@@ -267,7 +268,7 @@ class MT5Worker:
                     'stop_loss': result.get('stop_loss')
                 }
 
-                print(f"💱 Position updated for {result.get('symbol')} x {trade.get('quantity')} @ {trade.get('execution_price')}")
+                print(f"💱 Position updated for {result.get('symbol')} x {fmt_num(trade.get('quantity'))} @ {fmt_num(trade.get('execution_price'))}")
                 print(f"🔗 References: TV# {position_id} --> MT5# {mt5_ticket}")
                 
                 if result.get('take_profit') or result.get('stop_loss'):
@@ -357,7 +358,7 @@ class MT5Worker:
                     logger.error(f"❌ Failed to close TV position: {result['error']}\n")
                 return
 
-            print(f"📌 Closed {direction_emoji} {trade['instrument']} x {trade['quantity']}")
+            print(f"📌 Closed {direction_emoji} {trade['instrument']} x {fmt_num(trade['quantity'])}")
             print(f"🔗 References: TV# {position_id} <-- MT5# {ticket}\n")
 
         except Exception as e:

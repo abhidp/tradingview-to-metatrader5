@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple
 
 from src.config.database import get_session_factory
 from src.models.database import Trade
+from src.utils.number_format import fmt_num
 
 
 def _serialize(t) -> dict:
@@ -11,7 +12,7 @@ def _serialize(t) -> dict:
         "trade_id": getattr(t, "trade_id", None),
         "instrument": getattr(t, "instrument", None),
         "side": getattr(t, "side", None),
-        "quantity": str(getattr(t, "quantity", "")),
+        "quantity": fmt_num(getattr(t, "quantity", "")),
         "status": getattr(t, "status", None),
         "mt5_ticket": getattr(t, "mt5_ticket", None),
         "created_at": created.isoformat() if created else None,
