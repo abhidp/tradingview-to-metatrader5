@@ -31,6 +31,10 @@ class Runner:
         """Start the unified single-process engine (no Docker/Redis/Postgres)."""
         subprocess.run([sys.executable, "-m", "app"])
 
+    def run_desktop(self):
+        """Launch the desktop app (window + tray + Start/Stop)."""
+        subprocess.run([sys.executable, "-m", "app.desktop"])
+
     def update_requirements(self):
         """Update requirements.txt."""
         subprocess.run(["python", "src/scripts/generate_requirements.py"])
@@ -87,6 +91,7 @@ class Runner:
         print("-" * 50)
         commands = {
             "start": "Start the unified single-process app (proxy + worker)",
+            "desktop": "Launch the desktop app (window + tray + Start/Stop)",
             "proxy": "Start the TradingView proxy server",
             "worker": "Start the MT5 worker",
             "update-reqs": "Update requirements.txt",
@@ -157,6 +162,7 @@ def main():
     # Command mapping
     commands = {
         'start': runner.run_app,
+        'desktop': runner.run_desktop,
         'proxy': runner.run_proxy,
         'worker': runner.run_worker,
         'update-reqs': runner.update_requirements,
