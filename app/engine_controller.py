@@ -89,3 +89,55 @@ class EngineController:
             proxy={"listening": running, "port": self.listen_port},
             error=self._error,
         )
+
+    async def start(self) -> Status:
+        if self._state in (EngineState.STARTING, EngineState.RUNNING):
+            return self.status()
+        if self.listen_port != 0 and not _port_free(self.listen_host, self.listen_port):
+            self._error = (
+                f"Proxy port {self.listen_port} is in use — another copier may be running."
+            )
+            self._state = EngineState.STOPPED
+            raise ProxyPortInUseError(self._error)
+
+        self._error = None
+        self._state = EngineState.STARTING
+        self._runner = self._runner_factory(
+            listen_host=self.listen_host, listen_port=self.listen_port
+        )
+        self._task = asyncio.create_task(self._serve())
+
+        # Let wiring begin; catch an immediate failure before reporting RUNNING.
+        await asyncio.sleep(0.1)
+        if self._task.done():
+            exc = self._task.exception()
+            self._state = EngineState.ERROR
+            self._error = str(exc) if exc else "engine exited during startup"
+        else:
+            self._state = EngineState.RUNNING
+        return self.status()
+
+    async def _serve(self) -> None:
+        try:
+            await self._runner.serve()
+        except Exception as e:  # noqa: BLE001 - surfaced via status().error
+            logger.error("Engine runner failed: %s", e)
+            self._error = str(e)
+            self._state = EngineState.ERROR
+        finally:
+            if self._state != EngineState.ERROR:
+                self._state = EngineState.STOPPED
+
+    async def stop(self) -> Status:
+        if self._state not in (EngineState.RUNNING, EngineState.STARTING):
+            return self.status()
+        self._state = EngineState.STOPPING
+        if self._runner is not None:
+            self._runner.shutdown()
+        if self._task is not None:
+            await self._task
+        self._runner = None
+        self._task = None
+        if self._error is None:
+            self._state = EngineState.STOPPED
+        return self.status()

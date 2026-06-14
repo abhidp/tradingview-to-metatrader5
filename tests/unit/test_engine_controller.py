@@ -1,4 +1,8 @@
-from app.engine_controller import EngineController, EngineState
+import asyncio
+
+import pytest
+
+from app.engine_controller import EngineController, EngineState, ProxyPortInUseError
 
 
 def test_initial_status_is_stopped(temp_db_path):
@@ -36,3 +40,61 @@ def test_port_free_detects_busy_port(temp_db_path):
         s.close()
     # after close, the port is free again
     assert _port_free("127.0.0.1", busy_port) is True
+
+
+class _FakeRunner:
+    """Simulates the engine: serve() blocks until shutdown() is called."""
+
+    def __init__(self, listen_host="127.0.0.1", listen_port=8080):
+        self._stop = asyncio.Event()
+        self.served = False
+        self.shut = False
+
+    async def serve(self):
+        self.served = True
+        await self._stop.wait()
+
+    def shutdown(self):
+        self.shut = True
+        self._stop.set()
+
+    def mt5_connected(self):
+        return True
+
+    def tv_connected(self):
+        return True
+
+
+async def test_start_then_stop_transitions(temp_db_path):
+    c = EngineController(runner_factory=_FakeRunner, listen_port=0)
+    s = await c.start()
+    assert s.engine == EngineState.RUNNING
+    assert s.proxy["listening"] is True
+    assert s.mt5["connected"] is True
+
+    s = await c.stop()
+    assert s.engine == EngineState.STOPPED
+    assert s.proxy["listening"] is False
+
+
+async def test_start_is_idempotent_when_running(temp_db_path):
+    c = EngineController(runner_factory=_FakeRunner, listen_port=0)
+    await c.start()
+    s = await c.start()  # second call is a no-op
+    assert s.engine == EngineState.RUNNING
+    await c.stop()
+
+
+async def test_start_raises_when_proxy_port_busy(temp_db_path):
+    import socket as sock
+    s = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
+    s.bind(("127.0.0.1", 0))
+    s.listen(1)
+    busy = s.getsockname()[1]
+    try:
+        c = EngineController(runner_factory=_FakeRunner, listen_port=busy)
+        with pytest.raises(ProxyPortInUseError):
+            await c.start()
+        assert c.status().engine == EngineState.STOPPED
+    finally:
+        s.close()
