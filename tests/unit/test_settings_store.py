@@ -74,6 +74,7 @@ def test_seed_from_env_once_imports_keys(temp_db_path, monkeypatch):
 
     assert seeded is True
     assert store.get("tv.broker_url") == "broker.example.com"
+    assert store.get("tv.account_id") == "999"
     assert store.get_int("mt5.account") == 123456
     assert store.get_secret("mt5.password") == "hunter2"
     assert store.get("symbols.default_suffix") == ".r"

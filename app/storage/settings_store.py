@@ -137,6 +137,9 @@ class SettingsStore:
         """
         if self.get_bool("meta.seeded"):
             return False
+        # load_dotenv() does not override vars already set in the process
+        # environment (override=False by default), so system env takes
+        # precedence over the .env file during seeding. This is intentional.
         load_dotenv()
         for env_var, (key, is_secret) in _ENV_MAP.items():
             value = os.getenv(env_var)
