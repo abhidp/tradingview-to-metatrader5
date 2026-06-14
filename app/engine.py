@@ -41,7 +41,7 @@ def build_master(addon, listen_host: str = "127.0.0.1", listen_port: int = 8080)
 
 
 async def run_engine(listen_host: str = "127.0.0.1", listen_port: int = 8080) -> None:
-    """Wire SQLite + queue + worker + interceptor onto one loop and run.
+    """Wire SQLite + settings store + queue + worker + broker adapter + interceptor onto one loop and run.
 
     This is the single-process replacement for the old two-terminal
     (start_proxy.py + start_worker.py) setup. No Docker, Redis, or Postgres.

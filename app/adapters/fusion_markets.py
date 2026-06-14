@@ -36,6 +36,10 @@ class FusionMarketsAdapter:
 
     def __init__(self, store: Optional[SettingsStore] = None) -> None:
         self.store = store if store is not None else SettingsStore()
+        # _broker_url/_account_id are an in-memory snapshot of the stored target,
+        # read once here for the hot-path matches()/base_path. persist_account()
+        # is the write path that keeps both the store and this cache in sync; any
+        # other writer of tv.broker_url/tv.account_id must refresh this instance.
         self._broker_url = self.store.get("tv.broker_url")
         self._account_id = self.store.get("tv.account_id")
 
