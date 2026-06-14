@@ -1,18 +1,16 @@
 import json
 import logging
-import os
 from pathlib import Path
 from typing import Dict
 
-from dotenv import load_dotenv
+from app.config_accessors import get_symbol_settings
 
 logger = logging.getLogger('InstrumentManager')
 
 class InstrumentManager:
     def __init__(self):
-        load_dotenv()
         self.config_path = Path(__file__).parent.parent.parent / 'data' / 'instruments.json'
-        self.default_suffix = os.getenv('MT5_DEFAULT_SUFFIX', '')
+        self.default_suffix, _ = get_symbol_settings()
         self.instruments = self._load_config()
         
     def _load_config(self) -> Dict:

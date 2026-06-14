@@ -51,3 +51,18 @@ def test_get_symbol_settings_honors_empty_suffix_from_store(temp_db_path, monkey
     store.set("symbols.default_suffix", "")  # explicit "no suffix"
     suffix, _ = get_symbol_settings()
     assert suffix == ""  # must be honored, not overridden by the .a default
+
+
+def test_config_modules_import_without_env(temp_db_path, monkeypatch):
+    """A fresh install has no MT5_* env; importing config must not raise."""
+    for var in ("MT5_ACCOUNT", "MT5_PASSWORD", "MT5_SERVER", "MT5_TERMINAL_PATH"):
+        monkeypatch.delenv(var, raising=False)
+
+    import importlib
+
+    import src.config.mt5_config as mt5_config
+    importlib.reload(mt5_config)
+    assert hasattr(mt5_config, "get_mt5_config")
+    # Calling it returns Nones rather than raising.
+    cfg = mt5_config.get_mt5_config()
+    assert cfg["account"] is None

@@ -1,25 +1,22 @@
 import asyncio
 import logging
-import os
 from typing import Any, Dict
 
 import aiohttp
-from dotenv import load_dotenv
 
 from src.utils.token_manager import TokenManager
+from app.config_accessors import get_tv_target
 
 logger = logging.getLogger('TradingViewService')
 
-load_dotenv()
-TV_BROKER_URL = os.getenv('TV_BROKER_URL')
-TV_ACCOUNT_ID = os.getenv('TV_ACCOUNT_ID')
 
 class TradingViewService:
     """Service to interact with TradingView API."""
-    
+
     def __init__(self, token_manager: TokenManager):
         self.token_manager = token_manager
-        self.base_url = f"https://{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
+        broker_url, account_id = get_tv_target()
+        self.base_url = f"https://{broker_url}/accounts/{account_id}"
         self.session = None
         self.loop = asyncio.get_event_loop()
         # Use local proxy for routing through mitmproxy

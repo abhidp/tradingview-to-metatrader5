@@ -4,11 +4,9 @@ import signal
 import time
 from datetime import datetime, timezone
 from typing import Any, Dict, Set
-import os
-from pathlib import Path
 import MetaTrader5 as mt5
 
-from src.config.mt5_config import MT5_CONFIG
+from src.config.mt5_config import get_mt5_config
 from src.services.mt5_service import MT5Service, find_mt5_terminals
 from src.services.tradingview_service import TradingViewService
 from src.utils.database_handler import DatabaseHandler
@@ -34,14 +32,15 @@ class MT5Worker:
         asyncio.set_event_loop(self.loop)
         
         # Check MT5 terminal path before initialization
-        terminal_path = os.getenv('MT5_TERMINAL_PATH')
+        mt5_config = get_mt5_config()
+        terminal_path = mt5_config['terminal_path']
         if not terminal_path:
-            print("\n⚠️  MT5_TERMINAL_PATH not set in .env")
+            print("\n⚠️  MT5 terminal path not configured")
             print("Available MT5 terminals:")
             terminals = find_mt5_terminals()
             for i, path in enumerate(terminals, 1):
                 print(f"{i}. {path}")
-            print("\nAdd your chosen path to .env as MT5_TERMINAL_PATH=<path>")
+            print("\nConfigure the terminal path in Settings (or .env until then).")
         
         # Initialize services
         self.queue = InProcQueue()
@@ -50,13 +49,13 @@ class MT5Worker:
         self.db = DatabaseHandler()
         
         self.mt5 = MT5Service(
-            account=MT5_CONFIG['account'],
-            password=MT5_CONFIG['password'],
-            server=MT5_CONFIG['server'],
+            account=mt5_config['account'],
+            password=mt5_config['password'],
+            server=mt5_config['server'],
             db_handler=self.db
         )
         self.mt5.set_loop(self.loop)
-        
+
         self.tv_service = TradingViewService(
             token_manager=GLOBAL_TOKEN_MANAGER
         )
@@ -71,10 +70,11 @@ class MT5Worker:
         self.queue = queue
         self.db = db
 
+        mt5_config = get_mt5_config()
         self.mt5 = MT5Service(
-            account=MT5_CONFIG['account'],
-            password=MT5_CONFIG['password'],
-            server=MT5_CONFIG['server'],
+            account=mt5_config['account'],
+            password=mt5_config['password'],
+            server=mt5_config['server'],
             db_handler=self.db,
         )
         self.mt5.set_loop(self.loop)

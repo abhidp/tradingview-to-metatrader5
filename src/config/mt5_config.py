@@ -1,21 +1,10 @@
-import os
-from pathlib import Path
+"""MT5 connection config, now sourced from the settings store (was .env).
 
-from dotenv import load_dotenv
+Kept as a thin module so existing imports (`from src.config.mt5_config import
+get_mt5_config`) keep working. The import-time MT5_CONFIG dict was removed: it
+read os.getenv at import and raised on a fresh install where config lives only
+in the SQLite settings table.
+"""
+from app.config_accessors import get_mt5_config
 
-# Load environment variables from .env file
-env_path = Path(__file__).parent.parent.parent / '.env'
-load_dotenv(env_path)
-
-def get_required_env(key: str) -> str:
-    """Get required environment variable or raise error."""
-    value = os.getenv(key)
-    if value is None:
-        raise ValueError(f"Missing required environment variable: {key}")
-    return value
-
-MT5_CONFIG = {
-    'account': int(get_required_env('MT5_ACCOUNT')),
-    'password': get_required_env('MT5_PASSWORD'),
-    'server': get_required_env('MT5_SERVER'),
-}
+__all__ = ["get_mt5_config"]

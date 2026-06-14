@@ -6,7 +6,7 @@ from typing import Dict, Optional, Set
 
 import MetaTrader5 as mt5
 
-from src.config.mt5_config import MT5_CONFIG
+from src.config.mt5_config import get_mt5_config
 from src.services.mt5_service import MT5Service
 
 logger = logging.getLogger('SymbolMapper')
@@ -37,10 +37,11 @@ class SymbolMapper:
         self.mappings_file.parent.mkdir(exist_ok=True)
         
         # Get MT5 service instance
+        _cfg = get_mt5_config()
         self.mt5_service = MT5Service(
-            account=MT5_CONFIG['account'],
-            password=MT5_CONFIG['password'],
-            server=MT5_CONFIG['server']
+            account=_cfg['account'],
+            password=_cfg['password'],
+            server=_cfg['server']
         )
         
         # Load or initialize mappings and cache
