@@ -99,3 +99,11 @@ def test_focus_endpoint_invokes_callback(temp_db_path):
     r = client.post("/api/focus")
     assert r.status_code == 200
     assert hits == [1]
+
+
+def test_index_is_served(temp_db_path):
+    client, _ = _client(temp_db_path)
+    r = client.get("/")
+    assert r.status_code == 200
+    assert "TV2MT5" in r.text
+    assert "Dashboard" in r.text

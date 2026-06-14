@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TV2MT5 Desktop</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <nav class="sidebar">
+      <div class="brand">TV2MT5</div>
+      <a class="nav-item active" data-view="dashboard">Dashboard</a>
+      <a class="nav-item soon">Trades <span>soon</span></a>
+      <a class="nav-item soon">Symbols <span>soon</span></a>
+      <a class="nav-item soon">Settings <span>soon</span></a>
+      <a class="nav-item" data-view="logs">Logs</a>
+    </nav>
+
+    <main class="content">
+      <section id="view-dashboard" class="view">
+        <div class="topbar">
+          <span id="state-pill" class="pill stop">● Stopped</span>
+          <button id="toggle-btn" class="btn start">▶ Start Copying</button>
+        </div>
+        <div id="banner" class="banner hidden"></div>
+        <div class="cards">
+          <div class="card"><div class="lab">TradingView</div><div id="tv-val" class="val">—</div></div>
+          <div class="card"><div class="lab">MT5</div><div id="mt5-val" class="val">—</div></div>
+          <div class="card"><div class="lab">Proxy</div><div id="proxy-val" class="val">—</div></div>
+        </div>
+        <div class="panel">
+          <div class="lab">RECENT ACTIVITY</div>
+          <ul id="recent" class="recent"></ul>
+        </div>
+      </section>
+
+      <section id="view-logs" class="view hidden">
+        <div class="lab">LOGS</div>
+        <pre id="logbox" class="logbox"></pre>
+      </section>
+    </main>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

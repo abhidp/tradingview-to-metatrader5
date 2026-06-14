@@ -1,0 +1,30 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; color: #1f2430; }
+.app { display: flex; height: 100vh; }
+.sidebar { width: 180px; background: #1f2430; color: #cfd6e4; padding: 14px 0; flex-shrink: 0; }
+.brand { font-weight: 700; font-size: 18px; padding: 0 16px 14px; color: #fff; }
+.nav-item { display: flex; justify-content: space-between; padding: 9px 16px; cursor: pointer; color: #cfd6e4; text-decoration: none; }
+.nav-item.active { background: #2d6cdf; color: #fff; font-weight: 600; }
+.nav-item.soon { color: #6b7484; cursor: default; }
+.nav-item.soon span { font-size: 10px; text-transform: uppercase; opacity: .7; }
+.content { flex: 1; background: #f5f7fa; padding: 18px; overflow: auto; }
+.view.hidden, .banner.hidden { display: none; }
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.pill { padding: 4px 12px; border-radius: 14px; font-weight: 600; }
+.pill.run { background: #e6f4ea; color: #137333; }
+.pill.stop { background: #fce8e6; color: #c5221f; }
+.pill.busy { background: #fef7e0; color: #b06000; }
+.btn { border: none; border-radius: 5px; padding: 8px 18px; font-weight: 600; color: #fff; cursor: pointer; }
+.btn.start { background: #137333; }
+.btn.stop { background: #c5221f; }
+.banner { background: #fce8e6; color: #c5221f; border-radius: 6px; padding: 10px 12px; margin-bottom: 14px; }
+.cards { display: flex; gap: 12px; margin-bottom: 14px; }
+.card { flex: 1; background: #fff; border: 1px solid #e1e5ea; border-radius: 8px; padding: 12px; }
+.lab { color: #6b7484; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+.val { font-weight: 600; margin-top: 4px; }
+.dot-on { color: #137333; }
+.dot-off { color: #c5221f; }
+.panel { background: #fff; border: 1px solid #e1e5ea; border-radius: 8px; padding: 12px; }
+.recent { list-style: none; margin: 8px 0 0; padding: 0; font-family: Consolas, monospace; font-size: 12px; }
+.recent li { padding: 3px 0; border-bottom: 1px solid #f0f2f5; }
+.logbox { background: #11151c; color: #d6dde8; font-family: Consolas, monospace; font-size: 12px; padding: 12px; border-radius: 8px; height: 70vh; overflow: auto; white-space: pre-wrap; }
