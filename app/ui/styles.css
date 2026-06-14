@@ -19,7 +19,8 @@ body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; color: #1f2430
 .btn.stop { background: #c5221f; }
 .banner { background: #fce8e6; color: #c5221f; border-radius: 6px; padding: 10px 12px; margin-bottom: 14px; }
 .cards { display: flex; gap: 12px; margin-bottom: 14px; }
-.card { flex: 1; background: #fff; border: 1px solid #e1e5ea; border-radius: 8px; padding: 12px; }
+.card { flex: 1; background: #fff; border: 1px solid #e1e5ea; border-radius: 8px; padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.card-logo { height: 22px; width: auto; flex-shrink: 0; object-fit: contain; }
 .lab { color: #6b7484; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
 .val { font-weight: 600; margin-top: 4px; }
 .dot-on { color: #137333; }

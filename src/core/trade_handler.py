@@ -7,6 +7,7 @@ import MetaTrader5 as mt5
 
 from src.utils.database_handler import DatabaseHandler
 from app.queue.inproc_queue import InProcQueue
+from src.utils.number_format import fmt_num
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -58,7 +59,7 @@ class TradeHandler:
             direction_emoji = "🔼" if request_data['side'].lower() == 'buy' else "🔻"
             
             # Log new order with improved format
-            print(f"\n{direction_emoji} New {request_data['side'].upper()} order: {request_data['instrument']} x {request_data['qty']}")
+            print(f"\n{direction_emoji} New {request_data['side'].upper()} order: {request_data['instrument']} x {fmt_num(request_data['qty'])}")
             if take_profit or stop_loss:
                 print(f"🎯 TP: {take_profit} | SL: {stop_loss}")
             
@@ -155,7 +156,7 @@ class TradeHandler:
                 if not positions:
                     # If position not found in MT5, add the closing log here
                     direction_emoji = "BUY🔼" if trade['side'].lower() == 'buy' else "SELL🔻"
-                    print(f"📌 Closed {direction_emoji} {trade['instrument']} x {trade['quantity']}")
+                    print(f"📌 Closed {direction_emoji} {trade['instrument']} x {fmt_num(trade['quantity'])}")
                     return
                     
             except Exception as e:
@@ -218,9 +219,9 @@ class TradeHandler:
             
             # Log close action with consistent format
             if is_partial:
-                print(f"⭕ Partially closing {direction_emoji} {trade['instrument']} x {close_amount}")
+                print(f"⭕ Partially closing {direction_emoji} {trade['instrument']} x {fmt_num(close_amount)}")
             else:
-                print(f"📌 Closed {direction_emoji} {trade['instrument']} x {close_amount}")
+                print(f"📌 Closed {direction_emoji} {trade['instrument']} x {fmt_num(close_amount)}")
 
         except Exception as e:
             logger.error(f"Error processing position close: {e}")
@@ -272,7 +273,7 @@ class TradeHandler:
             }
             
             # Log the update
-            print(f"\n💱 Position update: {trade.get('instrument')} x {trade.get('quantity')} @ {trade.get('execution_price')}")
+            print(f"\n💱 Position update: {trade.get('instrument')} x {fmt_num(trade.get('quantity'))} @ {fmt_num(trade.get('execution_price'))}")
             print(f"🔗 References: TV# {position_id}")
 
             # only print if new TP and SL values have changed

@@ -165,3 +165,12 @@ def test_index_has_all_tabs(temp_db_path):
     for view in ("view-trades", "view-symbols", "view-settings"):
         assert view in html
     assert "soon" not in html  # future-tab placeholders removed
+
+
+def test_dashboard_logos_referenced_and_served(temp_db_path):
+    client, _ = _client(temp_db_path)
+    html = client.get("/").text
+    assert "/static/img/tradingview.svg" in html
+    assert "/static/img/mt5.png" in html
+    assert client.get("/static/img/tradingview.svg").status_code == 200
+    assert client.get("/static/img/mt5.png").status_code == 200
