@@ -127,3 +127,18 @@ async def test_error_is_reported_and_can_restart(temp_db_path):
     s = await c.start()
     assert s.engine == EngineState.RUNNING
     await c.stop()
+
+
+async def test_restart_cycles_to_running(temp_db_path):
+    c = EngineController(runner_factory=_FakeRunner, listen_port=0)
+    await c.start()
+    s = await c.restart()
+    assert s.engine == EngineState.RUNNING
+    await c.stop()
+
+
+async def test_restart_from_stopped_just_starts(temp_db_path):
+    c = EngineController(runner_factory=_FakeRunner, listen_port=0)
+    s = await c.restart()
+    assert s.engine == EngineState.RUNNING
+    await c.stop()
