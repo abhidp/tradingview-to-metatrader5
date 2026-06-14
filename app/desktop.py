@@ -121,8 +121,13 @@ def main() -> None:
     )
 
     def _on_closing():
-        _window.hide()
-        return False  # veto destroy; just hide to tray
+        # Hide to tray instead of quitting. hide() must NOT run inline here: the
+        # closing event fires on the GUI thread, and pywebview's hide() marshals
+        # back to that same thread via Invoke(), which deadlocks ("not responding",
+        # pywebview #1103). Running it from a background thread lets the marshal
+        # complete once the GUI thread is free again.
+        threading.Thread(target=_window.hide, daemon=True).start()
+        return False  # veto the close; the background hide() minimises to tray
 
     _window.events.closing += _on_closing
     webview.start()  # blocks on the main thread until the process exits
