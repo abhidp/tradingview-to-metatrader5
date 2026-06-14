@@ -9,7 +9,7 @@ on its own** and is built in order (later plans depend on earlier ones).
 | # | Plan | Outcome (working software at the end) | Status |
 |---|------|----------------------------------------|--------|
 | 1 | **Foundation: Infra Collapse** | Headless copier runs as **one process, no Docker/Postgres/Redis** — SQLite + in-process queue. Trades still copy TV→MT5. | **Written** (`2026-06-13-tv2mt5-desktop-plan-01-foundation.md`) |
-| 2 | **Broker Adapter + Settings Store** | `BrokerAdapter` interface with `FusionMarketsAdapter`; config moves from `.env` to a SQLite `settings` table; auto-detect of `broker_url`/`account_id` from live traffic. | **Written** (`2026-06-14-tv2mt5-desktop-plan-02-broker-adapter-settings.md`) |
+| 2 | **Broker Adapter + Settings Store** | `BrokerAdapter` interface with `FusionMarketsAdapter`; config moves from `.env` to a SQLite `settings` table; auto-detect of `broker_url`/`account_id` from live traffic. | **Executed + verified** end-to-end (open/close/TP-SL modify) on `v2-desktop` (`2026-06-14-tv2mt5-desktop-plan-02-broker-adapter-settings.md`) |
 | 3 | **App Shell (UI + tray)** | FastAPI local API + `pywebview`/WebView2 window + `pystray` tray with sidebar nav (Dashboard/Trades/Symbols/Settings/Logs); Start/Stop controls the engine from Plan 1. | Pending |
 | 4 | **Onboarding Wizard** | 6-step first-run wizard: auto cert install, MT5 terminal auto-detect + Test, TradingView auto-detect, symbol suffix, done. Auto-set/revert Windows system proxy on Start/Stop. | Pending |
 | 5 | **Monetization Seams** | `LicenseService`, `Updater`, `Telemetry`, `ErrorReporter` interfaces with local stubs, wired into the app behind feature checks. | Pending |
@@ -26,3 +26,19 @@ on its own** and is built in order (later plans depend on earlier ones).
 - **Plans 5–6** are additive and ship last.
 
 After Plan 2 is executed and verified, return to writing-plans to author Plan 3.
+
+## Carry-forward note for Plan 3/4
+
+During Plan 2 verification a "trades not copying" episode traced to **multiple engine
+instances running at once**, contending for MetaTrader5's single-terminal IPC
+(`-10005 IPC timeout` → `order_send` "Request timeout"; only the `:8080` bind fails
+loudly). The engine has **no singleton guard**. Fold a single-instance lock /
+port-in-use check (abort with a clear message) into the Plan 3/4 tray Start/Stop work.
+
+## Development workflow (from Plan 3 onward)
+
+Each plan is built on its own branch off `v2-desktop` (e.g. `plan-03-app-shell`),
+verified end-to-end, then merged back via a PR with **base = `v2-desktop`** using a
+**merge commit** (preserves the task-by-task TDD history). `main` stays v1 until all
+of v2 is ready. Plan 2 was committed directly on `v2-desktop` before this convention
+was adopted.
