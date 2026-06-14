@@ -29,6 +29,8 @@ class _Flow:
 
 
 def _adapter_with_target(temp_db_path):
+    # temp_db_path is required: the fixture points the shared DB engine at a
+    # throwaway file before SettingsStore() is constructed. Do not remove it.
     store = SettingsStore()
     store.set("tv.broker_url", "broker.example.com")
     store.set("tv.account_id", "999")
