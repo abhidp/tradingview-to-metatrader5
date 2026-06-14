@@ -1,7 +1,6 @@
 
 import asyncio
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -31,14 +30,13 @@ class TradingViewInterceptor:
     def __init__(self, trade_handler=None, adapter=None, sync_instruments=True):
         if not self._initialized:  # Only initialize once
             self.adapter = adapter if adapter is not None else FusionMarketsAdapter()
-            self.base_path = self.adapter.base_path or ""
             self.trade_handler = trade_handler if trade_handler is not None else TradeHandler()
             self.token_manager = GLOBAL_TOKEN_MANAGER
             if sync_instruments:
                 self._sync_instruments_sync()
 
-            broker_url = self.adapter._broker_url or 'Unknown Broker'
-            account_id = self.adapter._account_id or 'Unknown Account'
+            broker_url = self.adapter.broker_url or 'Unknown Broker'
+            account_id = self.adapter.account_id or 'Unknown Account'
 
             print("\n🚀 Trade interceptor initialized")
             print("👀 Watching for trades...\n")
@@ -46,6 +44,10 @@ class TradingViewInterceptor:
 
             self._initialized = True
 
+    @property
+    def base_path(self) -> str:
+        """Derived from the adapter so it never diverges from the live target."""
+        return self.adapter.base_path or ""
 
     def _sync_instruments_sync(self) -> None:
         """Synchronously sync instruments."""
@@ -161,7 +163,6 @@ class TradingViewInterceptor:
         # Auto-detect broker_url/account_id from live TradingView traffic.
         info = self.adapter.detect_account(flow)
         if info and self.adapter.persist_account(info):
-            self.base_path = self.adapter.base_path
             print(f"🔎 Detected TradingView account: {info.account_id} ({info.broker_url})")
 
         if self.adapter.base_path and self.adapter.base_path in flow.request.pretty_url:

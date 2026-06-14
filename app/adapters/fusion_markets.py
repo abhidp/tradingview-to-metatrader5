@@ -45,6 +45,14 @@ class FusionMarketsAdapter:
             return None
         return f"{self._broker_url}/accounts/{self._account_id}"
 
+    @property
+    def broker_url(self) -> Optional[str]:
+        return self._broker_url
+
+    @property
+    def account_id(self) -> Optional[str]:
+        return self._account_id
+
     def matches(self, flow) -> bool:
         base = self.base_path
         if not base:
