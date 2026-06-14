@@ -6,11 +6,23 @@ broker target from live traffic. Trade parsing is unchanged and stays in
 src/core/trade_handler.py.
 """
 import logging
+import re
 from typing import Optional
 
+from app.adapters.base import AccountInfo
 from app.storage.settings_store import SettingsStore
 
 logger = logging.getLogger("FusionMarketsAdapter")
+
+# https://{host}/accounts/{digits}/...  (TradingView broker-panel REST shape)
+_ACCOUNT_RE = re.compile(r"https?://(?P<host>[^/]+)/accounts/(?P<acct>\d+)/")
+
+
+def _is_tradingview(flow) -> bool:
+    headers = getattr(flow.request, "headers", {}) or {}
+    referer = headers.get("referer", "") or ""
+    origin = headers.get("origin", "") or ""
+    return "tradingview.com" in (referer + origin)
 
 
 class FusionMarketsAdapter:
@@ -43,3 +55,29 @@ class FusionMarketsAdapter:
         if ".TP." in url or ".SL." in url:
             return flow.request.method == "DELETE"
         return False
+
+    def detect_account(self, flow) -> Optional[AccountInfo]:
+        """Learn broker_url/account_id from TradingView-originated traffic."""
+        if not _is_tradingview(flow):
+            return None
+        match = _ACCOUNT_RE.search(flow.request.pretty_url)
+        if not match:
+            return None
+        return AccountInfo(broker_url=match.group("host"),
+                           account_id=match.group("acct"))
+
+    def persist_account(self, info: AccountInfo) -> bool:
+        """Persist a detected target if it differs from the current one.
+
+        Returns True if the stored target changed (so callers can refresh
+        derived state like base_path).
+        """
+        if (info.broker_url, info.account_id) == (self._broker_url, self._account_id):
+            return False
+        self.store.set("tv.broker_url", info.broker_url)
+        self.store.set("tv.account_id", info.account_id)
+        self._broker_url = info.broker_url
+        self._account_id = info.account_id
+        logger.info("Detected TradingView target %s (%s)",
+                    info.account_id, info.broker_url)
+        return True

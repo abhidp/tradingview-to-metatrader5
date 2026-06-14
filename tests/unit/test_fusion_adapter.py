@@ -75,3 +75,47 @@ def test_no_target_never_matches(temp_db_path):
     adapter = FusionMarketsAdapter(store=SettingsStore())
     assert adapter.base_path is None
     assert adapter.matches(_Flow("https://broker.example.com/accounts/999/orders?requestId=x", "POST")) is False
+
+
+from app.adapters.base import AccountInfo
+
+TV_HEADERS = {"referer": "https://www.tradingview.com/", "origin": "https://www.tradingview.com"}
+
+
+def test_detect_account_from_tradingview_flow(temp_db_path):
+    a = FusionMarketsAdapter(store=SettingsStore())
+    flow = _Flow("https://broker.example.com/accounts/424242/orders?locale=en",
+                 "POST", TV_HEADERS)
+    info = a.detect_account(flow)
+    assert info is not None
+    assert info.broker_url == "broker.example.com"
+    assert info.account_id == "424242"
+
+
+def test_detect_account_ignores_non_tradingview_origin(temp_db_path):
+    a = FusionMarketsAdapter(store=SettingsStore())
+    flow = _Flow("https://broker.example.com/accounts/424242/orders?locale=en",
+                 "POST", {"referer": "https://evil.example.com"})
+    assert a.detect_account(flow) is None
+
+
+def test_detect_account_returns_none_on_unmatched_url(temp_db_path):
+    a = FusionMarketsAdapter(store=SettingsStore())
+    flow = _Flow("https://www.tradingview.com/chart", "GET", TV_HEADERS)
+    assert a.detect_account(flow) is None
+
+
+def test_persist_account_writes_and_updates_base_path(temp_db_path):
+    store = SettingsStore()
+    a = FusionMarketsAdapter(store=store)
+    assert a.base_path is None  # nothing known yet
+
+    info = AccountInfo(broker_url="broker.example.com", account_id="424242")
+    changed = a.persist_account(info)
+
+    assert changed is True
+    assert a.base_path == "broker.example.com/accounts/424242"
+    assert store.get("tv.broker_url") == "broker.example.com"
+    assert store.get("tv.account_id") == "424242"
+    # Re-persisting the same target is a no-op.
+    assert a.persist_account(info) is False
