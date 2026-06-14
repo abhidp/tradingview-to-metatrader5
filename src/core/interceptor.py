@@ -5,19 +5,14 @@ import os
 import sys
 from pathlib import Path
 
-from dotenv import load_dotenv
-
 from backup.instrument_sync import InstrumentSynchronizer
 from mitmproxy import http
 from src.core.trade_handler import TradeHandler
 from src.utils.token_manager import GLOBAL_TOKEN_MANAGER, TokenManager
+from app.adapters.fusion_markets import FusionMarketsAdapter
 
 project_root = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, project_root)
-
-load_dotenv()
-TV_BROKER_URL = os.getenv('TV_BROKER_URL')
-TV_ACCOUNT_ID = os.getenv('TV_ACCOUNT_ID')
 
 # Create a global token manager instance
 GLOBAL_TOKEN_MANAGER = TokenManager()
@@ -33,16 +28,17 @@ class TradingViewInterceptor:
             cls._instance = super(TradingViewInterceptor, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, trade_handler=None, sync_instruments=True):
+    def __init__(self, trade_handler=None, adapter=None, sync_instruments=True):
         if not self._initialized:  # Only initialize once
-            self.base_path = f"{TV_BROKER_URL}/accounts/{TV_ACCOUNT_ID}"
+            self.adapter = adapter if adapter is not None else FusionMarketsAdapter()
+            self.base_path = self.adapter.base_path or ""
             self.trade_handler = trade_handler if trade_handler is not None else TradeHandler()
             self.token_manager = GLOBAL_TOKEN_MANAGER
             if sync_instruments:
                 self._sync_instruments_sync()
 
-            broker_url = os.getenv('TV_BROKER_URL', 'Unknown Broker')
-            account_id = os.getenv('TV_ACCOUNT_ID', 'Unknown Account')
+            broker_url = self.adapter._broker_url or 'Unknown Broker'
+            account_id = self.adapter._account_id or 'Unknown Account'
 
             print("\n🚀 Trade interceptor initialized")
             print("👀 Watching for trades...\n")
@@ -64,7 +60,10 @@ class TradingViewInterceptor:
             # Make synchronous request
             import requests
             
-            url = f"https://{os.getenv('TV_BROKER_URL')}/accounts/{os.getenv('TV_ACCOUNT_ID')}/instruments?locale=en"
+            if not self.adapter.base_path:
+                print("ℹ️  TradingView target not known yet; skipping instrument sync")
+                return
+            url = f"https://{self.adapter.base_path}/instruments?locale=en"
             headers = {
                 'accept': 'application/json',
                 'authorization': token,
@@ -134,23 +133,8 @@ class TradingViewInterceptor:
 
 
     def should_log_request(self, flow: http.HTTPFlow) -> bool:
-        """Strictly check if we should log this request."""
-        url = flow.request.pretty_url
-        
-        if self.base_path not in url:
-            return False
-        
-        # Match orders, executions, position closures, and position updates
-        if '/orders?locale=' in url and 'requestId=' in url:
-            return True
-        if '/executions?locale=' in url and 'instrument=' in url:
-            return True
-        if '/positions/' in url:
-            return flow.request.method in ["DELETE", "PUT"]
-        if '.TP.' in url or '.SL.' in url:
-            return flow.request.method == "DELETE"   
-            
-        return False
+        """Delegate flow matching to the broker adapter."""
+        return self.adapter.matches(flow)
 
     async def async_process_order(self, request_data: dict, response_data: dict) -> None:
         """Asynchronously process order."""
@@ -174,11 +158,17 @@ class TradingViewInterceptor:
 
     def request(self, flow: http.HTTPFlow) -> None:
         """Handle requests."""
-        if self.base_path in flow.request.pretty_url:
+        # Auto-detect broker_url/account_id from live TradingView traffic.
+        info = self.adapter.detect_account(flow)
+        if info and self.adapter.persist_account(info):
+            self.base_path = self.adapter.base_path
+            print(f"🔎 Detected TradingView account: {info.account_id} ({info.broker_url})")
+
+        if self.adapter.base_path and self.adapter.base_path in flow.request.pretty_url:
             auth_header = flow.request.headers.get('authorization')
             if auth_header:
                 self.token_manager.update_token(auth_header)
-        
+
         if not self.should_log_request(flow):
             return
         

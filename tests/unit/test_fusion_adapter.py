@@ -127,3 +127,25 @@ def test_persist_account_writes_and_updates_base_path(temp_db_path):
     assert store.get("tv.account_id") == "424242"
     # Re-persisting the same target is a no-op.
     assert a.persist_account(info) is False
+
+
+def test_interceptor_uses_injected_adapter_and_detects(temp_db_path):
+    from src.core.interceptor import TradingViewInterceptor
+
+    store = SettingsStore()
+    adapter = FusionMarketsAdapter(store=store)
+
+    TradingViewInterceptor._instance = None
+    TradingViewInterceptor._initialized = False
+    interceptor = TradingViewInterceptor(
+        trade_handler=object(), adapter=adapter, sync_instruments=False
+    )
+
+    # A matching TradingView flow drives auto-detect through request().
+    flow = _Flow("https://broker.example.com/accounts/787878/orders?locale=en&requestId=z",
+                 "POST", TV_HEADERS)
+    interceptor.request(flow)
+
+    assert store.get("tv.account_id") == "787878"
+    assert interceptor.base_path == "broker.example.com/accounts/787878"
+    assert interceptor.should_log_request(flow) is True
