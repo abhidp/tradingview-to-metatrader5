@@ -6,6 +6,7 @@ Process model (Plan 3a):
 - a tray thread runs the pystray icon
 Single-instance guard: bind the control port; if taken, focus the running app and exit.
 """
+import asyncio
 import logging
 import threading
 
@@ -22,14 +23,26 @@ from app.tray import build_tray
 logger = logging.getLogger("Desktop")
 
 _window = None
+_api_loop = None
+_server = None
 
 
 def _run_api(controller: EngineController) -> None:
-    """Run uvicorn (FastAPI + engine loop) on this thread's own asyncio loop."""
-    app = create_app(controller, focus_callback=_focus_window)
-    config = uvicorn.Config(app, host=CONTROL_HOST, port=CONTROL_PORT, log_level="warning")
-    server = uvicorn.Server(config)
-    server.run()  # creates and runs its own asyncio loop on this thread
+    """Run uvicorn (FastAPI + engine loop) on this thread's own asyncio loop.
+
+    We manage the loop explicitly (rather than uvicorn's server.run()) so the
+    main/tray thread can drive a clean engine shutdown via run_coroutine_threadsafe.
+    """
+    global _api_loop, _server
+    try:
+        _api_loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(_api_loop)
+        app = create_app(controller, focus_callback=_focus_window)
+        config = uvicorn.Config(app, host=CONTROL_HOST, port=CONTROL_PORT, log_level="warning")
+        _server = uvicorn.Server(config)
+        _api_loop.run_until_complete(_server.serve())
+    except Exception:
+        logger.critical("API/engine thread crashed", exc_info=True)
 
 
 def _focus_window() -> None:
@@ -64,11 +77,23 @@ def main() -> None:
     api_thread.start()
 
     def on_quit(icon):
+        # Stop the engine cleanly before tearing down the process, so the proxy
+        # port and MT5 link are released gracefully rather than on abrupt exit.
         try:
-            icon.stop()
+            if _api_loop is not None and _api_loop.is_running():
+                fut = asyncio.run_coroutine_threadsafe(controller.stop(), _api_loop)
+                try:
+                    fut.result(timeout=5.0)
+                except Exception:
+                    pass
+            if _server is not None:
+                _server.should_exit = True
         finally:
-            if _window is not None:
-                _window.destroy()
+            try:
+                icon.stop()
+            finally:
+                if _window is not None:
+                    _window.destroy()
 
     tray = build_tray(on_open=_focus_window, on_quit=on_quit)
     tray_thread = threading.Thread(target=tray.run, daemon=True)
