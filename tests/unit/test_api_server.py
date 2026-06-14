@@ -1,20 +1,20 @@
 import asyncio
-from datetime import datetime, timedelta
 
 from fastapi.testclient import TestClient
 
 from app.engine_controller import EngineController, EngineState
 
 
-def test_recent_trades_newest_first_and_limited(temp_db_path):
+def test_query_trades_paging_filter_and_total(temp_db_path):
+    from datetime import datetime, timedelta
     from src.models.database import init_db
     from src.utils.database_handler import DatabaseHandler
-    from app.api.trades import recent_trades
+    from app.api.trades import query_trades
 
     init_db()
     db = DatabaseHandler()
     base = datetime(2026, 6, 14, 12, 0, 0)
-    for i in range(3):
+    for i in range(5):
         db.save_trade({
             "trade_id": f"T{i}",
             "order_id": f"O{i}",
@@ -24,17 +24,22 @@ def test_recent_trades_newest_first_and_limited(temp_db_path):
             "type": "market",
             "ask_price": "1.1000",
             "bid_price": "1.0998",
-            "status": "completed",
             "tv_request": "{}",
             "tv_response": "{}",
+            "status": "completed" if i % 2 == 0 else "failed",
             "created_at": base + timedelta(minutes=i),
         })
 
-    rows = recent_trades(limit=2)
-    assert len(rows) == 2
-    assert rows[0]["trade_id"] == "T2"  # newest first
-    assert rows[1]["trade_id"] == "T1"
-    assert rows[0]["instrument"] == "EURUSD"
+    rows, total = query_trades(limit=2, offset=0)
+    assert total == 5
+    assert [r["trade_id"] for r in rows] == ["T4", "T3"]  # newest first
+
+    rows, total = query_trades(limit=2, offset=2)
+    assert [r["trade_id"] for r in rows] == ["T2", "T1"]
+
+    rows, total = query_trades(limit=10, offset=0, status="failed")
+    assert total == 2
+    assert {r["trade_id"] for r in rows} == {"T1", "T3"}
     db.cleanup()
 
 

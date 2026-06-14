@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.engine_controller import EngineController, ProxyPortInUseError
 from app.api.logs import read_log_tail
-from app.api.trades import recent_trades
+from app.api.trades import query_trades
 from app.paths import get_data_dir
 
 logger = logging.getLogger("ApiServer")
@@ -43,8 +43,13 @@ def create_app(controller: EngineController, focus_callback: Optional[Callable] 
         return {"lines": lines, "cursor": cursor}
 
     @app.get("/api/trades")
-    def get_trades(limit: int = Query(10, ge=1, le=200)):
-        return {"trades": recent_trades(limit=limit)}
+    def get_trades(
+        limit: int = Query(10, ge=1, le=200),
+        offset: int = Query(0, ge=0),
+        status: str = Query(None),
+    ):
+        rows, total = query_trades(limit=limit, offset=offset, status=status)
+        return {"trades": rows, "total": total}
 
     @app.post("/api/focus")
     def focus():
