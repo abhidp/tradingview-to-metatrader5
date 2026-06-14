@@ -41,6 +41,7 @@ class MT5Service:
         
         # Get terminal path from environment
         self.terminal_path = os.getenv('MT5_TERMINAL_PATH')
+        self.connected = False
         
         if not self.terminal_path:
             logger.warning("MT5_TERMINAL_PATH not set in .env file")
@@ -86,12 +87,14 @@ class MT5Service:
             self.initialized = False
             if not mt5.initialize(**init_params):
                 logger.error(f"MT5 initialization failed: {mt5.last_error()}")
+                self.connected = False
                 return False
             
             # Login to MT5
             if not mt5.login(self.account, password=self.password, server=self.server):
                 logger.error(f"MT5 login failed: {mt5.last_error()}")
                 mt5.shutdown()
+                self.connected = False
                 return False
             
             # Verify account info
@@ -99,6 +102,7 @@ class MT5Service:
             if not account_info:
                 logger.error("Could not get account info")
                 mt5.shutdown()
+                self.connected = False
                 return False
             
             self.initialized = True
@@ -106,6 +110,7 @@ class MT5Service:
             if self.terminal_path:
                 logger.info(f"Using terminal: {self.terminal_path}\n")
             logger.info(f"✅ MT5 Connected: {account_info.login} ({account_info.server})")
+            self.connected = True
             return True
                 
         except Exception as e:
