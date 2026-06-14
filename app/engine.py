@@ -86,6 +86,9 @@ class MitmEngineRunner:
 
         TradingViewInterceptor._instance = None
         TradingViewInterceptor._initialized = False
+        # sync_instruments=False: at cold start there is no auth token yet, so the
+        # network instrument-sync can't run anyway; avoid the confusing startup error
+        # and any risk of a blocking request stalling the loop before the proxy listens.
         interceptor = TradingViewInterceptor(
             trade_handler=trade_handler, adapter=adapter, sync_instruments=False
         )
@@ -104,6 +107,7 @@ class MitmEngineRunner:
             await asyncio.gather(self._worker_task, return_exceptions=True)
             self._queue.cleanup()
             self._db.cleanup()
+            self._master = None
             logger.info("Engine stopped")
 
     def shutdown(self) -> None:
@@ -118,7 +122,8 @@ class MitmEngineRunner:
         from src.utils.token_manager import GLOBAL_TOKEN_MANAGER
         try:
             return bool(GLOBAL_TOKEN_MANAGER.get_token())
-        except Exception:
+        except Exception as e:  # noqa: BLE001
+            logger.debug("tv_connected check failed: %s", e)
             return False
 
 
