@@ -8,6 +8,7 @@ Single-instance guard: bind the control port; if taken, focus the running app an
 """
 import asyncio
 import logging
+import os
 import threading
 
 import uvicorn
@@ -25,6 +26,18 @@ logger = logging.getLogger("Desktop")
 _window = None
 _api_loop = None
 _server = None
+
+
+def _configure_webview_env() -> None:
+    """Disable WebView2 GPU acceleration by default.
+
+    On some Windows GPU drivers, WebView2's hardware acceleration triggers a GPU
+    hang / TDR that freezes the window, blanks the screen, and restarts DWM/Explorer
+    (reproducible on window resize). The dashboard is lightweight text/lists, so
+    software rendering is smooth and far safer across unknown machines. A user can
+    override this by setting WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS themselves.
+    """
+    os.environ.setdefault("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--disable-gpu")
 
 
 def _run_api(controller: EngineController) -> None:
@@ -56,6 +69,7 @@ def _focus_window() -> None:
 
 def main() -> None:
     global _window
+    _configure_webview_env()
     setup_logging()
 
     if is_another_instance_running():
