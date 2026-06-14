@@ -66,7 +66,10 @@ class EngineController:
     ) -> None:
         self.listen_host = listen_host
         self.listen_port = listen_port
-        self._runner_factory = runner_factory  # default wired in a later task; injected in tests
+        if runner_factory is None:
+            from app.engine import MitmEngineRunner
+            runner_factory = MitmEngineRunner
+        self._runner_factory = runner_factory
         self._state = EngineState.STOPPED
         self._error: Optional[str] = None
         self._runner = None

@@ -40,63 +40,93 @@ def build_master(addon, listen_host: str = "127.0.0.1", listen_port: int = 8080)
     return master
 
 
+class MitmEngineRunner:
+    """The proxy + MT5 worker wiring as a start/stoppable unit.
+
+    serve() blocks until shutdown() is called (it awaits mitmproxy's master).
+    This is the production runner injected into EngineController; tests inject a fake.
+    """
+
+    def __init__(self, listen_host: str = "127.0.0.1", listen_port: int = 8080) -> None:
+        self.listen_host = listen_host
+        self.listen_port = listen_port
+        self._master = None
+        self._worker = None
+        self._worker_task = None
+        self._queue = None
+        self._db = None
+
+    async def serve(self) -> None:
+        from src.models.database import init_db
+        from src.utils.database_handler import DatabaseHandler
+        from src.core.trade_handler import TradeHandler
+        from src.core.interceptor import TradingViewInterceptor
+        from src.workers.mt5_worker import MT5Worker
+        from app.queue.inproc_queue import InProcQueue
+        from app.storage.settings_store import SettingsStore
+        from app.adapters.fusion_markets import FusionMarketsAdapter
+
+        quiet_proxy_noise()
+        init_db()
+
+        store = SettingsStore()
+        store.seed_from_env_once()
+
+        loop = asyncio.get_running_loop()
+        self._queue = InProcQueue()
+        self._db = DatabaseHandler()
+
+        trade_handler = TradeHandler(queue=self._queue, db=self._db)
+
+        self._worker = MT5Worker()
+        self._worker.init_inproc(loop=loop, queue=self._queue, db=self._db)
+        self._queue.subscribe(self._worker.handle_message)
+
+        adapter = FusionMarketsAdapter(store=store)
+
+        TradingViewInterceptor._instance = None
+        TradingViewInterceptor._initialized = False
+        interceptor = TradingViewInterceptor(
+            trade_handler=trade_handler, adapter=adapter, sync_instruments=False
+        )
+
+        self._master = build_master(
+            interceptor, listen_host=self.listen_host, listen_port=self.listen_port
+        )
+
+        self._worker_task = asyncio.create_task(self._worker.run_async())
+        try:
+            logger.info("Engine starting: proxy on %s:%s", self.listen_host, self.listen_port)
+            await self._master.run()
+        finally:
+            self._worker.running = False
+            self._worker_task.cancel()
+            await asyncio.gather(self._worker_task, return_exceptions=True)
+            self._queue.cleanup()
+            self._db.cleanup()
+            logger.info("Engine stopped")
+
+    def shutdown(self) -> None:
+        if self._master is not None:
+            self._master.shutdown()
+
+    def mt5_connected(self) -> bool:
+        return bool(self._worker is not None and getattr(self._worker, "mt5", None) is not None
+                    and getattr(self._worker.mt5, "connected", False))
+
+    def tv_connected(self) -> bool:
+        from src.utils.token_manager import GLOBAL_TOKEN_MANAGER
+        try:
+            return bool(GLOBAL_TOKEN_MANAGER.get_token())
+        except Exception:
+            return False
+
+
 async def run_engine(listen_host: str = "127.0.0.1", listen_port: int = 8080) -> None:
     """Wire SQLite + settings store + queue + worker + broker adapter + interceptor onto one loop and run.
 
     This is the single-process replacement for the old two-terminal
     (start_proxy.py + start_worker.py) setup. No Docker, Redis, or Postgres.
     """
-    # Local imports so unit tests can import build_master without these deps.
-    from src.models.database import init_db
-    from src.utils.database_handler import DatabaseHandler
-    from src.core.trade_handler import TradeHandler
-    from src.core.interceptor import TradingViewInterceptor
-    from src.workers.mt5_worker import MT5Worker
-    from app.queue.inproc_queue import InProcQueue
-    from app.storage.settings_store import SettingsStore
-    from app.adapters.fusion_markets import FusionMarketsAdapter
-
-    quiet_proxy_noise()
-    init_db()
-
-    # Settings store is the source of truth; seed once from any existing .env.
-    store = SettingsStore()
-    store.seed_from_env_once()
-
-    loop = asyncio.get_running_loop()
-    queue = InProcQueue()
-    db = DatabaseHandler()
-
-    # Shared trade handler used by the interceptor; pushes onto the queue.
-    trade_handler = TradeHandler(queue=queue, db=db)
-
-    # Worker consumes from the same queue on the same loop.
-    worker = MT5Worker()
-    worker.init_inproc(loop=loop, queue=queue, db=db)
-    queue.subscribe(worker.handle_message)
-
-    # Broker adapter owns flow matching + broker-target auto-detect.
-    adapter = FusionMarketsAdapter(store=store)
-
-    # Interceptor addon shares the trade handler and adapter.
-    TradingViewInterceptor._instance = None
-    TradingViewInterceptor._initialized = False
-    # sync_instruments=False: at cold start there is no auth token yet, so the
-    # network instrument-sync can't run anyway; avoid the confusing startup error
-    # and any risk of a blocking request stalling the loop before the proxy listens.
-    interceptor = TradingViewInterceptor(trade_handler=trade_handler, adapter=adapter, sync_instruments=False)
-
-    master = build_master(interceptor, listen_host=listen_host, listen_port=listen_port)
-
-    # Worker's MT5 position-monitor loop + the proxy run concurrently.
-    worker_task = asyncio.create_task(worker.run_async())
-    try:
-        logger.info("Engine starting: proxy on %s:%s", listen_host, listen_port)
-        await master.run()
-    finally:
-        worker.running = False
-        worker_task.cancel()
-        await asyncio.gather(worker_task, return_exceptions=True)
-        queue.cleanup()
-        db.cleanup()
-        logger.info("Engine stopped")
+    runner = MitmEngineRunner(listen_host=listen_host, listen_port=listen_port)
+    await runner.serve()
