@@ -17,12 +17,9 @@ logger = logging.getLogger("ApiServer")
 UI_DIR = Path(__file__).parent.parent / "ui"
 
 
-def _log_path() -> Path:
-    return get_data_dir() / "logs" / "tv2mt5.log"
-
-
 def create_app(controller: EngineController, focus_callback: Optional[Callable] = None) -> FastAPI:
     app = FastAPI(title="TV2MT5 Desktop")
+    log_file = get_data_dir() / "logs" / "tv2mt5.log"
 
     @app.get("/api/status")
     def get_status():
@@ -42,7 +39,7 @@ def create_app(controller: EngineController, focus_callback: Optional[Callable] 
 
     @app.get("/api/logs")
     def get_logs(after: int = Query(0, ge=0)):
-        lines, cursor = read_log_tail(_log_path(), after=after)
+        lines, cursor = read_log_tail(log_file, after=after)
         return {"lines": lines, "cursor": cursor}
 
     @app.get("/api/trades")
@@ -57,7 +54,10 @@ def create_app(controller: EngineController, focus_callback: Optional[Callable] 
 
     @app.get("/")
     def index():
-        return FileResponse(UI_DIR / "index.html")
+        p = UI_DIR / "index.html"
+        if not p.exists():
+            raise HTTPException(status_code=404, detail="UI not available")
+        return FileResponse(p)
 
     if UI_DIR.exists():
         app.mount("/static", StaticFiles(directory=str(UI_DIR)), name="static")

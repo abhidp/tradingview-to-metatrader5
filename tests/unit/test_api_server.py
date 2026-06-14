@@ -1,4 +1,9 @@
+import asyncio
 from datetime import datetime, timedelta
+
+from fastapi.testclient import TestClient
+
+from app.engine_controller import EngineController, EngineState
 
 
 def test_recent_trades_newest_first_and_limited(temp_db_path):
@@ -31,13 +36,6 @@ def test_recent_trades_newest_first_and_limited(temp_db_path):
     assert rows[1]["trade_id"] == "T1"
     assert rows[0]["instrument"] == "EURUSD"
     db.cleanup()
-
-
-import asyncio
-
-from fastapi.testclient import TestClient
-
-from app.engine_controller import EngineController, EngineState
 
 
 class _FakeRunner:
