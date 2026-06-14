@@ -91,23 +91,24 @@ def main() -> None:
     api_thread.start()
 
     def on_quit(icon):
-        # Stop the engine cleanly before tearing down the process, so the proxy
-        # port and MT5 link are released gracefully rather than on abrupt exit.
-        try:
-            if _api_loop is not None and _api_loop.is_running():
-                fut = asyncio.run_coroutine_threadsafe(controller.stop(), _api_loop)
-                try:
-                    fut.result(timeout=5.0)
-                except Exception:
-                    pass
-            if _server is not None:
-                _server.should_exit = True
-        finally:
+        # 1) Stop the engine cleanly first so the proxy port + MT5 link release
+        #    gracefully (not on abrupt exit).
+        if _api_loop is not None and _api_loop.is_running():
             try:
-                icon.stop()
-            finally:
-                if _window is not None:
-                    _window.destroy()
+                asyncio.run_coroutine_threadsafe(controller.stop(), _api_loop).result(timeout=5.0)
+            except Exception:
+                pass
+        # 2) Remove the tray icon so it doesn't linger as a "ghost" in the notify area.
+        try:
+            icon.stop()
+        except Exception:
+            pass
+        # 3) Force-terminate. pywebview + WinForms/.NET (pythonnet) + the WebView2
+        #    runtime keep the process alive after the window is destroyed
+        #    (webview.start() does not return cleanly), so a normal return would
+        #    leave the process hung. The engine is already torn down, so exiting
+        #    hard here is safe and guarantees a clean quit.
+        os._exit(0)
 
     tray = build_tray(on_open=_focus_window, on_quit=on_quit)
     tray_thread = threading.Thread(target=tray.run, daemon=True)
