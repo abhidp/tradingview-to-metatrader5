@@ -208,6 +208,7 @@ let wizStep = 1;
 const WIZ_LAST = 6;
 let certPoll = null;
 let tvPoll = null;
+let engineStartedForDetection = false;
 
 function wizBanner(msg, ok) {
   const b = $('wiz-banner');
@@ -243,6 +244,7 @@ function gotoStep(step) {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ step: wizStep }),
   }).catch(() => {});
+  wizStopCertPoll();
   if (wizStep !== 4) wizStopTvDetection();
   if (wizStep === 2) wizLoadCert();
   if (wizStep === 3) wizLoadMt5();
@@ -251,6 +253,7 @@ function gotoStep(step) {
 }
 
 async function wizLoadCert() {
+  $('wiz-next').disabled = true;
   try {
     const d = await (await fetch('/api/wizard/cert/status')).json();
     setCertUi(d.trusted);
@@ -316,6 +319,7 @@ $('wiz-mt5-test').addEventListener('click', async () => {
 async function wizStartTvDetection() {
   $('wiz-next').disabled = true;
   await fetch('/api/engine/start', { method: 'POST' }).catch(() => {});
+  engineStartedForDetection = true;
   clearInterval(tvPoll);
   tvPoll = setInterval(async () => {
     try {
@@ -328,7 +332,15 @@ async function wizStartTvDetection() {
   }, 2000);
 }
 
-function wizStopTvDetection() { clearInterval(tvPoll); tvPoll = null; }
+function wizStopCertPoll() { clearInterval(certPoll); certPoll = null; }
+
+function wizStopTvDetection() {
+  clearInterval(tvPoll); tvPoll = null;
+  if (engineStartedForDetection) {
+    engineStartedForDetection = false;
+    fetch('/api/engine/stop', { method: 'POST' }).catch(() => {});
+  }
+}
 
 async function wizLoadSuffix() {
   try {
