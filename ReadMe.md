@@ -128,3 +128,26 @@ Your support helps keep this project maintained and free for everyone! 🙏
 ## License
 
 MIT License - see LICENSE file for details.
+
+## Building the Windows installer (v2 desktop)
+
+Prerequisites: the project venv with dev deps (`pip install -r requirements-dev.txt`,
+includes PyInstaller) and [Inno Setup 6](https://jrsoftware.org/isdl.php).
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\build.ps1
+```
+
+Output: `installer\Output\TV2MT5-Setup-<version>.exe` (per-user install, no admin
+required). The version comes from `app/__version__.py`.
+
+### Notes
+- **WebView2:** the installer detects the Microsoft Edge WebView2 runtime and
+  downloads it only if missing (preinstalled on Windows 11).
+- **App data** lives in `%APPDATA%\TV2MT5` and is **kept on uninstall** (trades,
+  settings, logs).
+- **Security certificate:** the app installs a local mitmproxy CA into the Windows
+  Root store during onboarding. Uninstalling the app does **not** remove it. To
+  remove it manually: run `certutil -delstore root mitmproxy` from an elevated
+  prompt, or remove "mitmproxy" under certmgr.msc -> Trusted Root Certification
+  Authorities.

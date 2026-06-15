@@ -81,3 +81,5 @@ graphify-out/
 /build/
 /dist/
 *.spec.bak
+
+/installer/Output/
