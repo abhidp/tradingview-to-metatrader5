@@ -1,8 +1,15 @@
 # tv2mt5.spec
 # PyInstaller one-folder build for TV2MT5 Desktop. Build: pyinstaller --noconfirm tv2mt5.spec
+import os
+
 from PyInstaller.utils.hooks import collect_all, collect_submodules
 
 block_cipher = None
+
+# Repo root = the directory holding this spec. Pin it on the analysis path so the
+# top-level `app` and `src` packages resolve regardless of the build CWD. SPECPATH
+# is injected by PyInstaller; fall back to CWD if running the spec some other way.
+ROOT = globals().get("SPECPATH") or os.path.abspath(os.getcwd())
 
 datas = [
     ('app/ui', 'app/ui'),                                  # html/js/css/img + tv2mt5.ico
@@ -28,9 +35,15 @@ for pkg in ('mitmproxy', 'webview'):
 
 hiddenimports += collect_submodules('uvicorn')
 
+# Our own packages are imported lazily (delayed) inside tv2mt5.py / the engine, so
+# PyInstaller's static analysis can miss them. Collect them explicitly so the
+# frozen app always has app.desktop, app.engine, the src.* engine modules, etc.
+hiddenimports += collect_submodules('app')
+hiddenimports += collect_submodules('src')
+
 a = Analysis(
     ['tv2mt5.py'],
-    pathex=[],
+    pathex=[ROOT],
     binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,
