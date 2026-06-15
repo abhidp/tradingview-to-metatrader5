@@ -96,6 +96,11 @@ Bundled seed `datas`: `data/instruments.json`, `data/symbol_mappings.template.js
   - **frozen:** `ShellExecute("runas", sys.executable, "--run-cert-admin", ...)`
   - **source:** keep the existing `-m app.wizard._cert_admin` form (detect via
     `getattr(sys, "frozen", False)`).
+- **CA generation must not shell out to `mitmdump`** (`install_certificate.py:51`):
+  no `mitmdump.exe` ships beside the frozen exe. Replace `generate_certificate()`'s
+  subprocess with mitmproxy's in-process API:
+  `mitmproxy.certs.CertStore.from_store(Path("~/.mitmproxy"), "mitmproxy", 2048)`
+  (verified to write `mitmproxy-ca-cert.cer`). Works frozen and from source.
 
 **4. Entry point**
 - New top-level `tv2mt5.py`: performs the argv dispatch, then calls
