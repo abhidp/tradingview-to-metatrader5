@@ -1,0 +1,33 @@
+"""Onboarding wizard state: the first-run completion flag + resume step.
+
+Stored in the SQLite settings store alongside the rest of the app config.
+Step data itself (MT5 creds, symbols, TV target) is persisted through the
+existing config accessors as each step completes; this module only tracks
+*whether* onboarding is done and *where* the user left off.
+"""
+from typing import Optional
+
+from app.storage.settings_store import SettingsStore
+
+ONBOARDING_COMPLETE_KEY = "onboarding.complete"
+ONBOARDING_STEP_KEY = "onboarding.step"
+
+
+def is_onboarding_complete(store: Optional[SettingsStore] = None) -> bool:
+    s = store or SettingsStore()
+    return s.get_bool(ONBOARDING_COMPLETE_KEY, False)
+
+
+def set_onboarding_complete(value: bool = True, store: Optional[SettingsStore] = None) -> None:
+    s = store or SettingsStore()
+    s.set(ONBOARDING_COMPLETE_KEY, "1" if value else "0")
+
+
+def get_step(store: Optional[SettingsStore] = None) -> int:
+    s = store or SettingsStore()
+    return s.get_int(ONBOARDING_STEP_KEY, 1)
+
+
+def set_step(step: int, store: Optional[SettingsStore] = None) -> None:
+    s = store or SettingsStore()
+    s.set(ONBOARDING_STEP_KEY, str(int(step)))

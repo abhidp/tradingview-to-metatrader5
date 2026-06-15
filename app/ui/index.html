@@ -18,6 +18,77 @@
     </nav>
 
     <main class="content">
+      <section id="view-wizard" class="view hidden wizard">
+        <div class="wiz-rail">
+          <div class="brand">TV2MT5 Setup</div>
+          <ol>
+            <li data-step="1" class="wiz-step active">Welcome</li>
+            <li data-step="2" class="wiz-step">Certificate</li>
+            <li data-step="3" class="wiz-step">MT5 Account</li>
+            <li data-step="4" class="wiz-step">TradingView</li>
+            <li data-step="5" class="wiz-step">Symbols</li>
+            <li data-step="6" class="wiz-step">Done</li>
+          </ol>
+        </div>
+        <div class="wiz-panel">
+          <div id="wiz-banner" class="banner hidden"></div>
+
+          <div class="wiz-pane" data-pane="1">
+            <h2>Welcome to TV2MT5</h2>
+            <p>This copies your TradingView broker-panel trades into MetaTrader 5.
+               Your credentials stay on this PC.</p>
+          </div>
+
+          <div class="wiz-pane hidden" data-pane="2">
+            <h2>Security certificate</h2>
+            <p>We need to trust the local proxy certificate so TradingView traffic can be read.</p>
+            <div id="wiz-cert-status" class="lab">Checking…</div>
+            <button id="wiz-cert-install" class="btn start">Install certificate</button>
+          </div>
+
+          <div class="wiz-pane hidden" data-pane="3">
+            <h2>MT5 account</h2>
+            <label class="field">Terminal path
+              <input id="wiz-mt5-terminal" type="text" placeholder="auto-detected" />
+            </label>
+            <label class="field">Account <input id="wiz-mt5-account" type="number" /></label>
+            <label class="field">Password <input id="wiz-mt5-password" type="password" /></label>
+            <label class="field">Server <input id="wiz-mt5-server" type="text" /></label>
+            <button id="wiz-mt5-test" class="btn start" disabled>Test connection</button>
+            <div id="wiz-mt5-result" class="lab"></div>
+          </div>
+
+          <div class="wiz-pane hidden" data-pane="4">
+            <h2>Connect TradingView</h2>
+            <p>In the TradingView desktop app, set its proxy to:</p>
+            <pre class="logbox">Type: HTTP
+Host: 127.0.0.1
+Port: 8080
+No username / password</pre>
+            <p>Then open your broker panel. We'll detect it automatically.</p>
+            <div id="wiz-tv-status" class="lab">Waiting for TradingView traffic…</div>
+          </div>
+
+          <div class="wiz-pane hidden" data-pane="5">
+            <h2>Symbols</h2>
+            <label class="field">Default suffix
+              <input id="wiz-suffix" type="text" placeholder=".r" />
+            </label>
+            <p class="lab">Most accounts need a suffix like <code>.r</code>. You can change this later.</p>
+          </div>
+
+          <div class="wiz-pane hidden" data-pane="6">
+            <h2>All set</h2>
+            <p>Setup complete. Click Start Copying to begin.</p>
+          </div>
+
+          <div class="wiz-nav">
+            <button id="wiz-back" class="btn ghost">Back</button>
+            <button id="wiz-next" class="btn start">Next</button>
+          </div>
+        </div>
+      </section>
+
       <section id="view-dashboard" class="view">
         <div class="topbar">
           <span id="state-pill" class="pill stop">● Stopped</span>
@@ -97,7 +168,10 @@
         <label class="field">TradingView account (auto-detected)
           <input id="set-tv-account" type="text" disabled />
         </label>
-        <div><button id="set-save" class="btn start">Save</button></div>
+        <div>
+          <button id="set-save" class="btn start">Save</button>
+          <button id="set-rerun" class="btn ghost">Re-run setup wizard</button>
+        </div>
       </section>
 
       <section id="view-logs" class="view hidden">
