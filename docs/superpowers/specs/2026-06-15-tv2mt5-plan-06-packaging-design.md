@@ -74,7 +74,9 @@ runtime** — they must not live next to the frozen exe, and one uses a broken
 CWD-relative path:
 - `src/utils/symbol_mapper.py:36` — `Path('data/symbol_mappings.json')`
   (**CWD-relative**, read+write; breaks when launched from a Start Menu shortcut).
-  Seed template: `data/symbol_mappings.template.json`.
+  No bundled seed — `SymbolMapper` self-initialises from MT5 when the file is
+  absent; seeding the static `data/symbol_mappings.template.json` would suppress
+  that and bake in a wrong broker suffix, so it is deliberately not bundled.
 - `src/core/interceptor.py:112` and `src/utils/instrument_manager.py:12` —
   `data/instruments.json` (read+written; synced from the broker at runtime).
   Seed default: bundled `data/instruments.json`.
@@ -85,7 +87,7 @@ appdata copy from the bundled default via `resource_path(...)` if it does not ex
 Repoint the three call sites at these helpers. This fixes both the frozen-write
 problem and the existing CWD-relative bug.
 
-Bundled seed `datas`: `data/instruments.json`, `data/symbol_mappings.template.json`.
+Bundled seed `datas`: `data/instruments.json` only (symbol_mappings is not seeded — see above).
 
 **3. Frozen re-entry for elevated cert install**
 - Add an argv dispatch at the very top of the entry module: if `--run-cert-admin`
@@ -108,8 +110,7 @@ Bundled seed `datas`: `data/instruments.json`, `data/symbol_mappings.template.js
 - Keep `app/desktop.py:main()` and `app/__main__.py` working for source runs.
 
 **5. `tv2mt5.spec` (PyInstaller)**
-- `datas`: `app/ui/**` (html/js/css/img), `data/instruments.json`,
-  `data/symbol_mappings.template.json`, the `.ico`.
+- `datas`: `app/ui/**` (html/js/css/img), `data/instruments.json`, the `.ico`.
 - `collect_all("mitmproxy")`; hidden imports for `MetaTrader5`, `pystray._win32`,
   `win32*` (pywin32), `uvicorn` (loggers/protocols), `fastapi`/`pydantic` as needed.
 - `EXE(... console=False, icon=<ico>)`; `COLLECT(...)` → `dist/TV2MT5/`.

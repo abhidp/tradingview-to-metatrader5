@@ -742,7 +742,8 @@ block_cipher = None
 datas = [
     ('app/ui', 'app/ui'),                                  # html/js/css/img + tv2mt5.ico
     ('data/instruments.json', 'data'),                     # seed default
-    ('data/symbol_mappings.template.json', 'data'),        # seed template
+    # symbol_mappings is intentionally NOT bundled — SymbolMapper self-initialises
+    # from MT5 when absent; seeding a static template would suppress that.
 ]
 binaries = []
 hiddenimports = [
