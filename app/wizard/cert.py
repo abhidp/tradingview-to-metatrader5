@@ -8,8 +8,12 @@ unelevated. The frontend then polls is_cert_trusted() until it flips true.
 import subprocess
 import sys
 
-# mitmproxy's generated CA uses CN/issuer "mitmproxy".
+# mitmproxy's generated CA uses CN/issuer "mitmproxy". Pass the bare name as the
+# certutil store filter, but confirm a match on the distinguished-name marker
+# "CN=mitmproxy" — certutil echoes the bare search term in its header on some
+# locales even with no match, which the substring check would misread as trusted.
 _CERT_COMMON_NAME = "mitmproxy"
+_CERT_TRUSTED_MARKER = "CN=mitmproxy"
 
 
 def is_cert_trusted() -> bool:
@@ -21,7 +25,7 @@ def is_cert_trusted() -> bool:
         )
     except (OSError, subprocess.SubprocessError):
         return False
-    return result.returncode == 0 and _CERT_COMMON_NAME in (result.stdout or "")
+    return result.returncode == 0 and _CERT_TRUSTED_MARKER in (result.stdout or "")
 
 
 def _launch_elevated_cert_install() -> int:

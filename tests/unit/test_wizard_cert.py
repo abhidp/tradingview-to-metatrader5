@@ -23,6 +23,14 @@ def test_is_cert_trusted_false_when_absent(monkeypatch):
     assert cert.is_cert_trusted() is False
 
 
+def test_is_cert_trusted_false_on_echoed_search_term(monkeypatch):
+    # certutil can echo the bare search term in its header with no real match;
+    # that must NOT count as trusted (requires the CN=mitmproxy marker).
+    echoed = 'root "mitmproxy"\n\nCertUtil: -store command completed successfully.'
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: _R(0, echoed))
+    assert cert.is_cert_trusted() is False
+
+
 def test_is_cert_trusted_false_on_error(monkeypatch):
     def boom(*a, **k):
         raise OSError("certutil missing")
