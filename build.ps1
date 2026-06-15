@@ -13,11 +13,16 @@ Write-Host "==> Building TV2MT5 $version"
 & (Join-Path $root 'venv\Scripts\pyinstaller.exe') --noconfirm (Join-Path $root 'tv2mt5.spec')
 if ($LASTEXITCODE -ne 0) { throw 'PyInstaller failed' }
 
-# 2) Locate ISCC.
+# 2) Locate ISCC (PATH, then common machine-wide and per-user/winget install dirs).
 $iscc = (Get-Command ISCC.exe -ErrorAction SilentlyContinue).Source
 if (-not $iscc) {
-  $cand = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
-  if (Test-Path $cand) { $iscc = $cand } else { throw 'ISCC.exe not found. Install Inno Setup 6.' }
+  $cands = @(
+    'C:\Program Files (x86)\Inno Setup 6\ISCC.exe',
+    'C:\Program Files\Inno Setup 6\ISCC.exe',
+    (Join-Path $env:LOCALAPPDATA 'Programs\Inno Setup 6\ISCC.exe')
+  )
+  $iscc = $cands | Where-Object { Test-Path $_ } | Select-Object -First 1
+  if (-not $iscc) { throw 'ISCC.exe not found. Install Inno Setup 6.' }
 }
 
 # 3) Build installer.
