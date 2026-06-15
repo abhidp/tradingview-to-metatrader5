@@ -12,6 +12,7 @@ from app.api.config_api import (SettingsValidationError, get_settings,
                                 get_symbols, update_settings, update_symbols)
 from app.api.logs import read_log_tail
 from app.api.trades import query_trades
+from app.api.wizard import add_wizard_routes
 from app.paths import get_data_dir
 
 logger = logging.getLogger("ApiServer")
@@ -90,6 +91,8 @@ def create_app(controller: EngineController, focus_callback: Optional[Callable] 
         if focus_callback is not None:
             focus_callback()
         return {"ok": True}
+
+    add_wizard_routes(app)
 
     @app.get("/")
     def index():
