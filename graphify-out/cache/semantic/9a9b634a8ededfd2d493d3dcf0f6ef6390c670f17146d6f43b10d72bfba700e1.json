@@ -1,1 +1,0 @@
-{"nodes": [{"id": "models_database_init_db", "label": "init_db", "file_type": "code", "source_file": "src/models/database.py", "source_location": null, "source_url": null, "captured_at": null, "author": null, "contributor": null}], "edges": [], "hyperedges": []}
