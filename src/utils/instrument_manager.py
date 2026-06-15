@@ -1,15 +1,15 @@
 import json
 import logging
-from pathlib import Path
 from typing import Dict
 
 from app.config_accessors import get_symbol_settings
+from app.paths import get_data_file
 
 logger = logging.getLogger('InstrumentManager')
 
 class InstrumentManager:
     def __init__(self):
-        self.config_path = Path(__file__).parent.parent.parent / 'data' / 'instruments.json'
+        self.config_path = get_data_file('instruments.json', seed_name='instruments.json')
         self.default_suffix, _ = get_symbol_settings()
         self.instruments = self._load_config()
         
