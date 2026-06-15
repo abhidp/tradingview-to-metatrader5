@@ -32,6 +32,24 @@ class _DropConnectionResetNoise(logging.Filter):
         return not isinstance(exc, ConnectionResetError)
 
 
+def _force_utf8_streams() -> None:
+    """Reconfigure stdout/stderr to UTF-8 so emoji log/print lines don't crash.
+
+    Windows consoles default to cp1252, which raises UnicodeEncodeError on the
+    emoji status lines the app prints. Runs for every entry path (the desktop
+    entry does not go through app/__main__). Tolerates streams that are None (a
+    frozen windowed build) or non-reconfigurable (already-wrapped streams).
+    """
+    for name in ("stdout", "stderr"):
+        stream = getattr(sys, name, None)
+        if stream is None:
+            continue
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass  # non-reconfigurable stream — best effort
+
+
 def get_log_dir() -> Path:
     """Return (and create) the directory holding log files."""
     log_dir = get_data_dir() / "logs"
@@ -80,6 +98,8 @@ def setup_logging(level: int = logging.INFO) -> Path:
     log_file = get_log_dir() / "tv2mt5.log"
     if _configured:
         return log_file
+
+    _force_utf8_streams()
 
     file_handler = RotatingFileHandler(
         log_file, maxBytes=5_000_000, backupCount=5, encoding="utf-8"
