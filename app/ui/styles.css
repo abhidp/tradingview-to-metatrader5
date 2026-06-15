@@ -45,3 +45,18 @@ body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; color: #1f2430
 .map-row input { padding: 6px 8px; border: 1px solid #cfd6e4; border-radius: 5px; }
 .banner.ok { background: #e6f4ea; color: #137333; }
 select#trades-status { padding: 6px 10px; border: 1px solid #cfd6e4; border-radius: 5px; }
+/* --- Onboarding wizard (Plan 4a) --- */
+.onboarding .sidebar { display: none; }
+.view.wizard { display: flex; gap: 0; height: 100vh; }
+.view.wizard.hidden { display: none; }
+.wiz-rail {
+  width: 220px; background: #17181c; border-right: 1px solid #2c2e36; padding: 18px;
+}
+.wiz-rail .brand { font-weight: 700; margin-bottom: 16px; }
+.wiz-rail ol { list-style: none; padding: 0; margin: 0; }
+.wiz-step { padding: 8px 6px; opacity: .5; font-size: 14px; }
+.wiz-step.active { opacity: 1; color: #4ea1ff; font-weight: 600; }
+.wiz-panel { flex: 1; padding: 28px 32px; overflow: auto; display: flex; flex-direction: column; }
+.wiz-pane { flex: 1; }
+.wiz-pane.hidden { display: none; }
+.wiz-nav { display: flex; justify-content: space-between; margin-top: 24px; }

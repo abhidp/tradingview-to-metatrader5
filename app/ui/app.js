@@ -202,3 +202,168 @@ async function showSaveResult(banner, resp, reload) {
     banner.className = 'banner ok';
   }
 }
+
+// --- Onboarding wizard (Plan 4a) ---
+let wizStep = 1;
+const WIZ_LAST = 6;
+let certPoll = null;
+let tvPoll = null;
+
+function wizBanner(msg, ok) {
+  const b = $('wiz-banner');
+  b.textContent = msg;
+  b.className = 'banner' + (ok ? ' ok' : '');
+}
+
+function enterWizard() {
+  document.body.classList.add('onboarding');
+  VIEWS.forEach(v => $('view-' + v).classList.add('hidden'));
+  $('view-wizard').classList.remove('hidden');
+  gotoStep(wizStep);
+}
+
+function exitWizard() {
+  document.body.classList.remove('onboarding');
+  clearInterval(certPoll); clearInterval(tvPoll);
+  $('view-wizard').classList.add('hidden');
+  showView('dashboard');
+}
+
+function gotoStep(step) {
+  wizStep = Math.max(1, Math.min(WIZ_LAST, step));
+  document.querySelectorAll('.wiz-step').forEach(li =>
+    li.classList.toggle('active', Number(li.getAttribute('data-step')) === wizStep));
+  document.querySelectorAll('.wiz-pane').forEach(p =>
+    p.classList.toggle('hidden', Number(p.getAttribute('data-pane')) !== wizStep));
+  $('wiz-back').disabled = wizStep === 1;
+  $('wiz-next').textContent = wizStep === WIZ_LAST ? 'Start Copying' : 'Next';
+  $('wiz-banner').classList.add('hidden');
+  $('wiz-next').disabled = false;
+  fetch('/api/wizard/step', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ step: wizStep }),
+  }).catch(() => {});
+  if (wizStep !== 4) wizStopTvDetection();
+  if (wizStep === 2) wizLoadCert();
+  if (wizStep === 3) wizLoadMt5();
+  if (wizStep === 4) wizStartTvDetection();
+  if (wizStep === 5) wizLoadSuffix();
+}
+
+async function wizLoadCert() {
+  try {
+    const d = await (await fetch('/api/wizard/cert/status')).json();
+    setCertUi(d.trusted);
+  } catch (e) {}
+}
+
+function setCertUi(trusted) {
+  $('wiz-cert-status').textContent = trusted ? '✓ Certificate installed' : 'Not installed yet';
+  $('wiz-cert-install').classList.toggle('hidden', trusted);
+  if (wizStep === 2) $('wiz-next').disabled = !trusted;
+}
+
+$('wiz-cert-install').addEventListener('click', async () => {
+  $('wiz-cert-status').textContent = 'Requesting administrator access…';
+  let r;
+  try { r = await (await fetch('/api/wizard/cert/install', { method: 'POST' })).json(); }
+  catch (e) { wizBanner('Install failed', false); return; }
+  if (r.ok) { setCertUi(true); return; }
+  if (r.error) { wizBanner(r.error, false); $('wiz-cert-status').textContent = 'Not installed yet'; return; }
+  $('wiz-cert-status').textContent = 'Installing… approve the Windows prompt.';
+  clearInterval(certPoll);
+  certPoll = setInterval(async () => {
+    try {
+      const d = await (await fetch('/api/wizard/cert/status')).json();
+      if (d.trusted) { clearInterval(certPoll); setCertUi(true); }
+    } catch (e) {}
+  }, 1500);
+});
+
+async function wizLoadMt5() {
+  $('wiz-next').disabled = true; // require a successful test first
+  try {
+    const d = await (await fetch('/api/wizard/mt5/detect')).json();
+    const t = $('wiz-mt5-terminal');
+    if (!t.value) t.value = d.current || (d.terminals && d.terminals[0]) || '';
+  } catch (e) {}
+}
+
+$('wiz-mt5-test').addEventListener('click', async () => {
+  $('wiz-mt5-result').textContent = 'Testing…';
+  const mt5 = {
+    account: $('wiz-mt5-account').value.trim(),
+    password: $('wiz-mt5-password').value,
+    server: $('wiz-mt5-server').value.trim(),
+    terminal_path: $('wiz-mt5-terminal').value.trim(),
+  };
+  let r;
+  try {
+    r = await (await fetch('/api/wizard/mt5/test', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mt5 }),
+    })).json();
+  } catch (e) { wizBanner('Test failed', false); return; }
+  if (r.ok) {
+    $('wiz-mt5-result').textContent = `✓ ${r.account} — ${r.balance} ${r.currency} (${r.server})`;
+    $('wiz-next').disabled = false;
+  } else {
+    $('wiz-mt5-result').textContent = '';
+    wizBanner(r.error || 'Connection failed', false);
+  }
+});
+
+async function wizStartTvDetection() {
+  $('wiz-next').disabled = true;
+  await fetch('/api/engine/start', { method: 'POST' }).catch(() => {});
+  clearInterval(tvPoll);
+  tvPoll = setInterval(async () => {
+    try {
+      const d = await (await fetch('/api/wizard/tv/detection')).json();
+      if (d.detected) {
+        $('wiz-tv-status').textContent = `✓ Detected account ${d.account_id}`;
+        $('wiz-next').disabled = false;
+      }
+    } catch (e) {}
+  }, 2000);
+}
+
+function wizStopTvDetection() { clearInterval(tvPoll); tvPoll = null; }
+
+async function wizLoadSuffix() {
+  try {
+    const d = await (await fetch('/api/wizard/symbols/suggest')).json();
+    if (!$('wiz-suffix').value) $('wiz-suffix').value = d.suffix || '.r';
+  } catch (e) {}
+}
+
+$('wiz-back').addEventListener('click', () => gotoStep(wizStep - 1));
+
+$('wiz-next').addEventListener('click', async () => {
+  if (wizStep === 5) {
+    let cur = { map: {} };
+    try { cur = await (await fetch('/api/symbols')).json(); } catch (e) {}
+    await fetch('/api/symbols', {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ default_suffix: $('wiz-suffix').value.trim(), map: cur.map || {} }),
+    }).catch(() => {});
+  }
+  if (wizStep === WIZ_LAST) {
+    await fetch('/api/wizard/complete', { method: 'POST' }).catch(() => {});
+    exitWizard();
+    await fetch('/api/engine/start', { method: 'POST' }).catch(() => {});
+    refreshStatus();
+    return;
+  }
+  gotoStep(wizStep + 1);
+});
+
+$('set-rerun').addEventListener('click', () => { wizStep = 1; enterWizard(); });
+
+async function initOnboarding() {
+  try {
+    const d = await (await fetch('/api/wizard/state')).json();
+    if (!d.onboarding_complete) { wizStep = d.step || 1; enterWizard(); }
+  } catch (e) {}
+}
+initOnboarding();
