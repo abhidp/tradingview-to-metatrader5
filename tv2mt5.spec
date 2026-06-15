@@ -38,8 +38,11 @@ hiddenimports += collect_submodules('uvicorn')
 # Our own packages are imported lazily (delayed) inside tv2mt5.py / the engine, so
 # PyInstaller's static analysis can miss them. Collect them explicitly so the
 # frozen app always has app.desktop, app.engine, the src.* engine modules, etc.
+# Exclude src.scripts: those are dev/CLI utilities (init_db pulls psycopg2 — a
+# dependency deliberately cut in Plan 1 — symbol_specifications pulls pandas, etc.)
+# and are never run by the frozen app.
 hiddenimports += collect_submodules('app')
-hiddenimports += collect_submodules('src')
+hiddenimports += [m for m in collect_submodules('src') if not m.startswith('src.scripts')]
 
 a = Analysis(
     ['tv2mt5.py'],
@@ -50,7 +53,9 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=['tkinter', 'matplotlib'],
+    # psycopg2: SQLAlchemy's hook pulls in every DB dialect, but the app uses
+    # SQLite only (Postgres was cut in Plan 1) — exclude the unused C extension.
+    excludes=['tkinter', 'matplotlib', 'psycopg2', 'psycopg2cffi'],
     cipher=block_cipher,
     noarchive=False,
 )

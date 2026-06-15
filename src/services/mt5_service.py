@@ -48,13 +48,14 @@ class MT5Service:
         self.connected = False
         
         if not self.terminal_path:
-            logger.warning("MT5_TERMINAL_PATH not set in .env file")
+            logger.warning("MT5 terminal path not configured (Settings → MT5). "
+                           "MT5 will use the system default terminal, which may be the wrong broker.")
             terminals = find_mt5_terminals()
             if terminals:
                 logger.info("Available MT5 terminals:")
                 for i, path in enumerate(terminals, 1):
                     logger.info(f"{i}. {path}")
-                logger.info("Set MT5_TERMINAL_PATH in .env to use a specific terminal")
+                logger.info("Set the terminal path in Settings to pin a specific broker.")
         elif not os.path.exists(self.terminal_path):
             logger.error(f"MT5 terminal not found at: {self.terminal_path}")
             available = find_mt5_terminals()
