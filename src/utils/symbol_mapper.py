@@ -6,6 +6,7 @@ from typing import Dict, Optional, Set
 
 import MetaTrader5 as mt5
 
+from app.paths import get_data_file
 from src.config.mt5_config import get_mt5_config
 from src.services.mt5_service import MT5Service
 
@@ -32,9 +33,9 @@ class SymbolMapper:
         # Track active symbols for prioritized caching
         self._active_symbols: Set[str] = set()
         
-        # Set up file path for mappings
-        self.mappings_file = Path('data/symbol_mappings.json')
-        self.mappings_file.parent.mkdir(exist_ok=True)
+        # Mutable mappings live in %APPDATA%/TV2MT5/data (self-initialises from
+        # MT5 when absent, so no bundled seed is needed).
+        self.mappings_file = get_data_file('symbol_mappings.json')
         
         # Get MT5 service instance
         _cfg = get_mt5_config()
