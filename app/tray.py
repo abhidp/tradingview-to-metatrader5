@@ -5,6 +5,7 @@ import urllib.request
 from PIL import Image, ImageDraw
 import pystray
 
+from app.resources import resource_path
 from app.singleton import CONTROL_HOST, CONTROL_PORT
 
 logger = logging.getLogger("Tray")
@@ -21,10 +22,14 @@ def _api(path: str, method: str = "POST") -> None:
 
 
 def _icon_image() -> Image.Image:
-    img = Image.new("RGB", (64, 64), "#1f2430")
-    d = ImageDraw.Draw(img)
-    d.rectangle([18, 18, 46, 46], fill="#2d6cdf")
-    return img
+    """Tray icon from the bundled .ico; fall back to a drawn glyph if unavailable."""
+    try:
+        return Image.open(resource_path("app/ui/img/tv2mt5.ico"))
+    except Exception:  # noqa: BLE001 — any load failure → drawn fallback
+        img = Image.new("RGB", (64, 64), "#1f2430")
+        d = ImageDraw.Draw(img)
+        d.rectangle([18, 18, 46, 46], fill="#2d6cdf")
+        return img
 
 
 def build_tray(on_open, on_quit) -> "pystray.Icon":

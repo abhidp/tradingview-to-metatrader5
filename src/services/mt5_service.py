@@ -8,6 +8,7 @@ from pathlib import Path
 import MetaTrader5 as mt5
 
 from src.config.mt5_symbol_config import SymbolMapper
+from src.config.mt5_config import get_mt5_config
 from src.utils.database_handler import DatabaseHandler
 from src.utils.instrument_manager import InstrumentManager
 
@@ -39,18 +40,22 @@ class MT5Service:
         self.db = db_handler
         self.instrument_manager = InstrumentManager()
         
-        # Get terminal path from environment
-        self.terminal_path = os.getenv('MT5_TERMINAL_PATH')
+        # Terminal path comes from the settings store (get_mt5_config falls back
+        # to MT5_TERMINAL_PATH env for dev). Reading the store directly is required
+        # for the frozen app, where .env is never loaded — otherwise mt5.initialize()
+        # launches the machine's default terminal (wrong broker).
+        self.terminal_path = get_mt5_config().get("terminal_path")
         self.connected = False
         
         if not self.terminal_path:
-            logger.warning("MT5_TERMINAL_PATH not set in .env file")
+            logger.warning("MT5 terminal path not configured (Settings → MT5). "
+                           "MT5 will use the system default terminal, which may be the wrong broker.")
             terminals = find_mt5_terminals()
             if terminals:
                 logger.info("Available MT5 terminals:")
                 for i, path in enumerate(terminals, 1):
                     logger.info(f"{i}. {path}")
-                logger.info("Set MT5_TERMINAL_PATH in .env to use a specific terminal")
+                logger.info("Set the terminal path in Settings to pin a specific broker.")
         elif not os.path.exists(self.terminal_path):
             logger.error(f"MT5 terminal not found at: {self.terminal_path}")
             available = find_mt5_terminals()

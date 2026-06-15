@@ -4,6 +4,7 @@ import json
 import sys
 from pathlib import Path
 
+from app.paths import get_data_file
 from backup.instrument_sync import InstrumentSynchronizer
 from mitmproxy import http
 from src.core.trade_handler import TradeHandler
@@ -109,7 +110,7 @@ class TradingViewInterceptor:
                 })
 
             # Preserve custom pairs if file exists
-            config_path = Path(__file__).parent.parent.parent / 'data' / 'instruments.json'
+            config_path = get_data_file('instruments.json', seed_name='instruments.json')
             if config_path.exists():
                 try:
                     with open(config_path, 'r') as f:
