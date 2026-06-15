@@ -14,10 +14,11 @@ from app.api.logs import read_log_tail
 from app.api.trades import query_trades
 from app.api.wizard import add_wizard_routes
 from app.paths import get_data_dir
+from app.resources import resource_path
 
 logger = logging.getLogger("ApiServer")
 
-UI_DIR = Path(__file__).parent.parent / "ui"
+UI_DIR = resource_path("app/ui")
 
 
 def create_app(controller: EngineController, focus_callback: Optional[Callable] = None) -> FastAPI:
