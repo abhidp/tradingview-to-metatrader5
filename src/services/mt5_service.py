@@ -8,6 +8,7 @@ from pathlib import Path
 import MetaTrader5 as mt5
 
 from src.config.mt5_symbol_config import SymbolMapper
+from src.config.mt5_config import get_mt5_config
 from src.utils.database_handler import DatabaseHandler
 from src.utils.instrument_manager import InstrumentManager
 
@@ -39,8 +40,11 @@ class MT5Service:
         self.db = db_handler
         self.instrument_manager = InstrumentManager()
         
-        # Get terminal path from environment
-        self.terminal_path = os.getenv('MT5_TERMINAL_PATH')
+        # Terminal path comes from the settings store (get_mt5_config falls back
+        # to MT5_TERMINAL_PATH env for dev). Reading the store directly is required
+        # for the frozen app, where .env is never loaded — otherwise mt5.initialize()
+        # launches the machine's default terminal (wrong broker).
+        self.terminal_path = get_mt5_config().get("terminal_path")
         self.connected = False
         
         if not self.terminal_path:
