@@ -1,6 +1,5 @@
 """`python -m app` — launch the single-process TV2MT5 engine."""
 import asyncio
-import sys
 
 from app.engine import run_engine
 from app.logging_setup import setup_logging
