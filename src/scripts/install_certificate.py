@@ -42,32 +42,29 @@ class MitmCertInstaller:
         self.logger = logging.getLogger('CertInstaller')
 
     def generate_certificate(self):
-        """Generate mitmproxy certificate if it doesn't exist"""
-        if not os.path.exists(self.cert_path):
-            self.logger.info("Certificate not found. Generating now...")
-            try:
-                # Run mitmproxy briefly to generate cert
-                proc = subprocess.Popen(
-                    ['mitmdump', '--listen-port', '8080'],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL
-                )
-                time.sleep(2)  # Wait for cert generation
-                proc.terminate()
-                proc.wait()
-                time.sleep(1)  # Wait for cleanup
+        """Generate the mitmproxy CA in-process if missing (no mitmdump subprocess).
 
-                if os.path.exists(self.cert_path):
-                    self.logger.info(f"Certificate generated successfully at: {self.cert_path}")
-                else:
-                    self.logger.error("Certificate generation failed")
-                    return False
-            except Exception as e:
-                self.logger.error(f"Error generating certificate: {e}")
-                return False
-        else:
+        A frozen build ships no `mitmdump` executable, so we create the CA store
+        directly via mitmproxy's API. CertStore.from_store writes
+        mitmproxy-ca-cert.cer into the confdir (~/.mitmproxy by default).
+        """
+        if os.path.exists(self.cert_path):
             self.logger.info("Certificate already exists")
-        return True
+            return True
+        self.logger.info("Certificate not found. Generating now...")
+        try:
+            from mitmproxy.certs import CertStore
+            confdir = Path(self.cert_path).parent
+            confdir.mkdir(parents=True, exist_ok=True)
+            CertStore.from_store(confdir, "mitmproxy", 2048)
+            if os.path.exists(self.cert_path):
+                self.logger.info(f"Certificate generated successfully at: {self.cert_path}")
+                return True
+            self.logger.error("Certificate generation failed")
+            return False
+        except Exception as e:
+            self.logger.error(f"Error generating certificate: {e}")
+            return False
 
     def install_certificate(self):
         """Install mitmproxy certificate in Windows certificate store"""
