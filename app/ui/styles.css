@@ -60,3 +60,4 @@ select#trades-status { padding: 6px 10px; border: 1px solid #cfd6e4; border-radi
 .wiz-pane { flex: 1; }
 .wiz-pane.hidden { display: none; }
 .wiz-nav { display: flex; justify-content: space-between; margin-top: 24px; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }

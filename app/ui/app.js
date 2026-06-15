@@ -245,7 +245,8 @@ function gotoStep(step) {
     body: JSON.stringify({ step: wizStep }),
   }).catch(() => {});
   wizStopCertPoll();
-  if (wizStep !== 4) wizStopTvDetection();
+  if (wizStep !== 4) wizStopTvPoll();
+  if (wizStep < 4) wizStopDetectionEngine();
   if (wizStep === 2) wizLoadCert();
   if (wizStep === 3) wizLoadMt5();
   if (wizStep === 4) wizStartTvDetection();
@@ -283,8 +284,19 @@ $('wiz-cert-install').addEventListener('click', async () => {
   }, 1500);
 });
 
+function wizUpdateMt5TestEnabled() {
+  const ready = $('wiz-mt5-account').value.trim() &&
+                $('wiz-mt5-password').value &&
+                $('wiz-mt5-server').value.trim();
+  $('wiz-mt5-test').disabled = !ready;
+}
+
+['wiz-mt5-account', 'wiz-mt5-password', 'wiz-mt5-server'].forEach(id =>
+  $(id).addEventListener('input', wizUpdateMt5TestEnabled));
+
 async function wizLoadMt5() {
   $('wiz-next').disabled = true; // require a successful test first
+  wizUpdateMt5TestEnabled();
   try {
     const d = await (await fetch('/api/wizard/mt5/detect')).json();
     const t = $('wiz-mt5-terminal');
@@ -334,8 +346,9 @@ async function wizStartTvDetection() {
 
 function wizStopCertPoll() { clearInterval(certPoll); certPoll = null; }
 
-function wizStopTvDetection() {
-  clearInterval(tvPoll); tvPoll = null;
+function wizStopTvPoll() { clearInterval(tvPoll); tvPoll = null; }
+
+function wizStopDetectionEngine() {
   if (engineStartedForDetection) {
     engineStartedForDetection = false;
     fetch('/api/engine/stop', { method: 'POST' }).catch(() => {});
@@ -362,6 +375,10 @@ $('wiz-next').addEventListener('click', async () => {
   }
   if (wizStep === WIZ_LAST) {
     await fetch('/api/wizard/complete', { method: 'POST' }).catch(() => {});
+    // The engine started in step 4 keeps running as the live copier. Clear the
+    // detection flag so teardown won't stop it; start() is idempotent and returns
+    // the already-running engine without re-binding port 8080.
+    engineStartedForDetection = false;
     exitWizard();
     await fetch('/api/engine/start', { method: 'POST' }).catch(() => {});
     refreshStatus();
