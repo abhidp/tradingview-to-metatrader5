@@ -1,7 +1,6 @@
 import json
 import logging
 from datetime import datetime, timedelta
-from pathlib import Path
 from typing import Dict, Optional, Set
 
 import MetaTrader5 as mt5
