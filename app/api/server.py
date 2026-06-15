@@ -1,6 +1,5 @@
 """FastAPI app: JSON API + static UI for the desktop shell."""
 import logging
-from pathlib import Path
 from typing import Callable, Optional
 
 from fastapi import Body, FastAPI, HTTPException, Query
