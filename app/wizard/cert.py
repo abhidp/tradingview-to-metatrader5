@@ -31,11 +31,14 @@ def is_cert_trusted() -> bool:
 def _launch_elevated_cert_install() -> int:
     """Trigger a UAC prompt to run the elevated cert-install helper.
 
-    Returns the ShellExecuteW result code (>32 means the launch was accepted).
+    A frozen exe cannot run `-m module`, so it re-execs itself with the
+    --run-cert-admin sentinel (handled in tv2mt5.py). From source we keep the
+    module form. Returns the ShellExecuteW code (>32 means the launch was accepted).
     """
     import ctypes
+    params = "--run-cert-admin" if getattr(sys, "frozen", False) else "-m app.wizard._cert_admin"
     return int(ctypes.windll.shell32.ShellExecuteW(
-        None, "runas", sys.executable, "-m app.wizard._cert_admin", None, 1
+        None, "runas", sys.executable, params, None, 1
     ))
 
 
