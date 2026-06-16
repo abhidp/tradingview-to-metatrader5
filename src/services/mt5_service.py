@@ -84,7 +84,10 @@ def discover_mt5_terminals() -> List[dict]:
 
     seen, out = set(), []
     for path in raw:
-        key = os.path.normcase(os.path.abspath(path))
+        try:
+            key = os.path.normcase(str(Path(path).resolve()))
+        except OSError:
+            key = os.path.normcase(os.path.abspath(path))
         if key in seen:
             continue
         seen.add(key)

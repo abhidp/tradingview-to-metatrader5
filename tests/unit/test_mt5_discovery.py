@@ -37,6 +37,17 @@ def test_discover_labels_from_parent_folder(tmp_path, monkeypatch):
     assert t["label"] == "Fusion Markets"  # " MT5 Terminal" suffix stripped
 
 
+def test_scan_root_respects_max_depth(tmp_path):
+    # _scan_root uses default max_depth=3 and stops descending once the dir
+    # depth (relative to root) reaches max_depth. A terminal whose parent dir
+    # is at depth 1 is found; one whose parent dir is at depth 6 is excluded.
+    shallow = _make_terminal(tmp_path, "Broker", "terminal64.exe")
+    _make_terminal(tmp_path, "a", "b", "c", "d", "DeepBroker", "terminal64.exe")
+    found = [p.lower() for p in mod._scan_root(tmp_path)]
+    assert str(shallow).lower() in found
+    assert not any("deepbroker" in p for p in found)
+
+
 def test_find_mt5_terminals_is_path_list(tmp_path, monkeypatch):
     pf = tmp_path / "PF"
     _make_terminal(pf, "MetaTrader 5", "terminal64.exe")
