@@ -40,12 +40,12 @@ async function wireTerminalPicker(selectId, browseId, inputId) {
     input.value = sel.value === '__other__' ? '' : sel.value;
   }
 
-  sel.addEventListener('change', () => {
+  sel.onchange = () => {
     input.value = sel.value === '__other__' ? '' : sel.value;
     input.dispatchEvent(new Event('input'));  // re-runs wizard's test-enable check
-  });
+  };
   if (browse) {
-    browse.addEventListener('click', async () => {
+    browse.onclick = async () => {
       try {
         const r = await (await fetch('/api/mt5/browse-terminal', { method: 'POST' })).json();
         if (r.path) {
@@ -59,7 +59,7 @@ async function wireTerminalPicker(selectId, browseId, inputId) {
           input.dispatchEvent(new Event('input'));
         }
       } catch (e) {}
-    });
+    };
   }
 }
 
