@@ -273,6 +273,7 @@ async function deleteProfile(id, name) {
 $('profile-add').addEventListener('click', () => {
   $('profile-form').classList.remove('hidden');
   $('profile-name').value = '';
+  $('profile-password').value = '';
 });
 $('profile-cancel').addEventListener('click', () => $('profile-form').classList.add('hidden'));
 $('profile-save').addEventListener('click', async () => {
@@ -286,7 +287,7 @@ $('profile-save').addEventListener('click', async () => {
     },
     symbols: { default_suffix: $('sym-suffix') ? $('sym-suffix').value.trim() : '' },
   };
-  const pw = $('set-password').value;
+  const pw = $('profile-password').value;
   if (pw) body.mt5.password = pw;
   const r = await fetch('/api/profiles', { method: 'POST',
     headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });

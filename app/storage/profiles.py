@@ -107,6 +107,8 @@ def activate_profile(pid: str, store: Optional[SettingsStore] = None) -> dict:
     if pw:
         store.set_secret("mt5.password", pw)
     store.set("symbols.default_suffix", sym.get("default_suffix", ""))
-    store.set("symbols.map", json.dumps(sym.get("map", {})))
+    sym_map = sym.get("map") or {}
+    if sym_map:
+        store.set("symbols.map", json.dumps(sym_map))
     store.set(ACTIVE_KEY, pid)
     return profile

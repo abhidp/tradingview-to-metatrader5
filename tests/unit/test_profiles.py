@@ -62,3 +62,25 @@ def test_activate_unknown_raises(temp_db_path):
         assert False, "expected KeyError"
     except KeyError:
         pass
+
+
+def test_activate_with_empty_map_preserves_live_symbols_map(temp_db_path):
+    s = SettingsStore()
+    s.set("symbols.map", json.dumps({"BTCUSD": "BTCUSD.r"}))
+    # profile created without a symbols map (as the Settings UI does)
+    p = profiles.create_profile(
+        {"name": "NoMap", "mt5": {"account": "1", "server": "S"}, "symbols": {"default_suffix": ".r"}},
+        store=s,
+    )
+    profiles.activate_profile(p["id"], store=s)
+    # the live map must be untouched, not wiped to {}
+    assert json.loads(s.get("symbols.map")) == {"BTCUSD": "BTCUSD.r"}
+
+
+def test_delete_active_clears_active_pointer(temp_db_path):
+    s = SettingsStore()
+    p = profiles.create_profile(_data(), store=s)
+    profiles.activate_profile(p["id"], store=s)
+    assert s.get("profiles.active") == p["id"]
+    profiles.delete_profile(p["id"], store=s)
+    assert profiles.list_profiles(store=s)["active"] == ""
