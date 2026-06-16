@@ -93,14 +93,15 @@ class EngineController:
             error=self._error,
         )
 
-    async def start(self) -> Status:
+    async def start(self, check_port: bool = True) -> Status:
         if self._state in (EngineState.STARTING, EngineState.RUNNING):
             return self.status()
-        if self.listen_port != 0 and not _port_free(self.listen_host, self.listen_port):
+        if check_port and self.listen_port != 0 and not _port_free(self.listen_host, self.listen_port):
             self._error = (
                 f"Proxy port {self.listen_port} is in use — another copier may be running."
             )
             self._state = EngineState.STOPPED
+            logger.error("Engine start aborted: %s", self._error)
             raise ProxyPortInUseError(self._error)
 
         self._error = None
@@ -121,6 +122,7 @@ class EngineController:
                 exc = self._task.exception()
                 self._state = EngineState.ERROR
                 self._error = str(exc) if exc else "engine exited during startup"
+                logger.error("Engine exited during startup: %s", self._error)
         else:
             self._state = EngineState.RUNNING
         return self.status()
@@ -150,11 +152,46 @@ class EngineController:
             self._state = EngineState.STOPPED
         return self.status()
 
+    async def _wait_for_port_free(self, timeout: float = 3.0) -> None:
+        """Best-effort wait for our proxy port to become bindable again.
+
+        After we stop our own engine the OS can take a moment to release the
+        listening socket (notably on Windows). This gives it that moment before
+        restart() re-binds. It returns once the port looks free OR the timeout
+        elapses — it never raises; restart() calls start(check_port=False) and
+        lets the proxy's own bind surface any genuine conflict via _serve().
+        """
+        if self.listen_port == 0:
+            return
+        loop = asyncio.get_event_loop()
+        deadline = loop.time() + timeout
+        while not _port_free(self.listen_host, self.listen_port):
+            if loop.time() >= deadline:
+                return
+            await asyncio.sleep(0.1)
+
+    async def apply_mt5_settings(self) -> Status:
+        """Apply MT5 config changes (e.g. switching broker profiles) by
+        reconnecting the worker in place — the proxy keeps running, so there is no
+        port rebind. No-op when the engine isn't running (the next start picks up
+        the new config). Preferred over restart() for MT5-only changes.
+        """
+        if self._state == EngineState.RUNNING and self._runner is not None:
+            reconnect = getattr(self._runner, "reconnect_mt5", None)
+            if reconnect is not None:
+                await reconnect()
+        return self.status()
+
     async def restart(self) -> Status:
         """Stop (if running) then start — used to apply settings changes.
 
-        stop() fully releases the proxy port before start() re-checks it, so this
-        avoids a client-side stop/start race.
+        We give the OS a brief moment to release the proxy port, then start
+        WITHOUT the strict pre-check: on Windows, sockets from the just-closed
+        proxy can linger in TIME_WAIT longer than any reasonable wait, and the
+        SO_REUSEADDR=0 pre-check would reject a port that is ours to reuse. We let
+        the proxy attempt the bind directly; a genuine failure surfaces (and is
+        logged) via _serve() instead of a false "port in use" abort.
         """
         await self.stop()
-        return await self.start()
+        await self._wait_for_port_free(timeout=1.5)
+        return await self.start(check_port=False)

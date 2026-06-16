@@ -154,6 +154,17 @@ No username / password</pre>
       <section id="view-settings" class="view hidden">
         <div class="lab">SETTINGS</div>
         <div id="settings-banner" class="banner hidden"></div>
+          <div class="lab">Broker profiles</div>
+          <ul id="profiles-list" class="profiles"></ul>
+          <button id="profile-add" type="button" class="btn ghost">Save current settings as a profile…</button>
+          <div id="profile-form" class="hidden">
+            <label class="field">Profile name <input id="profile-name" type="text" /></label>
+            <label class="field">MT5 password for this profile <input id="profile-password" type="password" /></label>
+            <div id="profile-form-banner" class="banner hidden"></div>
+            <button id="profile-save" type="button" class="btn start" disabled>Save profile</button>
+            <button id="profile-cancel" type="button" class="btn ghost">Cancel</button>
+          </div>
+          <div id="profiles-banner" class="banner hidden"></div>
         <label class="field">MT5 Account Number
           <input id="set-account" type="text" inputmode="numeric" />
         </label>

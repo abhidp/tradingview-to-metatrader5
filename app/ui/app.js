@@ -225,7 +225,126 @@ async function loadSettings() {
     $('set-tv-broker').value = d.tv.broker_url || '';
     $('set-tv-account').value = d.tv.account_id || '';
   } catch (e) {}
+  loadProfiles();
 }
+
+// --- Broker profiles (Settings tab) ---
+async function loadProfiles() {
+  let data = { profiles: [], active: '' };
+  try { data = await (await fetch('/api/profiles')).json(); } catch (e) {}
+  const ul = $('profiles-list');
+  ul.innerHTML = '';
+  for (const p of data.profiles) {
+    const li = document.createElement('li');
+    const active = p.id === data.active;
+    li.innerHTML = `<span>${esc(p.name)}${active ? ' <em>(active)</em>' : ''}</span>`;
+    const act = document.createElement('button');
+    act.className = active ? 'btn prof-active' : 'btn prof-activate';
+    act.textContent = active ? 'Active' : 'Activate';
+    act.disabled = active;
+    act.addEventListener('click', () => activateProfile(p.id));
+    const del = document.createElement('button');
+    del.className = 'btn ghost'; del.textContent = 'Delete';
+    del.addEventListener('click', () => deleteProfile(p.id, p.name));
+    li.appendChild(act); li.appendChild(del);
+    ul.appendChild(li);
+  }
+}
+
+// Set a banner's text/style and auto-dismiss after a few seconds (unless sticky).
+// Timer lives on the element so each banner manages its own dismissal.
+function bannerMessage(banner, text, ok, { sticky = false, ms = 4000 } = {}) {
+  banner.className = ok ? 'banner ok' : 'banner';
+  banner.classList.remove('hidden');
+  banner.textContent = text;
+  if (banner._hideTimer) { clearTimeout(banner._hideTimer); banner._hideTimer = null; }
+  if (!sticky) banner._hideTimer = setTimeout(() => banner.classList.add('hidden'), ms);
+}
+
+function showProfilesBanner(text, ok, opts = {}) {
+  bannerMessage($('profiles-banner'), text, ok, opts);
+}
+
+async function activateProfile(id) {
+  showProfilesBanner('Activating…', true, { sticky: true });
+  try {
+    const r = await fetch(`/api/profiles/${id}/activate`, { method: 'POST' });
+    if (!r.ok) {
+      const j = await r.json().catch(() => ({}));
+      throw new Error(j.detail || `HTTP ${r.status}`);
+    }
+    const data = await r.json().catch(() => ({}));
+    const st = data.status || {};
+    if (st.engine === 'running' && st.mt5 && st.mt5.connected === false) {
+      // Profile is active, but the new broker didn't connect — say so plainly.
+      showProfilesBanner('Profile activated, but MT5 isn’t connected — check the account, password, and terminal path.', false, { sticky: true });
+    } else {
+      showProfilesBanner('Profile activated.', true);
+    }
+    // loadSettings() also re-renders the profiles list, so don't call loadProfiles() again.
+    loadSettings(); refreshStatus();
+  } catch (e) {
+    showProfilesBanner(`Activation failed: ${e.message}`, false);
+  }
+}
+
+async function deleteProfile(id, name) {
+  if (!confirm(`Delete profile "${name}"?`)) return;
+  const r = await fetch(`/api/profiles/${id}`, { method: 'DELETE' });
+  if (r.ok) { showProfilesBanner('Profile deleted.', true); loadProfiles(); }
+  else { showProfilesBanner('Delete failed.', false); }
+}
+
+// Save profile requires both a name and a password — keep the button disabled
+// (greyed out, unclickable) until both are filled in.
+function updateProfileSaveState() {
+  const ready = $('profile-name').value.trim() !== '' && $('profile-password').value !== '';
+  $('profile-save').disabled = !ready;
+}
+$('profile-name').addEventListener('input', updateProfileSaveState);
+$('profile-password').addEventListener('input', updateProfileSaveState);
+
+$('profile-add').addEventListener('click', () => {
+  $('profile-form').classList.remove('hidden');
+  $('profile-name').value = '';
+  $('profile-password').value = '';
+  $('profile-form-banner').classList.add('hidden');
+  updateProfileSaveState();
+});
+$('profile-cancel').addEventListener('click', () => $('profile-form').classList.add('hidden'));
+$('profile-save').addEventListener('click', async () => {
+  // Save the CURRENT Settings-form values as a new profile. Name + password are
+  // both required (the Save button is disabled until they're present); the
+  // backend enforces unique profile names and one profile per broker account.
+  // Snapshot the CURRENT live symbol settings (suffix + map) so the profile
+  // carries the broker's real symbol config — not the possibly-empty Symbols-tab
+  // input. Activating the profile later restores exactly these.
+  let symbols = { default_suffix: '', map: {} };
+  try {
+    const s = await (await fetch('/api/symbols')).json();
+    symbols = { default_suffix: s.default_suffix || '', map: s.map || {} };
+  } catch (e) {}
+  const body = {
+    name: $('profile-name').value.trim(),
+    mt5: {
+      terminal_path: $('set-terminal').value.trim(),
+      account: $('set-account').value.trim(),
+      server: $('set-server').value.trim(),
+      password: $('profile-password').value,
+    },
+    symbols,
+  };
+  const r = await fetch('/api/profiles', { method: 'POST',
+    headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const banner = $('profile-form-banner');
+  if (r.ok) { $('profile-form').classList.add('hidden'); loadProfiles(); }
+  else {
+    const j = await r.json().catch(() => ({}));
+    banner.className = 'banner';
+    banner.classList.remove('hidden');
+    banner.textContent = j.detail || 'Could not save profile';
+  }
+});
 
 $('set-save').addEventListener('click', async () => {
   const mt5 = {
@@ -263,13 +382,14 @@ async function showSaveResult(banner, resp, reload) {
   const time = new Date().toLocaleTimeString();
   if (window._engineRunning) {
     // Engine running → keep the actionable Restart button (don't auto-hide).
-    banner.innerHTML = `Saved at ${time} — restart the engine to apply. <button id="restart-now" class="btn start">Restart engine</button>`;
+    banner.innerHTML = `Saved at ${time} — apply to the running engine. <button id="restart-now" class="btn start">Apply to engine</button>`;
     banner.className = 'banner ok';
     $('restart-now').addEventListener('click', async () => {
-      banner.textContent = 'Restarting…';
-      await fetch('/api/engine/restart', { method: 'POST' });
+      banner.textContent = 'Applying…';
+      // Hot-swap MT5 in place (no proxy restart / port rebind).
+      const ar = await fetch('/api/engine/apply', { method: 'POST' }).catch(() => null);
       refreshStatus();
-      banner.textContent = 'Engine restarted.';
+      banner.textContent = (ar && ar.ok) ? 'Applied to engine.' : 'Apply failed — check status.';
     });
   } else {
     banner.textContent = `Saved at ${time}.`;

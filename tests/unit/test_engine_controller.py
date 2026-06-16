@@ -142,3 +142,46 @@ async def test_restart_from_stopped_just_starts(temp_db_path):
     s = await c.restart()
     assert s.engine == EngineState.RUNNING
     await c.stop()
+
+
+async def test_wait_for_port_free_returns_immediately_at_port_zero(temp_db_path):
+    c = EngineController(runner_factory=_FakeRunner, listen_port=0)
+    await c._wait_for_port_free(timeout=0.5)  # port 0 sentinel -> no-op, must not hang
+
+
+async def test_wait_for_port_free_blocks_until_timeout_when_busy(temp_db_path):
+    s = _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM)
+    s.bind(("127.0.0.1", 0))
+    s.listen(1)
+    busy_port = s.getsockname()[1]
+    c = EngineController(runner_factory=_FakeRunner, listen_port=busy_port)
+    try:
+        loop = asyncio.get_event_loop()
+        t0 = loop.time()
+        await c._wait_for_port_free(timeout=0.3)  # never frees -> returns after ~timeout
+        assert loop.time() - t0 >= 0.3
+    finally:
+        s.close()
+
+
+class _ReconnectRunner(_FakeRunner):
+    def __init__(self, listen_host="127.0.0.1", listen_port=8080):
+        super().__init__(listen_host, listen_port)
+        self.reconnects = 0
+
+    async def reconnect_mt5(self):
+        self.reconnects += 1
+
+
+async def test_apply_mt5_settings_reconnects_when_running(temp_db_path):
+    c = EngineController(runner_factory=_ReconnectRunner, listen_port=0)
+    await c.start()
+    await c.apply_mt5_settings()
+    assert c._runner.reconnects == 1  # reconnected in place, no restart
+    await c.stop()
+
+
+async def test_apply_mt5_settings_is_noop_when_stopped(temp_db_path):
+    c = EngineController(runner_factory=_ReconnectRunner, listen_port=0)
+    s = await c.apply_mt5_settings()  # never started
+    assert s.engine == EngineState.STOPPED
