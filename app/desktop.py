@@ -100,7 +100,7 @@ def _run_api(controller: EngineController) -> None:
     try:
         _api_loop = asyncio.new_event_loop()
         asyncio.set_event_loop(_api_loop)
-        app = create_app(controller, focus_callback=_focus_window)
+        app = create_app(controller, focus_callback=_focus_window, pick_file=_pick_terminal_file)
         config = uvicorn.Config(app, host=CONTROL_HOST, port=CONTROL_PORT, log_level="warning")
         _server = uvicorn.Server(config)
         _api_loop.run_until_complete(_server.serve())
@@ -115,6 +115,28 @@ def _focus_window() -> None:
             _window.restore()
         except Exception as e:  # noqa: BLE001
             logger.info("focus window failed: %s", e)
+
+
+def _pick_terminal_file():
+    """Open a native file dialog to choose terminal64.exe; return the path or None.
+
+    pywebview marshals create_file_dialog to the GUI thread, so this is safe to call
+    from the API worker thread. Returns None on cancel or if the window is gone.
+    """
+    if _window is None:
+        return None
+    try:
+        result = _window.create_file_dialog(
+            webview.OPEN_DIALOG,
+            allow_multiple=False,
+            file_types=("Executable (*.exe)", "All files (*.*)"),
+        )
+    except Exception as e:  # noqa: BLE001 - dialog failure must not crash the API
+        logger.info("file dialog failed: %s", e)
+        return None
+    if not result:
+        return None
+    return result[0] if isinstance(result, (list, tuple)) else result
 
 
 def main() -> None:

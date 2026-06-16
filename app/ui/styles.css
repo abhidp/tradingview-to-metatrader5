@@ -43,7 +43,13 @@ body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; color: #1f2430
 .field input:disabled { background: #eef1f5; color: #6b7484; }
 .map-row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
 .map-row input { padding: 6px 8px; border: 1px solid #cfd6e4; border-radius: 5px; }
+.row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+.row input { flex: 1; min-width: 0; padding: 7px 9px; border: 1px solid #cfd6e4; border-radius: 5px; font-size: 14px; color: #1f2430; }
+.field select { display: block; width: 360px; max-width: 100%; margin-top: 4px; padding: 7px 32px 7px 9px; border: 1px solid #cfd6e4; border-radius: 5px; font-size: 14px; color: #1f2430; text-overflow: ellipsis; }
+.row select { flex: 1; min-width: 0; }
 .banner.ok { background: #e6f4ea; color: #137333; }
+@keyframes banner-flash { 0% { opacity: .25; transform: translateY(-3px); } 100% { opacity: 1; transform: none; } }
+.banner.flash { animation: banner-flash .4s ease-out; }
 select#trades-status { padding: 6px 10px; border: 1px solid #cfd6e4; border-radius: 5px; }
 /* --- Onboarding wizard (Plan 4a) --- */
 .onboarding .sidebar { display: none; }

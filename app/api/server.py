@@ -12,6 +12,7 @@ from app.api.config_api import (SettingsValidationError, get_settings,
 from app.api.logs import read_log_tail
 from app.api.trades import query_trades
 from app.api.wizard import add_wizard_routes
+from app.api.mt5_api import add_mt5_routes
 from app.paths import get_data_dir
 from app.resources import resource_path
 
@@ -20,7 +21,8 @@ logger = logging.getLogger("ApiServer")
 UI_DIR = resource_path("app/ui")
 
 
-def create_app(controller: EngineController, focus_callback: Optional[Callable] = None) -> FastAPI:
+def create_app(controller: EngineController, focus_callback: Optional[Callable] = None,
+               pick_file: Optional[Callable] = None) -> FastAPI:
     app = FastAPI(title="TV2MT5 Desktop")
     log_file = get_data_dir() / "logs" / "tv2mt5.log"
 
@@ -93,6 +95,7 @@ def create_app(controller: EngineController, focus_callback: Optional[Callable] 
         return {"ok": True}
 
     add_wizard_routes(app)
+    add_mt5_routes(app, pick_file=pick_file)
 
     @app.get("/")
     def index():
