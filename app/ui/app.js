@@ -239,11 +239,11 @@ async function loadProfiles() {
     const active = p.id === data.active;
     li.innerHTML = `<span>${esc(p.name)}${active ? ' <em>(active)</em>' : ''}</span>`;
     const act = document.createElement('button');
-    act.className = 'btn'; act.textContent = active ? 'Active' : 'Activate';
+    act.className = 'btn start'; act.textContent = active ? 'Active' : 'Activate';
     act.disabled = active;
     act.addEventListener('click', () => activateProfile(p.id));
     const del = document.createElement('button');
-    del.className = 'btn'; del.textContent = 'Delete';
+    del.className = 'btn ghost'; del.textContent = 'Delete';
     del.addEventListener('click', () => deleteProfile(p.id, p.name));
     li.appendChild(act); li.appendChild(del);
     ul.appendChild(li);
