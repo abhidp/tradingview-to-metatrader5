@@ -85,3 +85,13 @@ def test_activate_returns_409_when_restart_port_in_use(temp_db_path, monkeypatch
                "terminal_path": "C:/t.exe"}, "symbols": {}})
     pid = r.json()["id"]
     assert c.post(f"/api/profiles/{pid}/activate").status_code == 409
+
+
+def test_create_duplicate_returns_409(temp_db_path, monkeypatch):
+    from app.storage.settings_store import SettingsStore
+    store = SettingsStore()
+    ctrl = FakeController(running=False)
+    c = _client(ctrl, monkeypatch, store)
+    body = {"name": "A", "mt5": {"account": "1", "server": "S", "terminal_path": "C:/t.exe"}, "symbols": {}}
+    assert c.post("/api/profiles", json=body).status_code == 200
+    assert c.post("/api/profiles", json=body).status_code == 409

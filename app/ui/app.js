@@ -239,7 +239,8 @@ async function loadProfiles() {
     const active = p.id === data.active;
     li.innerHTML = `<span>${esc(p.name)}${active ? ' <em>(active)</em>' : ''}</span>`;
     const act = document.createElement('button');
-    act.className = 'btn start'; act.textContent = active ? 'Active' : 'Activate';
+    act.className = active ? 'btn prof-active' : 'btn prof-activate';
+    act.textContent = active ? 'Active' : 'Activate';
     act.disabled = active;
     act.addEventListener('click', () => activateProfile(p.id));
     const del = document.createElement('button');
@@ -270,30 +271,47 @@ async function deleteProfile(id, name) {
   if (r.ok) loadProfiles();
 }
 
+// Save profile requires both a name and a password — keep the button disabled
+// (greyed out, unclickable) until both are filled in.
+function updateProfileSaveState() {
+  const ready = $('profile-name').value.trim() !== '' && $('profile-password').value !== '';
+  $('profile-save').disabled = !ready;
+}
+$('profile-name').addEventListener('input', updateProfileSaveState);
+$('profile-password').addEventListener('input', updateProfileSaveState);
+
 $('profile-add').addEventListener('click', () => {
   $('profile-form').classList.remove('hidden');
   $('profile-name').value = '';
   $('profile-password').value = '';
+  $('profile-form-banner').classList.add('hidden');
+  updateProfileSaveState();
 });
 $('profile-cancel').addEventListener('click', () => $('profile-form').classList.add('hidden'));
 $('profile-save').addEventListener('click', async () => {
-  // Save the CURRENT Settings-form values as a new profile.
+  // Save the CURRENT Settings-form values as a new profile. Name + password are
+  // both required (the Save button is disabled until they're present); the
+  // backend enforces unique profile names and one profile per broker account.
   const body = {
-    name: $('profile-name').value.trim() || 'Profile',
+    name: $('profile-name').value.trim(),
     mt5: {
       terminal_path: $('set-terminal').value.trim(),
       account: $('set-account').value.trim(),
       server: $('set-server').value.trim(),
+      password: $('profile-password').value,
     },
     symbols: { default_suffix: $('sym-suffix') ? $('sym-suffix').value.trim() : '' },
   };
-  const pw = $('profile-password').value;
-  if (pw) body.mt5.password = pw;
   const r = await fetch('/api/profiles', { method: 'POST',
     headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const banner = $('profile-form-banner');
   if (r.ok) { $('profile-form').classList.add('hidden'); loadProfiles(); }
-  else { banner.className = 'banner'; banner.textContent = 'Could not save profile'; }
+  else {
+    const j = await r.json().catch(() => ({}));
+    banner.className = 'banner';
+    banner.classList.remove('hidden');
+    banner.textContent = j.detail || 'Could not save profile';
+  }
 });
 
 $('set-save').addEventListener('click', async () => {

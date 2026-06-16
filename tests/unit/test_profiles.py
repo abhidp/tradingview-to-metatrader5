@@ -84,3 +84,25 @@ def test_delete_active_clears_active_pointer(temp_db_path):
     assert s.get("profiles.active") == p["id"]
     profiles.delete_profile(p["id"], store=s)
     assert profiles.list_profiles(store=s)["active"] == ""
+
+
+def test_create_rejects_duplicate_name(temp_db_path):
+    s = SettingsStore()
+    profiles.create_profile({"name": "Fusion", "mt5": {"account": "1", "server": "A"}, "symbols": {}}, store=s)
+    try:
+        # same name (case-insensitive), different broker — still rejected
+        profiles.create_profile({"name": "fusion", "mt5": {"account": "2", "server": "B"}, "symbols": {}}, store=s)
+        assert False, "expected DuplicateProfileError"
+    except profiles.DuplicateProfileError:
+        pass
+
+
+def test_create_rejects_duplicate_broker_account(temp_db_path):
+    s = SettingsStore()
+    profiles.create_profile({"name": "One", "mt5": {"account": "384569", "server": "FusionMarketsAU-Demo"}, "symbols": {}}, store=s)
+    try:
+        # different name, same account + server (case-insensitive) — rejected
+        profiles.create_profile({"name": "Two", "mt5": {"account": "384569", "server": "fusionmarketsau-demo"}, "symbols": {}}, store=s)
+        assert False, "expected DuplicateProfileError"
+    except profiles.DuplicateProfileError:
+        pass

@@ -15,6 +15,10 @@ LIST_KEY = "profiles.list"
 ACTIVE_KEY = "profiles.active"
 
 
+class DuplicateProfileError(ValueError):
+    """Raised when a profile would duplicate an existing name or broker account."""
+
+
 def _pw_key(pid: str) -> str:
     return f"profiles.{pid}.password"
 
@@ -56,8 +60,16 @@ def list_profiles(store: Optional[SettingsStore] = None) -> dict:
 def create_profile(data: dict, store: Optional[SettingsStore] = None) -> dict:
     store = store or SettingsStore()
     items = _load(store)
-    pid = uuid.uuid4().hex[:8]
-    profile = {"id": pid, **_shape(data)}
+    profile = {"id": uuid.uuid4().hex[:8], **_shape(data)}
+    name = profile["name"].strip().lower()
+    if any(p["name"].strip().lower() == name for p in items):
+        raise DuplicateProfileError(f"A profile named '{profile['name']}' already exists.")
+    acct = profile["mt5"]["account"].strip()
+    srv = profile["mt5"]["server"].strip().lower()
+    if acct and any(p["mt5"]["account"].strip() == acct
+                    and p["mt5"]["server"].strip().lower() == srv for p in items):
+        raise DuplicateProfileError("A profile for this broker account already exists.")
+    pid = profile["id"]
     password = (data.get("mt5") or {}).get("password")
     if password:
         store.set_secret(_pw_key(pid), password)

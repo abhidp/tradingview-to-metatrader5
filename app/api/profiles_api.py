@@ -12,7 +12,10 @@ def add_profile_routes(app: FastAPI, controller: EngineController) -> None:
 
     @app.post("/api/profiles")
     def create(payload: dict = Body(...)):
-        return profiles.create_profile(payload)
+        try:
+            return profiles.create_profile(payload)
+        except profiles.DuplicateProfileError as e:
+            raise HTTPException(status_code=409, detail=str(e))
 
     @app.put("/api/profiles/{pid}")
     def update(pid: str, payload: dict = Body(...)):
