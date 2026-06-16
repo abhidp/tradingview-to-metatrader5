@@ -225,7 +225,75 @@ async function loadSettings() {
     $('set-tv-broker').value = d.tv.broker_url || '';
     $('set-tv-account').value = d.tv.account_id || '';
   } catch (e) {}
+  loadProfiles();
 }
+
+// --- Broker profiles (Settings tab) ---
+async function loadProfiles() {
+  let data = { profiles: [], active: '' };
+  try { data = await (await fetch('/api/profiles')).json(); } catch (e) {}
+  const ul = $('profiles-list');
+  ul.innerHTML = '';
+  for (const p of data.profiles) {
+    const li = document.createElement('li');
+    const active = p.id === data.active;
+    li.innerHTML = `<span>${p.name}${active ? ' <em>(active)</em>' : ''}</span>`;
+    const act = document.createElement('button');
+    act.className = 'btn'; act.textContent = active ? 'Active' : 'Activate';
+    act.disabled = active;
+    act.addEventListener('click', () => activateProfile(p.id));
+    const del = document.createElement('button');
+    del.className = 'btn'; del.textContent = 'Delete';
+    del.addEventListener('click', () => deleteProfile(p.id, p.name));
+    li.appendChild(act); li.appendChild(del);
+    ul.appendChild(li);
+  }
+}
+
+async function activateProfile(id) {
+  const banner = $('profiles-banner');
+  banner.classList.remove('hidden');
+  banner.className = 'banner ok'; banner.textContent = 'Activating…';
+  try {
+    await fetch(`/api/profiles/${id}/activate`, { method: 'POST' });
+    banner.textContent = 'Profile activated.';
+    loadSettings(); loadProfiles(); refreshStatus();
+  } catch (e) { banner.className = 'banner'; banner.textContent = 'Activation failed'; }
+}
+
+async function deleteProfile(id, name) {
+  const banner = $('profiles-banner');
+  if (!confirm(`Delete profile "${name}"?`)) return;
+  await fetch(`/api/profiles/${id}`, { method: 'DELETE' });
+  banner.classList.remove('hidden');
+  banner.className = 'banner ok'; banner.textContent = 'Profile deleted.';
+  loadProfiles();
+}
+
+$('profile-add').addEventListener('click', () => {
+  $('profile-form').classList.remove('hidden');
+  $('profile-name').value = '';
+});
+$('profile-cancel').addEventListener('click', () => $('profile-form').classList.add('hidden'));
+$('profile-save').addEventListener('click', async () => {
+  // Save the CURRENT Settings-form values as a new profile.
+  const body = {
+    name: $('profile-name').value.trim() || 'Profile',
+    mt5: {
+      terminal_path: $('set-terminal').value.trim(),
+      account: $('set-account').value.trim(),
+      server: $('set-server').value.trim(),
+    },
+    symbols: { default_suffix: $('sym-suffix') ? $('sym-suffix').value.trim() : '' },
+  };
+  const pw = $('set-password').value;
+  if (pw) body.mt5.password = pw;
+  const r = await fetch('/api/profiles', { method: 'POST',
+    headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const banner = $('profile-form-banner');
+  if (r.ok) { $('profile-form').classList.add('hidden'); loadProfiles(); }
+  else { banner.textContent = 'Could not save profile'; }
+});
 
 $('set-save').addEventListener('click', async () => {
   const mt5 = {
