@@ -4,6 +4,65 @@ let logCursor = 0;
 
 function dot(on) { return on ? '<span class="dot-on">●</span>' : '<span class="dot-off">○</span>'; }
 
+// Populate a <select> with detected MT5 terminals and wire Browse → the text input.
+// The text input (inputId) stays the value source that test/save read.
+async function wireTerminalPicker(selectId, browseId, inputId) {
+  const sel = $(selectId), input = $(inputId), browse = $(browseId);
+  if (!sel || !input) return;
+  let terminals = [], current = '';
+  try {
+    const d = await (await fetch('/api/mt5/terminals')).json();
+    terminals = d.terminals || [];
+    current = d.current || '';
+  } catch (e) {}
+
+  sel.innerHTML = '';
+  for (const t of terminals) {
+    const o = document.createElement('option');
+    o.value = t.path;
+    o.textContent = t.label ? `${t.label} — ${t.path}` : t.path;
+    sel.appendChild(o);
+  }
+  const other = document.createElement('option');
+  other.value = '__other__';
+  other.textContent = 'Other… (enter path manually)';
+  sel.appendChild(other);
+
+  // Initial selection: stored value, else single detected, else "Other".
+  const initial = input.value || current ||
+    (terminals.length === 1 ? terminals[0].path : '');
+  if (initial && terminals.some(t => t.path === initial)) {
+    sel.value = initial; input.value = initial;
+  } else if (initial) {
+    sel.value = '__other__'; input.value = initial;
+  } else {
+    sel.value = terminals.length ? terminals[0].path : '__other__';
+    input.value = sel.value === '__other__' ? '' : sel.value;
+  }
+
+  sel.addEventListener('change', () => {
+    input.value = sel.value === '__other__' ? '' : sel.value;
+    input.dispatchEvent(new Event('input'));  // re-runs wizard's test-enable check
+  });
+  if (browse) {
+    browse.addEventListener('click', async () => {
+      try {
+        const r = await (await fetch('/api/mt5/browse-terminal', { method: 'POST' })).json();
+        if (r.path) {
+          input.value = r.path;
+          if (![...sel.options].some(o => o.value === r.path)) {
+            const o = document.createElement('option');
+            o.value = r.path; o.textContent = r.path;
+            sel.insertBefore(o, sel.lastChild);
+          }
+          sel.value = r.path;
+          input.dispatchEvent(new Event('input'));
+        }
+      } catch (e) {}
+    });
+  }
+}
+
 async function refreshStatus() {
   try {
     const s = await (await fetch('/api/status')).json();
@@ -160,6 +219,7 @@ async function loadSettings() {
     $('set-account').value = d.mt5.account ?? '';
     $('set-server').value = d.mt5.server || '';
     $('set-terminal').value = d.mt5.terminal_path || '';
+    await wireTerminalPicker('set-terminal-select', 'set-terminal-browse', 'set-terminal');
     $('set-password').value = '';
     $('set-password').placeholder = d.mt5.password_set ? '•••••• (unchanged)' : 'not set';
     $('set-tv-broker').value = d.tv.broker_url || '';
@@ -297,11 +357,7 @@ function wizUpdateMt5TestEnabled() {
 async function wizLoadMt5() {
   $('wiz-next').disabled = true; // require a successful test first
   wizUpdateMt5TestEnabled();
-  try {
-    const d = await (await fetch('/api/wizard/mt5/detect')).json();
-    const t = $('wiz-mt5-terminal');
-    if (!t.value) t.value = d.current || (d.terminals && d.terminals[0]) || '';
-  } catch (e) {}
+  await wireTerminalPicker('wiz-mt5-terminal-select', 'wiz-mt5-terminal-browse', 'wiz-mt5-terminal');
 }
 
 $('wiz-mt5-test').addEventListener('click', async () => {

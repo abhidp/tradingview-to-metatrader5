@@ -48,9 +48,13 @@
 
           <div class="wiz-pane hidden" data-pane="3">
             <h2>MT5 account</h2>
-            <label class="field">Terminal path
-              <input id="wiz-mt5-terminal" type="text" placeholder="auto-detected" />
+            <label class="field">Terminal
+              <select id="wiz-mt5-terminal-select"></select>
             </label>
+            <div class="row">
+              <input id="wiz-mt5-terminal" type="text" placeholder="terminal64.exe path" />
+              <button id="wiz-mt5-terminal-browse" type="button" class="btn">Browse…</button>
+            </div>
             <label class="field">Account <input id="wiz-mt5-account" type="number" /></label>
             <label class="field">Password <input id="wiz-mt5-password" type="password" /></label>
             <label class="field">Server <input id="wiz-mt5-server" type="text" /></label>
@@ -159,9 +163,13 @@ No username / password</pre>
         <label class="field">MT5 server
           <input id="set-server" type="text" />
         </label>
-        <label class="field">MT5 terminal path
-          <input id="set-terminal" type="text" />
+        <label class="field">Terminal
+          <select id="set-terminal-select"></select>
         </label>
+        <div class="row">
+          <input id="set-terminal" type="text" placeholder="terminal64.exe path" />
+          <button id="set-terminal-browse" type="button" class="btn">Browse…</button>
+        </div>
         <label class="field">TradingView broker (auto-detected)
           <input id="set-tv-broker" type="text" disabled />
         </label>
