@@ -237,7 +237,7 @@ async function loadProfiles() {
   for (const p of data.profiles) {
     const li = document.createElement('li');
     const active = p.id === data.active;
-    li.innerHTML = `<span>${p.name}${active ? ' <em>(active)</em>' : ''}</span>`;
+    li.innerHTML = `<span>${esc(p.name)}${active ? ' <em>(active)</em>' : ''}</span>`;
     const act = document.createElement('button');
     act.className = 'btn'; act.textContent = active ? 'Active' : 'Activate';
     act.disabled = active;
@@ -252,10 +252,10 @@ async function loadProfiles() {
 
 async function activateProfile(id) {
   const banner = $('profiles-banner');
-  banner.classList.remove('hidden');
   banner.className = 'banner ok'; banner.textContent = 'Activating…';
   try {
-    await fetch(`/api/profiles/${id}/activate`, { method: 'POST' });
+    const r = await fetch(`/api/profiles/${id}/activate`, { method: 'POST' });
+    if (!r.ok) throw new Error(r.status);
     banner.textContent = 'Profile activated.';
     loadSettings(); loadProfiles(); refreshStatus();
   } catch (e) { banner.className = 'banner'; banner.textContent = 'Activation failed'; }
@@ -264,10 +264,10 @@ async function activateProfile(id) {
 async function deleteProfile(id, name) {
   const banner = $('profiles-banner');
   if (!confirm(`Delete profile "${name}"?`)) return;
-  await fetch(`/api/profiles/${id}`, { method: 'DELETE' });
-  banner.classList.remove('hidden');
-  banner.className = 'banner ok'; banner.textContent = 'Profile deleted.';
-  loadProfiles();
+  const r = await fetch(`/api/profiles/${id}`, { method: 'DELETE' });
+  banner.className = r.ok ? 'banner ok' : 'banner';
+  banner.textContent = r.ok ? 'Profile deleted.' : 'Delete failed.';
+  if (r.ok) loadProfiles();
 }
 
 $('profile-add').addEventListener('click', () => {
@@ -292,7 +292,7 @@ $('profile-save').addEventListener('click', async () => {
     headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const banner = $('profile-form-banner');
   if (r.ok) { $('profile-form').classList.add('hidden'); loadProfiles(); }
-  else { banner.textContent = 'Could not save profile'; }
+  else { banner.className = 'banner'; banner.textContent = 'Could not save profile'; }
 });
 
 $('set-save').addEventListener('click', async () => {
