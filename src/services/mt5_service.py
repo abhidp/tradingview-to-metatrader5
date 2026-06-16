@@ -14,17 +14,87 @@ from src.utils.instrument_manager import InstrumentManager
 
 logger = logging.getLogger('MT5Service')
 
+def _terminal_roots() -> List[Path]:
+    """Install roots to scan for terminal64.exe (existing ones only)."""
+    names = ("APPDATA", "LOCALAPPDATA", "ProgramFiles", "ProgramFiles(x86)", "ProgramW6432")
+    roots = []
+    for name in names:
+        val = os.getenv(name)
+        if val:
+            p = Path(val)
+            if p.is_dir() and p not in roots:
+                roots.append(p)
+    return roots
+
+
+def _scan_root(root: Path, max_depth: int = 3) -> List[str]:
+    """Find terminal64.exe under root, bounded to max_depth to stay fast."""
+    found = []
+    root = root.resolve()
+    base_depth = len(root.parts)
+    try:
+        for dirpath, dirnames, filenames in os.walk(root):
+            depth = len(Path(dirpath).parts) - base_depth
+            if depth >= max_depth:
+                dirnames[:] = []  # stop descending
+            if "terminal64.exe" in filenames:
+                found.append(str(Path(dirpath) / "terminal64.exe"))
+    except OSError:
+        pass  # unreadable tree — skip
+    return found
+
+
+def _running_terminal_paths() -> List[str]:
+    """Paths of currently-running terminal64.exe processes (reliable backstop)."""
+    paths = []
+    try:
+        import psutil
+        for proc in psutil.process_iter(["name", "exe"]):
+            try:
+                if (proc.info.get("name") or "").lower() == "terminal64.exe":
+                    exe = proc.info.get("exe")
+                    if exe:
+                        paths.append(exe)
+            except (psutil.Error, OSError):
+                continue
+    except Exception:  # noqa: BLE001 - psutil missing/blocked must not break detection
+        pass
+    return paths
+
+
+def _label_for(path: str) -> str:
+    """Friendly broker label from the terminal's parent folder name."""
+    name = Path(path).parent.name
+    for suffix in (" MT5 Terminal", " MT5", " Terminal"):
+        if name.endswith(suffix):
+            return name[: -len(suffix)].strip() or name
+    return name
+
+
+def discover_mt5_terminals() -> List[dict]:
+    """All MT5 terminals on this machine as [{"path","label"}], deduped.
+
+    Scans common install roots (incl. Program Files) AND the paths of any running
+    terminal64.exe processes. No folder-name filter, so non-"MT5" brokers are found.
+    """
+    raw = []
+    for root in _terminal_roots():
+        raw.extend(_scan_root(root))
+    raw.extend(_running_terminal_paths())
+
+    seen, out = set(), []
+    for path in raw:
+        key = os.path.normcase(os.path.abspath(path))
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({"path": path, "label": _label_for(path)})
+    return out
+
+
 def find_mt5_terminals() -> List[str]:
-    """Find all MT5 terminals installed on the system."""
-    terminals = []
-    roaming = Path(os.getenv('APPDATA'))  # This gets the Roaming folder path
-    
-    # Search for all terminal64.exe files in Roaming directory
-    for path in roaming.glob("**/terminal64.exe"):
-        if "MetaTrader 5" in str(path) or "MT5" in str(path):
-            terminals.append(str(path))
-            
-    return terminals
+    """Backward-compatible path-only list (used by MT5Service init logging)."""
+    return [t["path"] for t in discover_mt5_terminals()]
 
 class MT5Service:
     def __init__(self, account: int, password: str, server: str, db_handler: DatabaseHandler = None):
