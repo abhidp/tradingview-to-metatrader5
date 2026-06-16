@@ -31,3 +31,24 @@ def get_step(store: Optional[SettingsStore] = None) -> int:
 def set_step(step: int, store: Optional[SettingsStore] = None) -> None:
     s = store or SettingsStore()
     s.set(ONBOARDING_STEP_KEY, str(int(step)))
+
+
+def complete_onboarding(store: Optional[SettingsStore] = None) -> None:
+    """Mark onboarding complete and seed a 'Default' broker profile if none exist."""
+    from app.config_accessors import get_mt5_config, get_symbol_settings
+    from app.storage import profiles
+    s = store or SettingsStore()
+    set_onboarding_complete(True, store=s)
+    if profiles.list_profiles(store=s)["profiles"]:
+        return
+    cfg = get_mt5_config()
+    suffix, mapping = get_symbol_settings()
+    created = profiles.create_profile({
+        "name": "Default",
+        "mt5": {"terminal_path": cfg.get("terminal_path") or "",
+                "account": cfg.get("account") or "",
+                "server": cfg.get("server") or "",
+                "password": cfg.get("password") or ""},
+        "symbols": {"default_suffix": suffix or "", "map": mapping or {}},
+    }, store=s)
+    profiles.activate_profile(created["id"], store=s)

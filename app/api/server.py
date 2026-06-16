@@ -13,6 +13,7 @@ from app.api.logs import read_log_tail
 from app.api.trades import query_trades
 from app.api.wizard import add_wizard_routes
 from app.api.mt5_api import add_mt5_routes
+from app.api.profiles_api import add_profile_routes
 from app.paths import get_data_dir
 from app.resources import resource_path
 
@@ -96,6 +97,7 @@ def create_app(controller: EngineController, focus_callback: Optional[Callable] 
 
     add_wizard_routes(app)
     add_mt5_routes(app, pick_file=pick_file)
+    add_profile_routes(app, controller)
 
     @app.get("/")
     def index():

@@ -22,7 +22,7 @@ def add_wizard_routes(app: FastAPI) -> None:
 
     @app.post("/api/wizard/complete")
     def wizard_complete():
-        state.set_onboarding_complete(True)
+        state.complete_onboarding()
         return {"ok": True}
 
     @app.get("/api/wizard/cert/status")
