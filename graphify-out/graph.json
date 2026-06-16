@@ -568,7 +568,7 @@
       "source_file": "tv2mt5.py",
       "source_location": "L1",
       "id": "tv2mt5_py",
-      "community": 33,
+      "community": 1,
       "norm_label": "tv2mt5.py"
     },
     {
@@ -577,7 +577,7 @@
       "source_file": "tv2mt5.py",
       "source_location": "L12",
       "id": "tradingview_to_metatrader5_tv2mt5_main",
-      "community": 33,
+      "community": 1,
       "norm_label": "main()"
     },
     {
@@ -721,7 +721,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L1",
       "id": "app_desktop_py",
-      "community": 33,
+      "community": 1,
       "norm_label": "desktop.py"
     },
     {
@@ -730,7 +730,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L36",
       "id": "app_desktop_quit",
-      "community": 33,
+      "community": 1,
       "norm_label": "_quit()"
     },
     {
@@ -739,7 +739,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L61",
       "id": "app_desktop_install_console_ctrl_handler",
-      "community": 33,
+      "community": 1,
       "norm_label": "_install_console_ctrl_handler()"
     },
     {
@@ -748,7 +748,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L81",
       "id": "app_desktop_configure_webview_env",
-      "community": 130,
+      "community": 1,
       "norm_label": "_configure_webview_env()"
     },
     {
@@ -757,7 +757,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L93",
       "id": "app_desktop_run_api",
-      "community": 33,
+      "community": 1,
       "norm_label": "_run_api()"
     },
     {
@@ -766,7 +766,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L93",
       "id": "app_desktop_py_enginecontroller",
-      "community": 33,
+      "community": 1,
       "norm_label": "enginecontroller"
     },
     {
@@ -775,7 +775,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L111",
       "id": "app_desktop_focus_window",
-      "community": 33,
+      "community": 1,
       "norm_label": "_focus_window()"
     },
     {
@@ -784,7 +784,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L120",
       "id": "app_desktop_pick_terminal_file",
-      "community": 33,
+      "community": 1,
       "norm_label": "_pick_terminal_file()"
     },
     {
@@ -793,7 +793,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L142",
       "id": "app_desktop_main",
-      "community": 33,
+      "community": 1,
       "norm_label": "main()"
     },
     {
@@ -802,7 +802,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L1",
       "id": "app_desktop_rationale_1",
-      "community": 33,
+      "community": 1,
       "norm_label": "desktop entrypoint: window (main thread) + api/engine loop (thread) + tray (thre"
     },
     {
@@ -811,7 +811,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L37",
       "id": "app_desktop_rationale_37",
-      "community": 33,
+      "community": 1,
       "norm_label": "stop the engine cleanly, remove the tray icon, and terminate the process.      s"
     },
     {
@@ -820,7 +820,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L62",
       "id": "app_desktop_rationale_62",
-      "community": 33,
+      "community": 1,
       "norm_label": "make ctrl+c / ctrl+break / console-close exit the app from the terminal.      we"
     },
     {
@@ -829,7 +829,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L82",
       "id": "app_desktop_rationale_82",
-      "community": 130,
+      "community": 1,
       "norm_label": "disable webview2 gpu acceleration by default.      on some windows gpu drivers,"
     },
     {
@@ -838,7 +838,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L94",
       "id": "app_desktop_rationale_94",
-      "community": 33,
+      "community": 1,
       "norm_label": "run uvicorn (fastapi + engine loop) on this thread's own asyncio loop.      we m"
     },
     {
@@ -847,7 +847,7 @@
       "source_file": "app/desktop.py",
       "source_location": "L121",
       "id": "app_desktop_rationale_121",
-      "community": 33,
+      "community": 1,
       "norm_label": "open a native file dialog to choose terminal64.exe; return the path or none."
     },
     {
@@ -928,7 +928,7 @@
       "source_file": "app/engine.py",
       "source_location": "L59",
       "id": "app_engine_mitmenginerunner_serve",
-      "community": 16,
+      "community": 7,
       "norm_label": ".serve()"
     },
     {
@@ -1045,7 +1045,7 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L1",
       "id": "app_engine_controller_py",
-      "community": 118,
+      "community": 37,
       "norm_label": "engine_controller.py"
     },
     {
@@ -1054,7 +1054,7 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L17",
       "id": "app_engine_controller_enginestate",
-      "community": 118,
+      "community": 37,
       "norm_label": "enginestate"
     },
     {
@@ -1072,7 +1072,7 @@
       "source_file": "",
       "source_location": "",
       "id": "enum",
-      "community": 118,
+      "community": 37,
       "norm_label": "enum"
     },
     {
@@ -1144,7 +1144,7 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L60",
       "id": "app_engine_controller_enginecontroller",
-      "community": 113,
+      "community": 37,
       "norm_label": "enginecontroller"
     },
     {
@@ -1214,7 +1214,7 @@
       "label": ".apply_mt5_settings()",
       "file_type": "code",
       "source_file": "app/engine_controller.py",
-      "source_location": "L174",
+      "source_location": "L173",
       "id": "app_engine_controller_enginecontroller_apply_mt5_settings",
       "community": 37,
       "norm_label": ".apply_mt5_settings()"
@@ -1223,7 +1223,7 @@
       "label": ".restart()",
       "file_type": "code",
       "source_file": "app/engine_controller.py",
-      "source_location": "L186",
+      "source_location": "L185",
       "id": "app_engine_controller_enginecontroller_restart",
       "community": 37,
       "norm_label": ".restart()"
@@ -1234,7 +1234,7 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L1",
       "id": "app_engine_controller_rationale_1",
-      "community": 118,
+      "community": 37,
       "norm_label": "engine lifecycle controller: start/stop the engine task and report status.  the"
     },
     {
@@ -1256,20 +1256,20 @@
       "norm_label": "true if (host, port) can be bound right now."
     },
     {
-      "label": "Poll until our proxy port is bindable again (or timeout).          After we stop",
+      "label": "Best-effort wait for our proxy port to become bindable again.          After we",
       "file_type": "rationale",
       "source_file": "app/engine_controller.py",
       "source_location": "L156",
       "id": "app_engine_controller_rationale_156",
       "community": 37,
-      "norm_label": "poll until our proxy port is bindable again (or timeout).          after we stop"
+      "norm_label": "best-effort wait for our proxy port to become bindable again.          after we"
     },
     {
       "label": "Apply MT5 config changes (e.g. switching broker profiles) by         reconnectin",
       "file_type": "rationale",
       "source_file": "app/engine_controller.py",
-      "source_location": "L175",
-      "id": "app_engine_controller_rationale_175",
+      "source_location": "L174",
+      "id": "app_engine_controller_rationale_174",
       "community": 37,
       "norm_label": "apply mt5 config changes (e.g. switching broker profiles) by         reconnectin"
     },
@@ -1277,8 +1277,8 @@
       "label": "Stop (if running) then start \u2014 used to apply settings changes.          We give",
       "file_type": "rationale",
       "source_file": "app/engine_controller.py",
-      "source_location": "L187",
-      "id": "app_engine_controller_rationale_187",
+      "source_location": "L186",
+      "id": "app_engine_controller_rationale_186",
       "community": 37,
       "norm_label": "stop (if running) then start \u2014 used to apply settings changes.          we give"
     },
@@ -1486,7 +1486,7 @@
       "source_file": "app/paths.py",
       "source_location": "L1",
       "id": "app_paths_py",
-      "community": 102,
+      "community": 26,
       "norm_label": "paths.py"
     },
     {
@@ -1495,7 +1495,7 @@
       "source_file": "app/paths.py",
       "source_location": "L11",
       "id": "app_paths_get_db_path",
-      "community": 102,
+      "community": 26,
       "norm_label": "get_db_path()"
     },
     {
@@ -1504,7 +1504,7 @@
       "source_file": "app/paths.py",
       "source_location": "L11",
       "id": "app_paths_py_path",
-      "community": 102,
+      "community": 26,
       "norm_label": "path"
     },
     {
@@ -1513,7 +1513,7 @@
       "source_file": "app/paths.py",
       "source_location": "L24",
       "id": "app_paths_get_data_dir",
-      "community": 102,
+      "community": 26,
       "norm_label": "get_data_dir()"
     },
     {
@@ -1522,7 +1522,7 @@
       "source_file": "app/paths.py",
       "source_location": "L31",
       "id": "app_paths_get_data_file",
-      "community": 102,
+      "community": 146,
       "norm_label": "get_data_file()"
     },
     {
@@ -1531,7 +1531,7 @@
       "source_file": "app/paths.py",
       "source_location": "L31",
       "id": "app_paths_py_str",
-      "community": 102,
+      "community": 146,
       "norm_label": "str"
     },
     {
@@ -1540,7 +1540,7 @@
       "source_file": "app/paths.py",
       "source_location": "L1",
       "id": "app_paths_rationale_1",
-      "community": 102,
+      "community": 26,
       "norm_label": "resolve where tv2mt5 stores its data (sqlite db, logs)."
     },
     {
@@ -1549,7 +1549,7 @@
       "source_file": "app/paths.py",
       "source_location": "L12",
       "id": "app_paths_rationale_12",
-      "community": 102,
+      "community": 26,
       "norm_label": "return the sqlite database file path.      honours the tv2mt5_db_path env overri"
     },
     {
@@ -1558,7 +1558,7 @@
       "source_file": "app/paths.py",
       "source_location": "L25",
       "id": "app_paths_rationale_25",
-      "community": 102,
+      "community": 26,
       "norm_label": "return (and create) the directory that holds the sqlite db."
     },
     {
@@ -1567,7 +1567,7 @@
       "source_file": "app/paths.py",
       "source_location": "L32",
       "id": "app_paths_rationale_32",
-      "community": 102,
+      "community": 146,
       "norm_label": "return the path to a mutable data file under %appdata%/tv2mt5/data/<name>."
     },
     {
@@ -1576,7 +1576,7 @@
       "source_file": "app/resources.py",
       "source_location": "L1",
       "id": "app_resources_py",
-      "community": 102,
+      "community": 118,
       "norm_label": "resources.py"
     },
     {
@@ -1585,7 +1585,7 @@
       "source_file": "app/resources.py",
       "source_location": "L10",
       "id": "app_resources_resource_path",
-      "community": 102,
+      "community": 118,
       "norm_label": "resource_path()"
     },
     {
@@ -1594,7 +1594,7 @@
       "source_file": "app/resources.py",
       "source_location": "L10",
       "id": "app_resources_py_str",
-      "community": 102,
+      "community": 118,
       "norm_label": "str"
     },
     {
@@ -1603,7 +1603,7 @@
       "source_file": "app/resources.py",
       "source_location": "L10",
       "id": "app_resources_py_path",
-      "community": 102,
+      "community": 118,
       "norm_label": "path"
     },
     {
@@ -1612,7 +1612,7 @@
       "source_file": "app/resources.py",
       "source_location": "L1",
       "id": "app_resources_rationale_1",
-      "community": 102,
+      "community": 118,
       "norm_label": "resolve read-only bundled resources in both source and pyinstaller-frozen runs."
     },
     {
@@ -1621,7 +1621,7 @@
       "source_file": "app/resources.py",
       "source_location": "L11",
       "id": "app_resources_rationale_11",
-      "community": 102,
+      "community": 118,
       "norm_label": "return the absolute path to a bundled resource given a repo-root-relative path."
     },
     {
@@ -1630,7 +1630,7 @@
       "source_file": "app/singleton.py",
       "source_location": "L1",
       "id": "app_singleton_py",
-      "community": 14,
+      "community": 1,
       "norm_label": "singleton.py"
     },
     {
@@ -1639,7 +1639,7 @@
       "source_file": "app/singleton.py",
       "source_location": "L17",
       "id": "app_singleton_acquire_single_instance",
-      "community": 14,
+      "community": 1,
       "norm_label": "acquire_single_instance()"
     },
     {
@@ -1648,7 +1648,7 @@
       "source_file": "app/singleton.py",
       "source_location": "L17",
       "id": "app_singleton_py_str",
-      "community": 14,
+      "community": 1,
       "norm_label": "str"
     },
     {
@@ -1657,7 +1657,7 @@
       "source_file": "app/singleton.py",
       "source_location": "L17",
       "id": "app_singleton_py_int",
-      "community": 14,
+      "community": 1,
       "norm_label": "int"
     },
     {
@@ -1666,7 +1666,7 @@
       "source_file": "app/singleton.py",
       "source_location": "L17",
       "id": "socket",
-      "community": 14,
+      "community": 1,
       "norm_label": "socket"
     },
     {
@@ -1675,7 +1675,7 @@
       "source_file": "app/singleton.py",
       "source_location": "L31",
       "id": "app_singleton_is_another_instance_running",
-      "community": 14,
+      "community": 1,
       "norm_label": "is_another_instance_running()"
     },
     {
@@ -1684,7 +1684,7 @@
       "source_file": "app/singleton.py",
       "source_location": "L31",
       "id": "app_singleton_py_bool",
-      "community": 14,
+      "community": 1,
       "norm_label": "bool"
     },
     {
@@ -1693,7 +1693,7 @@
       "source_file": "app/singleton.py",
       "source_location": "L46",
       "id": "app_singleton_focus_running_instance",
-      "community": 14,
+      "community": 1,
       "norm_label": "focus_running_instance()"
     },
     {
@@ -1702,7 +1702,7 @@
       "source_file": "app/singleton.py",
       "source_location": "L1",
       "id": "app_singleton_rationale_1",
-      "community": 14,
+      "community": 1,
       "norm_label": "single-instance guard for the desktop app.  the app binds one tcp port (control_"
     },
     {
@@ -1711,7 +1711,7 @@
       "source_file": "app/singleton.py",
       "source_location": "L18",
       "id": "app_singleton_rationale_18",
-      "community": 14,
+      "community": 1,
       "norm_label": "bind and return the control socket, or none if already bound (another instance)."
     },
     {
@@ -1720,7 +1720,7 @@
       "source_file": "app/singleton.py",
       "source_location": "L32",
       "id": "app_singleton_rationale_32",
-      "community": 14,
+      "community": 1,
       "norm_label": "true if something is already accepting connections on the control port."
     },
     {
@@ -1729,7 +1729,7 @@
       "source_file": "app/singleton.py",
       "source_location": "L47",
       "id": "app_singleton_rationale_47",
-      "community": 14,
+      "community": 1,
       "norm_label": "best-effort: ask the running instance to raise its window via post /api/focus."
     },
     {
@@ -1837,7 +1837,7 @@
       "source_file": "app/__main__.py",
       "source_location": "L1",
       "id": "app_main_py",
-      "community": 6,
+      "community": 145,
       "norm_label": "__main__.py"
     },
     {
@@ -1846,7 +1846,7 @@
       "source_file": "app/__main__.py",
       "source_location": "L11",
       "id": "app_main_main",
-      "community": 126,
+      "community": 145,
       "norm_label": "main()"
     },
     {
@@ -1855,7 +1855,7 @@
       "source_file": "app/__main__.py",
       "source_location": "L1",
       "id": "app_main_rationale_1",
-      "community": 6,
+      "community": 145,
       "norm_label": "`python -m app` \u2014 launch the single-process tv2mt5 engine."
     },
     {
@@ -1873,7 +1873,7 @@
       "source_file": "app/adapters/base.py",
       "source_location": "L1",
       "id": "app_adapters_base_py",
-      "community": 15,
+      "community": 0,
       "norm_label": "base.py"
     },
     {
@@ -1882,7 +1882,7 @@
       "source_file": "app/adapters/base.py",
       "source_location": "L14",
       "id": "adapters_base_accountinfo",
-      "community": 15,
+      "community": 0,
       "norm_label": "accountinfo"
     },
     {
@@ -1891,7 +1891,7 @@
       "source_file": "app/adapters/base.py",
       "source_location": "L20",
       "id": "adapters_base_brokeradapter",
-      "community": 15,
+      "community": 0,
       "norm_label": "brokeradapter"
     },
     {
@@ -1900,7 +1900,7 @@
       "source_file": "",
       "source_location": "",
       "id": "protocol",
-      "community": 15,
+      "community": 0,
       "norm_label": "protocol"
     },
     {
@@ -1909,7 +1909,7 @@
       "source_file": "app/adapters/base.py",
       "source_location": "L23",
       "id": "adapters_base_brokeradapter_matches",
-      "community": 15,
+      "community": 0,
       "norm_label": ".matches()"
     },
     {
@@ -1918,7 +1918,7 @@
       "source_file": "app/adapters/base.py",
       "source_location": "L23",
       "id": "app_adapters_base_py_bool",
-      "community": 15,
+      "community": 0,
       "norm_label": "bool"
     },
     {
@@ -1927,7 +1927,7 @@
       "source_file": "app/adapters/base.py",
       "source_location": "L27",
       "id": "adapters_base_brokeradapter_detect_account",
-      "community": 15,
+      "community": 0,
       "norm_label": ".detect_account()"
     },
     {
@@ -1936,7 +1936,7 @@
       "source_file": "app/adapters/base.py",
       "source_location": "L1",
       "id": "adapters_base_rationale_1",
-      "community": 15,
+      "community": 0,
       "norm_label": "brokeradapter seam.  thin by design (plan 2): adapters own flow *matching* and *"
     },
     {
@@ -1945,7 +1945,7 @@
       "source_file": "app/adapters/base.py",
       "source_location": "L24",
       "id": "adapters_base_rationale_24",
-      "community": 15,
+      "community": 0,
       "norm_label": "return true if this flow belongs to our broker and is processable."
     },
     {
@@ -1954,7 +1954,7 @@
       "source_file": "app/adapters/base.py",
       "source_location": "L28",
       "id": "adapters_base_rationale_28",
-      "community": 15,
+      "community": 0,
       "norm_label": "extract broker_url/account_id from broker-panel traffic, or none."
     },
     {
@@ -1963,7 +1963,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L1",
       "id": "app_adapters_fusion_markets_py",
-      "community": 15,
+      "community": 109,
       "norm_label": "fusion_markets.py"
     },
     {
@@ -1972,7 +1972,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L21",
       "id": "adapters_fusion_markets_is_tradingview",
-      "community": 15,
+      "community": 109,
       "norm_label": "_is_tradingview()"
     },
     {
@@ -1981,7 +1981,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L21",
       "id": "app_adapters_fusion_markets_py_bool",
-      "community": 15,
+      "community": 109,
       "norm_label": "bool"
     },
     {
@@ -1999,7 +1999,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L37",
       "id": "adapters_fusion_markets_fusionmarketsadapter_init",
-      "community": 15,
+      "community": 0,
       "norm_label": ".__init__()"
     },
     {
@@ -2008,7 +2008,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L37",
       "id": "app_adapters_fusion_markets_py_settingsstore",
-      "community": 15,
+      "community": 0,
       "norm_label": "settingsstore"
     },
     {
@@ -2017,7 +2017,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L47",
       "id": "adapters_fusion_markets_fusionmarketsadapter_base_path",
-      "community": 15,
+      "community": 151,
       "norm_label": ".base_path()"
     },
     {
@@ -2026,7 +2026,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L47",
       "id": "app_adapters_fusion_markets_py_str",
-      "community": 15,
+      "community": 151,
       "norm_label": "str"
     },
     {
@@ -2035,7 +2035,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L53",
       "id": "adapters_fusion_markets_fusionmarketsadapter_broker_url",
-      "community": 15,
+      "community": 151,
       "norm_label": ".broker_url()"
     },
     {
@@ -2044,7 +2044,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L57",
       "id": "adapters_fusion_markets_fusionmarketsadapter_account_id",
-      "community": 15,
+      "community": 151,
       "norm_label": ".account_id()"
     },
     {
@@ -2053,7 +2053,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L60",
       "id": "adapters_fusion_markets_fusionmarketsadapter_matches",
-      "community": 15,
+      "community": 109,
       "norm_label": ".matches()"
     },
     {
@@ -2062,7 +2062,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L77",
       "id": "adapters_fusion_markets_fusionmarketsadapter_detect_account",
-      "community": 15,
+      "community": 109,
       "norm_label": ".detect_account()"
     },
     {
@@ -2071,7 +2071,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L77",
       "id": "accountinfo",
-      "community": 15,
+      "community": 109,
       "norm_label": "accountinfo"
     },
     {
@@ -2080,7 +2080,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L87",
       "id": "adapters_fusion_markets_fusionmarketsadapter_persist_account",
-      "community": 15,
+      "community": 109,
       "norm_label": ".persist_account()"
     },
     {
@@ -2089,7 +2089,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L1",
       "id": "adapters_fusion_markets_rationale_1",
-      "community": 15,
+      "community": 109,
       "norm_label": "fusionmarkets adapter: tradingview broker-panel traffic.  `matches` reproduces t"
     },
     {
@@ -2098,7 +2098,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L22",
       "id": "adapters_fusion_markets_rationale_22",
-      "community": 15,
+      "community": 109,
       "norm_label": "true if the flow looks tradingview-originated.      gates broker-target auto-det"
     },
     {
@@ -2107,7 +2107,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L78",
       "id": "adapters_fusion_markets_rationale_78",
-      "community": 15,
+      "community": 109,
       "norm_label": "learn broker_url/account_id from tradingview-originated traffic."
     },
     {
@@ -2116,7 +2116,7 @@
       "source_file": "app/adapters/fusion_markets.py",
       "source_location": "L88",
       "id": "adapters_fusion_markets_rationale_88",
-      "community": 15,
+      "community": 109,
       "norm_label": "persist a detected target if it differs from the current one.          returns t"
     },
     {
@@ -2143,7 +2143,7 @@
       "source_file": "app/api/config_api.py",
       "source_location": "L1",
       "id": "app_api_config_api_py",
-      "community": 0,
+      "community": 36,
       "norm_label": "config_api.py"
     },
     {
@@ -2170,7 +2170,7 @@
       "source_file": "app/api/config_api.py",
       "source_location": "L16",
       "id": "api_config_api_get_settings",
-      "community": 0,
+      "community": 36,
       "norm_label": "get_settings()"
     },
     {
@@ -2179,7 +2179,7 @@
       "source_file": "app/api/config_api.py",
       "source_location": "L32",
       "id": "api_config_api_update_settings",
-      "community": 0,
+      "community": 36,
       "norm_label": "update_settings()"
     },
     {
@@ -2188,7 +2188,7 @@
       "source_file": "app/api/config_api.py",
       "source_location": "L59",
       "id": "api_config_api_get_symbols",
-      "community": 0,
+      "community": 36,
       "norm_label": "get_symbols()"
     },
     {
@@ -2197,7 +2197,7 @@
       "source_file": "app/api/config_api.py",
       "source_location": "L66",
       "id": "api_config_api_update_symbols",
-      "community": 0,
+      "community": 36,
       "norm_label": "update_symbols()"
     },
     {
@@ -2206,7 +2206,7 @@
       "source_file": "app/api/config_api.py",
       "source_location": "L1",
       "id": "api_config_api_rationale_1",
-      "community": 0,
+      "community": 36,
       "norm_label": "read/write helpers for the settings and symbols tabs (plan 3b).  all values live"
     },
     {
@@ -2224,7 +2224,7 @@
       "source_file": "app/api/config_api.py",
       "source_location": "L33",
       "id": "api_config_api_rationale_33",
-      "community": 0,
+      "community": 36,
       "norm_label": "apply editable mt5 settings. ignores the (read-only) tv target.      password is"
     },
     {
@@ -2233,7 +2233,7 @@
       "source_file": "app/api/config_api.py",
       "source_location": "L67",
       "id": "api_config_api_rationale_67",
-      "community": 0,
+      "community": 36,
       "norm_label": "write the default suffix + the tv->mt5 symbol map. raises on a bad map."
     },
     {
@@ -2440,7 +2440,7 @@
       "source_file": "app/api/trades.py",
       "source_location": "L1",
       "id": "app_api_trades_py",
-      "community": 102,
+      "community": 143,
       "norm_label": "trades.py"
     },
     {
@@ -2449,7 +2449,7 @@
       "source_file": "app/api/trades.py",
       "source_location": "L9",
       "id": "api_trades_serialize",
-      "community": 102,
+      "community": 143,
       "norm_label": "_serialize()"
     },
     {
@@ -2458,7 +2458,7 @@
       "source_file": "app/api/trades.py",
       "source_location": "L22",
       "id": "api_trades_query_trades",
-      "community": 102,
+      "community": 143,
       "norm_label": "query_trades()"
     },
     {
@@ -2467,7 +2467,7 @@
       "source_file": "app/api/trades.py",
       "source_location": "L22",
       "id": "app_api_trades_py_int",
-      "community": 102,
+      "community": 143,
       "norm_label": "int"
     },
     {
@@ -2476,7 +2476,7 @@
       "source_file": "app/api/trades.py",
       "source_location": "L22",
       "id": "app_api_trades_py_str",
-      "community": 102,
+      "community": 143,
       "norm_label": "str"
     },
     {
@@ -2485,7 +2485,7 @@
       "source_file": "app/api/trades.py",
       "source_location": "L1",
       "id": "api_trades_rationale_1",
-      "community": 102,
+      "community": 143,
       "norm_label": "trade-history reads for the dashboard preview + the trades tab (plan 3b)."
     },
     {
@@ -2494,7 +2494,7 @@
       "source_file": "app/api/trades.py",
       "source_location": "L25",
       "id": "api_trades_rationale_25",
-      "community": 102,
+      "community": 143,
       "norm_label": "return (rows, total) \u2014 trades newest-first, paged, optionally status-filtered."
     },
     {
@@ -2782,7 +2782,7 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L1",
       "id": "app_storage_profiles_py",
-      "community": 26,
+      "community": 6,
       "norm_label": "profiles.py"
     },
     {
@@ -2791,7 +2791,7 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L18",
       "id": "storage_profiles_duplicateprofileerror",
-      "community": 26,
+      "community": 6,
       "norm_label": "duplicateprofileerror"
     },
     {
@@ -2800,7 +2800,7 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L22",
       "id": "storage_profiles_pw_key",
-      "community": 26,
+      "community": 6,
       "norm_label": "_pw_key()"
     },
     {
@@ -2809,7 +2809,7 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L22",
       "id": "app_storage_profiles_py_str",
-      "community": 26,
+      "community": 6,
       "norm_label": "str"
     },
     {
@@ -2818,7 +2818,7 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L26",
       "id": "storage_profiles_load",
-      "community": 26,
+      "community": 6,
       "norm_label": "_load()"
     },
     {
@@ -2827,7 +2827,7 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L26",
       "id": "app_storage_profiles_py_settingsstore",
-      "community": 26,
+      "community": 6,
       "norm_label": "settingsstore"
     },
     {
@@ -2836,7 +2836,7 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L30",
       "id": "storage_profiles_save",
-      "community": 26,
+      "community": 6,
       "norm_label": "_save()"
     },
     {
@@ -2845,52 +2845,61 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L34",
       "id": "storage_profiles_shape",
-      "community": 26,
+      "community": 6,
       "norm_label": "_shape()"
+    },
+    {
+      "label": "_assert_unique()",
+      "file_type": "code",
+      "source_file": "app/storage/profiles.py",
+      "source_location": "L51",
+      "id": "storage_profiles_assert_unique",
+      "community": 6,
+      "norm_label": "_assert_unique()"
     },
     {
       "label": "list_profiles()",
       "file_type": "code",
       "source_file": "app/storage/profiles.py",
-      "source_location": "L51",
+      "source_location": "L71",
       "id": "storage_profiles_list_profiles",
-      "community": 26,
+      "community": 6,
       "norm_label": "list_profiles()"
     },
     {
       "label": "create_profile()",
       "file_type": "code",
       "source_file": "app/storage/profiles.py",
-      "source_location": "L60",
+      "source_location": "L80",
       "id": "storage_profiles_create_profile",
-      "community": 26,
+      "community": 6,
       "norm_label": "create_profile()"
     },
     {
       "label": "update_profile()",
       "file_type": "code",
       "source_file": "app/storage/profiles.py",
-      "source_location": "L81",
+      "source_location": "L94",
       "id": "storage_profiles_update_profile",
-      "community": 26,
+      "community": 6,
       "norm_label": "update_profile()"
     },
     {
       "label": "delete_profile()",
       "file_type": "code",
       "source_file": "app/storage/profiles.py",
-      "source_location": "L99",
+      "source_location": "L114",
       "id": "storage_profiles_delete_profile",
-      "community": 26,
+      "community": 6,
       "norm_label": "delete_profile()"
     },
     {
       "label": "activate_profile()",
       "file_type": "code",
       "source_file": "app/storage/profiles.py",
-      "source_location": "L108",
+      "source_location": "L126",
       "id": "storage_profiles_activate_profile",
-      "community": 26,
+      "community": 6,
       "norm_label": "activate_profile()"
     },
     {
@@ -2899,7 +2908,7 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L1",
       "id": "storage_profiles_rationale_1",
-      "community": 26,
+      "community": 6,
       "norm_label": "broker profiles: named mt5-connection + symbols presets in the settings store."
     },
     {
@@ -2908,16 +2917,25 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L19",
       "id": "storage_profiles_rationale_19",
-      "community": 26,
+      "community": 6,
       "norm_label": "raised when a profile would duplicate an existing name or broker account."
+    },
+    {
+      "label": "Enforce unique profile name and one profile per (account, server).      Uses def",
+      "file_type": "rationale",
+      "source_file": "app/storage/profiles.py",
+      "source_location": "L52",
+      "id": "storage_profiles_rationale_52",
+      "community": 6,
+      "norm_label": "enforce unique profile name and one profile per (account, server).      uses def"
     },
     {
       "label": "Copy the profile's values into the live config keys and mark it active.",
       "file_type": "rationale",
       "source_file": "app/storage/profiles.py",
-      "source_location": "L109",
-      "id": "storage_profiles_rationale_109",
-      "community": 26,
+      "source_location": "L127",
+      "id": "storage_profiles_rationale_127",
+      "community": 6,
       "norm_label": "copy the profile's values into the live config keys and mark it active."
     },
     {
@@ -2935,7 +2953,7 @@
       "source_file": "app/storage/settings_store.py",
       "source_location": "L28",
       "id": "storage_settings_store_settings",
-      "community": 102,
+      "community": 110,
       "norm_label": "settings"
     },
     {
@@ -2944,7 +2962,7 @@
       "source_file": "",
       "source_location": "",
       "id": "settingsbase",
-      "community": 102,
+      "community": 110,
       "norm_label": "settingsbase"
     },
     {
@@ -3272,10 +3290,19 @@
       "norm_label": "loadprofiles()"
     },
     {
-      "label": "showProfilesBanner()",
+      "label": "bannerMessage()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
       "source_location": "L256",
+      "id": "ui_app_bannermessage",
+      "community": 25,
+      "norm_label": "bannermessage()"
+    },
+    {
+      "label": "showProfilesBanner()",
+      "file_type": "code",
+      "source_file": "app/ui/app.js",
+      "source_location": "L264",
       "id": "ui_app_showprofilesbanner",
       "community": 25,
       "norm_label": "showprofilesbanner()"
@@ -3284,7 +3311,7 @@
       "label": "activateProfile()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L265",
+      "source_location": "L268",
       "id": "ui_app_activateprofile",
       "community": 25,
       "norm_label": "activateprofile()"
@@ -3293,7 +3320,7 @@
       "label": "deleteProfile()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L280",
+      "source_location": "L291",
       "id": "ui_app_deleteprofile",
       "community": 25,
       "norm_label": "deleteprofile()"
@@ -3302,7 +3329,7 @@
       "label": "updateProfileSaveState()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L289",
+      "source_location": "L300",
       "id": "ui_app_updateprofilesavestate",
       "community": 25,
       "norm_label": "updateprofilesavestate()"
@@ -3311,7 +3338,7 @@
       "label": "flashBanner()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L355",
+      "source_location": "L366",
       "id": "ui_app_flashbanner",
       "community": 25,
       "norm_label": "flashbanner()"
@@ -3320,7 +3347,7 @@
       "label": "showSaveResult()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L361",
+      "source_location": "L372",
       "id": "ui_app_showsaveresult",
       "community": 25,
       "norm_label": "showsaveresult()"
@@ -3329,7 +3356,7 @@
       "label": "wizBanner()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L401",
+      "source_location": "L412",
       "id": "ui_app_wizbanner",
       "community": 25,
       "norm_label": "wizbanner()"
@@ -3338,7 +3365,7 @@
       "label": "enterWizard()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L407",
+      "source_location": "L418",
       "id": "ui_app_enterwizard",
       "community": 25,
       "norm_label": "enterwizard()"
@@ -3347,7 +3374,7 @@
       "label": "exitWizard()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L414",
+      "source_location": "L425",
       "id": "ui_app_exitwizard",
       "community": 25,
       "norm_label": "exitwizard()"
@@ -3356,7 +3383,7 @@
       "label": "gotoStep()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L421",
+      "source_location": "L432",
       "id": "ui_app_gotostep",
       "community": 25,
       "norm_label": "gotostep()"
@@ -3365,7 +3392,7 @@
       "label": "wizLoadCert()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L444",
+      "source_location": "L455",
       "id": "ui_app_wizloadcert",
       "community": 25,
       "norm_label": "wizloadcert()"
@@ -3374,7 +3401,7 @@
       "label": "setCertUi()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L452",
+      "source_location": "L463",
       "id": "ui_app_setcertui",
       "community": 25,
       "norm_label": "setcertui()"
@@ -3383,7 +3410,7 @@
       "label": "wizUpdateMt5TestEnabled()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L475",
+      "source_location": "L486",
       "id": "ui_app_wizupdatemt5testenabled",
       "community": 25,
       "norm_label": "wizupdatemt5testenabled()"
@@ -3392,7 +3419,7 @@
       "label": "wizLoadMt5()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L485",
+      "source_location": "L496",
       "id": "ui_app_wizloadmt5",
       "community": 25,
       "norm_label": "wizloadmt5()"
@@ -3401,7 +3428,7 @@
       "label": "wizStartTvDetection()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L515",
+      "source_location": "L526",
       "id": "ui_app_wizstarttvdetection",
       "community": 25,
       "norm_label": "wizstarttvdetection()"
@@ -3410,7 +3437,7 @@
       "label": "wizStopCertPoll()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L531",
+      "source_location": "L542",
       "id": "ui_app_wizstopcertpoll",
       "community": 25,
       "norm_label": "wizstopcertpoll()"
@@ -3419,7 +3446,7 @@
       "label": "wizStopTvPoll()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L533",
+      "source_location": "L544",
       "id": "ui_app_wizstoptvpoll",
       "community": 25,
       "norm_label": "wizstoptvpoll()"
@@ -3428,7 +3455,7 @@
       "label": "wizStopDetectionEngine()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L535",
+      "source_location": "L546",
       "id": "ui_app_wizstopdetectionengine",
       "community": 25,
       "norm_label": "wizstopdetectionengine()"
@@ -3437,7 +3464,7 @@
       "label": "wizLoadSuffix()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L542",
+      "source_location": "L553",
       "id": "ui_app_wizloadsuffix",
       "community": 25,
       "norm_label": "wizloadsuffix()"
@@ -3446,7 +3473,7 @@
       "label": "initOnboarding()",
       "file_type": "code",
       "source_file": "app/ui/app.js",
-      "source_location": "L576",
+      "source_location": "L587",
       "id": "ui_app_initonboarding",
       "community": 25,
       "norm_label": "initonboarding()"
@@ -3628,7 +3655,7 @@
       "source_file": "app/wizard/state.py",
       "source_location": "L1",
       "id": "app_wizard_state_py",
-      "community": 2,
+      "community": 113,
       "norm_label": "state.py"
     },
     {
@@ -3637,7 +3664,7 @@
       "source_file": "app/wizard/state.py",
       "source_location": "L19",
       "id": "wizard_state_is_onboarding_complete",
-      "community": 2,
+      "community": 113,
       "norm_label": "is_onboarding_complete()"
     },
     {
@@ -3646,7 +3673,7 @@
       "source_file": "app/wizard/state.py",
       "source_location": "L19",
       "id": "app_wizard_state_py_settingsstore",
-      "community": 2,
+      "community": 113,
       "norm_label": "settingsstore"
     },
     {
@@ -3655,7 +3682,7 @@
       "source_file": "app/wizard/state.py",
       "source_location": "L19",
       "id": "app_wizard_state_py_bool",
-      "community": 2,
+      "community": 113,
       "norm_label": "bool"
     },
     {
@@ -3664,7 +3691,7 @@
       "source_file": "app/wizard/state.py",
       "source_location": "L24",
       "id": "wizard_state_set_onboarding_complete",
-      "community": 2,
+      "community": 113,
       "norm_label": "set_onboarding_complete()"
     },
     {
@@ -3673,7 +3700,7 @@
       "source_file": "app/wizard/state.py",
       "source_location": "L29",
       "id": "wizard_state_get_step",
-      "community": 2,
+      "community": 113,
       "norm_label": "get_step()"
     },
     {
@@ -3682,7 +3709,7 @@
       "source_file": "app/wizard/state.py",
       "source_location": "L29",
       "id": "app_wizard_state_py_int",
-      "community": 2,
+      "community": 113,
       "norm_label": "int"
     },
     {
@@ -3691,7 +3718,7 @@
       "source_file": "app/wizard/state.py",
       "source_location": "L34",
       "id": "wizard_state_set_step",
-      "community": 2,
+      "community": 113,
       "norm_label": "set_step()"
     },
     {
@@ -3700,7 +3727,7 @@
       "source_file": "app/wizard/state.py",
       "source_location": "L39",
       "id": "wizard_state_complete_onboarding",
-      "community": 2,
+      "community": 113,
       "norm_label": "complete_onboarding()"
     },
     {
@@ -3709,7 +3736,7 @@
       "source_file": "app/wizard/state.py",
       "source_location": "L1",
       "id": "wizard_state_rationale_1",
-      "community": 2,
+      "community": 113,
       "norm_label": "onboarding wizard state: the first-run completion flag + resume step.  stored in"
     },
     {
@@ -3718,7 +3745,7 @@
       "source_file": "app/wizard/state.py",
       "source_location": "L40",
       "id": "wizard_state_rationale_40",
-      "community": 2,
+      "community": 113,
       "norm_label": "mark onboarding complete and seed a 'default' broker profile if none exist."
     },
     {
@@ -3781,7 +3808,7 @@
       "source_file": "backup/instrument_sync.py",
       "source_location": "L1",
       "id": "backup_instrument_sync_py",
-      "community": 8,
+      "community": 14,
       "norm_label": "instrument_sync.py"
     },
     {
@@ -3790,7 +3817,7 @@
       "source_file": "backup/instrument_sync.py",
       "source_location": "L8",
       "id": "backup_instrument_sync_instrumentsynchronizer",
-      "community": 8,
+      "community": 14,
       "norm_label": "instrumentsynchronizer"
     },
     {
@@ -3799,7 +3826,7 @@
       "source_file": "backup/instrument_sync.py",
       "source_location": "L9",
       "id": "backup_instrument_sync_instrumentsynchronizer_init",
-      "community": 8,
+      "community": 14,
       "norm_label": ".__init__()"
     },
     {
@@ -3808,7 +3835,7 @@
       "source_file": "backup/instrument_sync.py",
       "source_location": "L12",
       "id": "backup_instrument_sync_instrumentsynchronizer_fetch_instruments",
-      "community": 8,
+      "community": 14,
       "norm_label": ".fetch_instruments()"
     },
     {
@@ -3817,7 +3844,7 @@
       "source_file": "backup/instrument_sync.py",
       "source_location": "L12",
       "id": "backup_instrument_sync_py_str",
-      "community": 8,
+      "community": 14,
       "norm_label": "str"
     },
     {
@@ -3826,7 +3853,7 @@
       "source_file": "backup/instrument_sync.py",
       "source_location": "L29",
       "id": "backup_instrument_sync_instrumentsynchronizer_sync_instruments",
-      "community": 8,
+      "community": 14,
       "norm_label": ".sync_instruments()"
     },
     {
@@ -3835,7 +3862,7 @@
       "source_file": "backup/instrument_sync.py",
       "source_location": "L13",
       "id": "backup_instrument_sync_rationale_13",
-      "community": 8,
+      "community": 14,
       "norm_label": "fetch instruments from tradingview."
     },
     {
@@ -3844,7 +3871,7 @@
       "source_file": "backup/instrument_sync.py",
       "source_location": "L30",
       "id": "backup_instrument_sync_rationale_30",
-      "community": 8,
+      "community": 14,
       "norm_label": "sync instruments from tradingview to local config."
     },
     {
@@ -4087,7 +4114,7 @@
       "source_file": "src/main.py",
       "source_location": "L1",
       "id": "src_main_py",
-      "community": 8,
+      "community": 16,
       "norm_label": "main.py"
     },
     {
@@ -4105,7 +4132,7 @@
       "source_file": "src/config/database.py",
       "source_location": "L1",
       "id": "src_config_database_py",
-      "community": 102,
+      "community": 26,
       "norm_label": "database.py"
     },
     {
@@ -4114,7 +4141,7 @@
       "source_file": "src/config/database.py",
       "source_location": "L21",
       "id": "config_database_build_url",
-      "community": 102,
+      "community": 26,
       "norm_label": "_build_url()"
     },
     {
@@ -4123,7 +4150,7 @@
       "source_file": "src/config/database.py",
       "source_location": "L21",
       "id": "src_config_database_py_str",
-      "community": 102,
+      "community": 26,
       "norm_label": "str"
     },
     {
@@ -4168,7 +4195,7 @@
       "source_file": "src/config/database.py",
       "source_location": "L1",
       "id": "config_database_rationale_1",
-      "community": 102,
+      "community": 26,
       "norm_label": "sqlite database configuration and shared engine/session factory.  this module re"
     },
     {
@@ -4339,7 +4366,7 @@
       "source_file": "src/core/interceptor.py",
       "source_location": "L1",
       "id": "src_core_interceptor_py",
-      "community": 8,
+      "community": 16,
       "norm_label": "interceptor.py"
     },
     {
@@ -4348,7 +4375,7 @@
       "source_file": "src/core/interceptor.py",
       "source_location": "L20",
       "id": "core_interceptor_tradingviewinterceptor",
-      "community": 8,
+      "community": 16,
       "norm_label": "tradingviewinterceptor"
     },
     {
@@ -4357,7 +4384,7 @@
       "source_file": "src/core/interceptor.py",
       "source_location": "L26",
       "id": "core_interceptor_tradingviewinterceptor_new",
-      "community": 8,
+      "community": 16,
       "norm_label": ".__new__()"
     },
     {
@@ -4366,7 +4393,7 @@
       "source_file": "src/core/interceptor.py",
       "source_location": "L31",
       "id": "core_interceptor_tradingviewinterceptor_init",
-      "community": 8,
+      "community": 16,
       "norm_label": ".__init__()"
     },
     {
@@ -4375,7 +4402,7 @@
       "source_file": "src/core/interceptor.py",
       "source_location": "L49",
       "id": "core_interceptor_tradingviewinterceptor_base_path",
-      "community": 8,
+      "community": 14,
       "norm_label": ".base_path()"
     },
     {
@@ -4384,7 +4411,7 @@
       "source_file": "src/core/interceptor.py",
       "source_location": "L49",
       "id": "src_core_interceptor_py_str",
-      "community": 8,
+      "community": 14,
       "norm_label": "str"
     },
     {
@@ -4393,7 +4420,7 @@
       "source_file": "src/core/interceptor.py",
       "source_location": "L53",
       "id": "core_interceptor_tradingviewinterceptor_sync_instruments_sync",
-      "community": 8,
+      "community": 16,
       "norm_label": "._sync_instruments_sync()"
     },
     {
@@ -4447,7 +4474,7 @@
       "source_file": "src/core/interceptor.py",
       "source_location": "L150",
       "id": "core_interceptor_tradingviewinterceptor_async_process_position_close",
-      "community": 8,
+      "community": 14,
       "norm_label": ".async_process_position_close()"
     },
     {
@@ -4456,7 +4483,7 @@
       "source_file": "src/core/interceptor.py",
       "source_location": "L150",
       "id": "src_core_interceptor_py_any",
-      "community": 8,
+      "community": 14,
       "norm_label": "any"
     },
     {
@@ -4501,7 +4528,7 @@
       "source_file": "src/core/interceptor.py",
       "source_location": "L21",
       "id": "core_interceptor_rationale_21",
-      "community": 8,
+      "community": 16,
       "norm_label": "intercepts and handles tradingview requests."
     },
     {
@@ -4510,7 +4537,7 @@
       "source_file": "src/core/interceptor.py",
       "source_location": "L50",
       "id": "core_interceptor_rationale_50",
-      "community": 8,
+      "community": 14,
       "norm_label": "derived from the adapter so it never diverges from the live target."
     },
     {
@@ -4519,7 +4546,7 @@
       "source_file": "src/core/interceptor.py",
       "source_location": "L54",
       "id": "core_interceptor_rationale_54",
-      "community": 8,
+      "community": 16,
       "norm_label": "synchronously sync instruments."
     },
     {
@@ -4555,7 +4582,7 @@
       "source_file": "src/core/interceptor.py",
       "source_location": "L151",
       "id": "core_interceptor_rationale_151",
-      "community": 8,
+      "community": 14,
       "norm_label": "asynchronously process position close."
     },
     {
@@ -4771,7 +4798,7 @@
       "source_file": "src/models/database.py",
       "source_location": "L68",
       "id": "models_database_init_db",
-      "community": 102,
+      "community": 7,
       "norm_label": "init_db()"
     },
     {
@@ -4780,7 +4807,7 @@
       "source_file": "src/models/database.py",
       "source_location": "L69",
       "id": "models_database_rationale_69",
-      "community": 102,
+      "community": 7,
       "norm_label": "initialize database tables."
     },
     {
@@ -5716,7 +5743,7 @@
       "source_file": "src/services/mt5_service.py",
       "source_location": "L30",
       "id": "src_services_mt5_service_py_int",
-      "community": 11,
+      "community": 29,
       "norm_label": "int"
     },
     {
@@ -5797,7 +5824,7 @@
       "source_file": "src/services/mt5_service.py",
       "source_location": "L139",
       "id": "services_mt5_service_mt5service_set_loop",
-      "community": 29,
+      "community": 130,
       "norm_label": ".set_loop()"
     },
     {
@@ -5806,7 +5833,7 @@
       "source_file": "src/services/mt5_service.py",
       "source_location": "L139",
       "id": "abstracteventloop",
-      "community": 29,
+      "community": 130,
       "norm_label": "abstracteventloop"
     },
     {
@@ -5842,7 +5869,7 @@
       "source_file": "src/services/mt5_service.py",
       "source_location": "L212",
       "id": "services_mt5_service_mt5service_async_initialize",
-      "community": 29,
+      "community": 130,
       "norm_label": ".async_initialize()"
     },
     {
@@ -5878,7 +5905,7 @@
       "source_file": "src/services/mt5_service.py",
       "source_location": "L338",
       "id": "services_mt5_service_mt5service_async_execute_market_order",
-      "community": 4,
+      "community": 11,
       "norm_label": ".async_execute_market_order()"
     },
     {
@@ -5968,7 +5995,7 @@
       "source_file": "src/services/mt5_service.py",
       "source_location": "L729",
       "id": "services_mt5_service_mt5service_check_position_exists",
-      "community": 11,
+      "community": 152,
       "norm_label": "._check_position_exists()"
     },
     {
@@ -6031,7 +6058,7 @@
       "source_file": "src/services/mt5_service.py",
       "source_location": "L140",
       "id": "services_mt5_service_rationale_140",
-      "community": 29,
+      "community": 130,
       "norm_label": "set the event loop for this service."
     },
     {
@@ -6058,7 +6085,7 @@
       "source_file": "src/services/mt5_service.py",
       "source_location": "L213",
       "id": "services_mt5_service_rationale_213",
-      "community": 29,
+      "community": 130,
       "norm_label": "initialize mt5 connection with cooldown asynchronously."
     },
     {
@@ -6085,7 +6112,7 @@
       "source_file": "src/services/mt5_service.py",
       "source_location": "L339",
       "id": "services_mt5_service_rationale_339",
-      "community": 4,
+      "community": 11,
       "norm_label": "execute market order on mt5 asynchronously."
     },
     {
@@ -6166,7 +6193,7 @@
       "source_file": "src/services/mt5_service.py",
       "source_location": "L730",
       "id": "services_mt5_service_rationale_730",
-      "community": 11,
+      "community": 152,
       "norm_label": "centralized position check with detailed response."
     },
     {
@@ -6193,7 +6220,7 @@
       "source_file": "src/services/tradingview_service.py",
       "source_location": "L13",
       "id": "services_tradingview_service_tradingviewservice",
-      "community": 109,
+      "community": 2,
       "norm_label": "tradingviewservice"
     },
     {
@@ -6202,7 +6229,7 @@
       "source_file": "src/services/tradingview_service.py",
       "source_location": "L16",
       "id": "services_tradingview_service_tradingviewservice_init",
-      "community": 109,
+      "community": 2,
       "norm_label": ".__init__()"
     },
     {
@@ -6211,7 +6238,7 @@
       "source_file": "src/services/tradingview_service.py",
       "source_location": "L16",
       "id": "tokenmanager",
-      "community": 109,
+      "community": 2,
       "norm_label": "tokenmanager"
     },
     {
@@ -6220,7 +6247,7 @@
       "source_file": "src/services/tradingview_service.py",
       "source_location": "L28",
       "id": "services_tradingview_service_tradingviewservice_get_valid_token",
-      "community": 109,
+      "community": 2,
       "norm_label": "._get_valid_token()"
     },
     {
@@ -6229,7 +6256,7 @@
       "source_file": "src/services/tradingview_service.py",
       "source_location": "L28",
       "id": "src_services_tradingview_service_py_str",
-      "community": 109,
+      "community": 2,
       "norm_label": "str"
     },
     {
@@ -6238,7 +6265,7 @@
       "source_file": "src/services/tradingview_service.py",
       "source_location": "L47",
       "id": "services_tradingview_service_tradingviewservice_async_close_position",
-      "community": 109,
+      "community": 2,
       "norm_label": ".async_close_position()"
     },
     {
@@ -6247,7 +6274,7 @@
       "source_file": "src/services/tradingview_service.py",
       "source_location": "L47",
       "id": "src_services_tradingview_service_py_any",
-      "community": 109,
+      "community": 2,
       "norm_label": "any"
     },
     {
@@ -6256,7 +6283,7 @@
       "source_file": "src/services/tradingview_service.py",
       "source_location": "L141",
       "id": "services_tradingview_service_tradingviewservice_close_position",
-      "community": 109,
+      "community": 2,
       "norm_label": ".close_position()"
     },
     {
@@ -6265,7 +6292,7 @@
       "source_file": "src/services/tradingview_service.py",
       "source_location": "L145",
       "id": "services_tradingview_service_tradingviewservice_cleanup",
-      "community": 109,
+      "community": 2,
       "norm_label": ".cleanup()"
     },
     {
@@ -6274,7 +6301,7 @@
       "source_file": "src/services/tradingview_service.py",
       "source_location": "L14",
       "id": "services_tradingview_service_rationale_14",
-      "community": 109,
+      "community": 2,
       "norm_label": "service to interact with tradingview api."
     },
     {
@@ -6283,7 +6310,7 @@
       "source_file": "src/services/tradingview_service.py",
       "source_location": "L29",
       "id": "services_tradingview_service_rationale_29",
-      "community": 109,
+      "community": 2,
       "norm_label": "get a valid token, refreshing if necessary."
     },
     {
@@ -6292,7 +6319,7 @@
       "source_file": "src/services/tradingview_service.py",
       "source_location": "L48",
       "id": "services_tradingview_service_rationale_48",
-      "community": 109,
+      "community": 2,
       "norm_label": "close a position on tradingview asynchronously."
     },
     {
@@ -6301,7 +6328,7 @@
       "source_file": "src/services/tradingview_service.py",
       "source_location": "L142",
       "id": "services_tradingview_service_rationale_142",
-      "community": 109,
+      "community": 2,
       "norm_label": "synchronous version of close_position for compatibility."
     },
     {
@@ -6580,7 +6607,7 @@
       "source_file": "src/utils/instrument_manager.py",
       "source_location": "L1",
       "id": "src_utils_instrument_manager_py",
-      "community": 102,
+      "community": 146,
       "norm_label": "instrument_manager.py"
     },
     {
@@ -6616,7 +6643,7 @@
       "source_file": "src/utils/instrument_manager.py",
       "source_location": "L46",
       "id": "utils_instrument_manager_instrumentmanager_get_pip_size",
-      "community": 143,
+      "community": 29,
       "norm_label": ".get_pip_size()"
     },
     {
@@ -6625,7 +6652,7 @@
       "source_file": "src/utils/instrument_manager.py",
       "source_location": "L46",
       "id": "src_utils_instrument_manager_py_str",
-      "community": 143,
+      "community": 29,
       "norm_label": "str"
     },
     {
@@ -6634,7 +6661,7 @@
       "source_file": "src/utils/instrument_manager.py",
       "source_location": "L46",
       "id": "src_utils_instrument_manager_py_float",
-      "community": 143,
+      "community": 29,
       "norm_label": "float"
     },
     {
@@ -6643,7 +6670,7 @@
       "source_file": "src/utils/instrument_manager.py",
       "source_location": "L69",
       "id": "utils_instrument_manager_instrumentmanager_calculate_trailing_distance",
-      "community": 143,
+      "community": 29,
       "norm_label": ".calculate_trailing_distance()"
     },
     {
@@ -6661,7 +6688,7 @@
       "source_file": "src/utils/instrument_manager.py",
       "source_location": "L47",
       "id": "utils_instrument_manager_rationale_47",
-      "community": 143,
+      "community": 29,
       "norm_label": "get pip size for a symbol."
     },
     {
@@ -6670,7 +6697,7 @@
       "source_file": "src/utils/instrument_manager.py",
       "source_location": "L70",
       "id": "utils_instrument_manager_rationale_70",
-      "community": 143,
+      "community": 29,
       "norm_label": "calculate trailing distance for a symbol."
     },
     {
@@ -6679,7 +6706,7 @@
       "source_file": "src/utils/number_format.py",
       "source_location": "L1",
       "id": "src_utils_number_format_py",
-      "community": 17,
+      "community": 33,
       "norm_label": "number_format.py"
     },
     {
@@ -6688,7 +6715,7 @@
       "source_file": "src/utils/number_format.py",
       "source_location": "L10",
       "id": "utils_number_format_fmt_num",
-      "community": 17,
+      "community": 33,
       "norm_label": "fmt_num()"
     },
     {
@@ -6697,7 +6724,7 @@
       "source_file": "src/utils/number_format.py",
       "source_location": "L10",
       "id": "src_utils_number_format_py_str",
-      "community": 17,
+      "community": 33,
       "norm_label": "str"
     },
     {
@@ -6706,7 +6733,7 @@
       "source_file": "src/utils/number_format.py",
       "source_location": "L1",
       "id": "utils_number_format_rationale_1",
-      "community": 17,
+      "community": 33,
       "norm_label": "human-friendly numeric formatting for logs and ui.  display-only: strips trailin"
     },
     {
@@ -6715,7 +6742,7 @@
       "source_file": "src/utils/number_format.py",
       "source_location": "L11",
       "id": "utils_number_format_rationale_11",
-      "community": 17,
+      "community": 33,
       "norm_label": "return a clean string for a price/size: no trailing zeros, no sci-notation."
     },
     {
@@ -6787,7 +6814,7 @@
       "source_file": "src/utils/symbol_mapper.py",
       "source_location": "L1",
       "id": "src_utils_symbol_mapper_py",
-      "community": 5,
+      "community": 146,
       "norm_label": "symbol_mapper.py"
     },
     {
@@ -7066,7 +7093,7 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L1",
       "id": "src_workers_mt5_worker_py",
-      "community": 9,
+      "community": 33,
       "norm_label": "mt5_worker.py"
     },
     {
@@ -7075,7 +7102,7 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L19",
       "id": "workers_mt5_worker_mt5worker",
-      "community": 16,
+      "community": 21,
       "norm_label": "mt5worker"
     },
     {
@@ -7084,32 +7111,32 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L20",
       "id": "workers_mt5_worker_mt5worker_init",
-      "community": 16,
+      "community": 21,
       "norm_label": ".__init__()"
     },
     {
       "label": ".initialize()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L31",
+      "source_location": "L35",
       "id": "workers_mt5_worker_mt5worker_initialize",
-      "community": 34,
+      "community": 4,
       "norm_label": ".initialize()"
     },
     {
       "label": ".init_inproc()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L65",
+      "source_location": "L69",
       "id": "workers_mt5_worker_mt5worker_init_inproc",
-      "community": 109,
+      "community": 2,
       "norm_label": ".init_inproc()"
     },
     {
       "label": "._initialize_positions()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L88",
+      "source_location": "L92",
       "id": "workers_mt5_worker_mt5worker_initialize_positions",
       "community": 34,
       "norm_label": "._initialize_positions()"
@@ -7118,16 +7145,25 @@
       "label": "._start_trailing_monitor()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L99",
+      "source_location": "L103",
       "id": "workers_mt5_worker_mt5worker_start_trailing_monitor",
       "community": 34,
       "norm_label": "._start_trailing_monitor()"
     },
     {
+      "label": "._stop_trailing_monitor()",
+      "file_type": "code",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L108",
+      "id": "workers_mt5_worker_mt5worker_stop_trailing_monitor",
+      "community": 34,
+      "norm_label": "._stop_trailing_monitor()"
+    },
+    {
       "label": ".reconnect_mt5()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L107",
+      "source_location": "L122",
       "id": "workers_mt5_worker_mt5worker_reconnect_mt5",
       "community": 34,
       "norm_label": ".reconnect_mt5()"
@@ -7136,7 +7172,7 @@
       "label": ".handle_message()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L135",
+      "source_location": "L157",
       "id": "workers_mt5_worker_mt5worker_handle_message",
       "community": 21,
       "norm_label": ".handle_message()"
@@ -7145,7 +7181,7 @@
       "label": "str",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L135",
+      "source_location": "L157",
       "id": "src_workers_mt5_worker_py_str",
       "community": 21,
       "norm_label": "str"
@@ -7154,7 +7190,7 @@
       "label": "Any",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L135",
+      "source_location": "L157",
       "id": "src_workers_mt5_worker_py_any",
       "community": 21,
       "norm_label": "any"
@@ -7163,16 +7199,25 @@
       "label": ".process_trade()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L147",
+      "source_location": "L169",
       "id": "workers_mt5_worker_mt5worker_process_trade",
       "community": 21,
       "norm_label": ".process_trade()"
     },
     {
+      "label": "._process_trade_locked()",
+      "file_type": "code",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L174",
+      "id": "workers_mt5_worker_mt5worker_process_trade_locked",
+      "community": 21,
+      "norm_label": "._process_trade_locked()"
+    },
+    {
       "label": "._handle_new_position()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L183",
+      "source_location": "L209",
       "id": "workers_mt5_worker_mt5worker_handle_new_position",
       "community": 21,
       "norm_label": "._handle_new_position()"
@@ -7181,7 +7226,7 @@
       "label": "int",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L183",
+      "source_location": "L209",
       "id": "src_workers_mt5_worker_py_int",
       "community": 21,
       "norm_label": "int"
@@ -7190,7 +7235,7 @@
       "label": "._handle_position_close()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L221",
+      "source_location": "L247",
       "id": "workers_mt5_worker_mt5worker_handle_position_close",
       "community": 21,
       "norm_label": "._handle_position_close()"
@@ -7199,7 +7244,7 @@
       "label": "._handle_position_update()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L281",
+      "source_location": "L307",
       "id": "workers_mt5_worker_mt5worker_handle_position_update",
       "community": 21,
       "norm_label": "._handle_position_update()"
@@ -7208,25 +7253,34 @@
       "label": ".check_mt5_positions()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L337",
+      "source_location": "L363",
       "id": "workers_mt5_worker_mt5worker_check_mt5_positions",
-      "community": 34,
+      "community": 121,
       "norm_label": ".check_mt5_positions()"
+    },
+    {
+      "label": "._check_mt5_positions_locked()",
+      "file_type": "code",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L368",
+      "id": "workers_mt5_worker_mt5worker_check_mt5_positions_locked",
+      "community": 121,
+      "norm_label": "._check_mt5_positions_locked()"
     },
     {
       "label": ".handle_mt5_close()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L360",
+      "source_location": "L390",
       "id": "workers_mt5_worker_mt5worker_handle_mt5_close",
-      "community": 21,
+      "community": 121,
       "norm_label": ".handle_mt5_close()"
     },
     {
       "label": ".run_async()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L409",
+      "source_location": "L439",
       "id": "workers_mt5_worker_mt5worker_run_async",
       "community": 34,
       "norm_label": ".run_async()"
@@ -7235,16 +7289,16 @@
       "label": ".handle_shutdown()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L436",
+      "source_location": "L466",
       "id": "workers_mt5_worker_mt5worker_handle_shutdown",
-      "community": 16,
+      "community": 153,
       "norm_label": ".handle_shutdown()"
     },
     {
       "label": ".shutdown()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L443",
+      "source_location": "L473",
       "id": "workers_mt5_worker_mt5worker_shutdown",
       "community": 34,
       "norm_label": ".shutdown()"
@@ -7253,7 +7307,7 @@
       "label": ".run()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L455",
+      "source_location": "L485",
       "id": "workers_mt5_worker_mt5worker_run",
       "community": 34,
       "norm_label": ".run()"
@@ -7262,7 +7316,7 @@
       "label": ".cleanup()",
       "file_type": "code",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L480",
+      "source_location": "L510",
       "id": "workers_mt5_worker_mt5worker_cleanup",
       "community": 34,
       "norm_label": ".cleanup()"
@@ -7271,44 +7325,53 @@
       "label": "Initialize all services with shared event loop.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L32",
-      "id": "workers_mt5_worker_rationale_32",
-      "community": 34,
+      "source_location": "L36",
+      "id": "workers_mt5_worker_rationale_36",
+      "community": 4,
       "norm_label": "initialize all services with shared event loop."
     },
     {
       "label": "Initialize the worker to share an existing event loop, queue, and db.          U",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L66",
-      "id": "workers_mt5_worker_rationale_66",
-      "community": 109,
+      "source_location": "L70",
+      "id": "workers_mt5_worker_rationale_70",
+      "community": 2,
       "norm_label": "initialize the worker to share an existing event loop, queue, and db.          u"
     },
     {
       "label": "Initialize open positions set on startup.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L89",
-      "id": "workers_mt5_worker_rationale_89",
+      "source_location": "L93",
+      "id": "workers_mt5_worker_rationale_93",
       "community": 34,
       "norm_label": "initialize open positions set on startup."
     },
     {
-      "label": "(Re)start the trailing-stop monitor, cancelling any previous one.",
+      "label": "Start the trailing-stop monitor (assumes any previous one was stopped).",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L100",
-      "id": "workers_mt5_worker_rationale_100",
+      "source_location": "L104",
+      "id": "workers_mt5_worker_rationale_104",
       "community": 34,
-      "norm_label": "(re)start the trailing-stop monitor, cancelling any previous one."
+      "norm_label": "start the trailing-stop monitor (assumes any previous one was stopped)."
+    },
+    {
+      "label": "Cancel the trailing-stop monitor and WAIT for it to finish, so it can't",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L109",
+      "id": "workers_mt5_worker_rationale_109",
+      "community": 34,
+      "norm_label": "cancel the trailing-stop monitor and wait for it to finish, so it can't"
     },
     {
       "label": "Switch the MT5 connection to the current (active-profile) config WITHOUT",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L108",
-      "id": "workers_mt5_worker_rationale_108",
+      "source_location": "L123",
+      "id": "workers_mt5_worker_rationale_123",
       "community": 34,
       "norm_label": "switch the mt5 connection to the current (active-profile) config without"
     },
@@ -7316,26 +7379,26 @@
       "label": "Handle messages from Redis channels asynchronously.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L136",
-      "id": "workers_mt5_worker_rationale_136",
+      "source_location": "L158",
+      "id": "workers_mt5_worker_rationale_158",
       "community": 21,
       "norm_label": "handle messages from redis channels asynchronously."
     },
     {
-      "label": "Process a single trade asynchronously.",
+      "label": "Process a single trade, serialised against MT5 reconnects/position checks.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L148",
-      "id": "workers_mt5_worker_rationale_148",
+      "source_location": "L170",
+      "id": "workers_mt5_worker_rationale_170",
       "community": 21,
-      "norm_label": "process a single trade asynchronously."
+      "norm_label": "process a single trade, serialised against mt5 reconnects/position checks."
     },
     {
       "label": "Handle opening a new position.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L184",
-      "id": "workers_mt5_worker_rationale_184",
+      "source_location": "L210",
+      "id": "workers_mt5_worker_rationale_210",
       "community": 21,
       "norm_label": "handle opening a new position."
     },
@@ -7343,8 +7406,8 @@
       "label": "Handle closing an existing position.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L222",
-      "id": "workers_mt5_worker_rationale_222",
+      "source_location": "L248",
+      "id": "workers_mt5_worker_rationale_248",
       "community": 21,
       "norm_label": "handle closing an existing position."
     },
@@ -7352,35 +7415,35 @@
       "label": "Handle updating TP/SL for an existing position.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L282",
-      "id": "workers_mt5_worker_rationale_282",
+      "source_location": "L308",
+      "id": "workers_mt5_worker_rationale_308",
       "community": 21,
       "norm_label": "handle updating tp/sl for an existing position."
     },
     {
-      "label": "Monitor MT5 positions for manual closes asynchronously.",
+      "label": "Monitor MT5 positions for manual closes, serialised against reconnects.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L338",
-      "id": "workers_mt5_worker_rationale_338",
-      "community": 34,
-      "norm_label": "monitor mt5 positions for manual closes asynchronously."
+      "source_location": "L364",
+      "id": "workers_mt5_worker_rationale_364",
+      "community": 121,
+      "norm_label": "monitor mt5 positions for manual closes, serialised against reconnects."
     },
     {
       "label": "Handle position closed in MT5 asynchronously.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L361",
-      "id": "workers_mt5_worker_rationale_361",
-      "community": 21,
+      "source_location": "L391",
+      "id": "workers_mt5_worker_rationale_391",
+      "community": 121,
       "norm_label": "handle position closed in mt5 asynchronously."
     },
     {
       "label": "Run the worker service asynchronously.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L410",
-      "id": "workers_mt5_worker_rationale_410",
+      "source_location": "L440",
+      "id": "workers_mt5_worker_rationale_440",
       "community": 34,
       "norm_label": "run the worker service asynchronously."
     },
@@ -7388,17 +7451,17 @@
       "label": "Handle shutdown signals gracefully.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L437",
-      "id": "workers_mt5_worker_rationale_437",
-      "community": 16,
+      "source_location": "L467",
+      "id": "workers_mt5_worker_rationale_467",
+      "community": 153,
       "norm_label": "handle shutdown signals gracefully."
     },
     {
       "label": "Perform async shutdown tasks.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L444",
-      "id": "workers_mt5_worker_rationale_444",
+      "source_location": "L474",
+      "id": "workers_mt5_worker_rationale_474",
       "community": 34,
       "norm_label": "perform async shutdown tasks."
     },
@@ -7406,8 +7469,8 @@
       "label": "Run the worker service with proper signal handling.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L456",
-      "id": "workers_mt5_worker_rationale_456",
+      "source_location": "L486",
+      "id": "workers_mt5_worker_rationale_486",
       "community": 34,
       "norm_label": "run the worker service with proper signal handling."
     },
@@ -7415,8 +7478,8 @@
       "label": "Cleanup resources in correct order.",
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L481",
-      "id": "workers_mt5_worker_rationale_481",
+      "source_location": "L511",
+      "id": "workers_mt5_worker_rationale_511",
       "community": 34,
       "norm_label": "cleanup resources in correct order."
     },
@@ -7678,7 +7741,7 @@
       "source_file": "tests/unit/test_api_config.py",
       "source_location": "L1",
       "id": "tests_unit_test_api_config_py",
-      "community": 0,
+      "community": 36,
       "norm_label": "test_api_config.py"
     },
     {
@@ -7687,7 +7750,7 @@
       "source_file": "tests/unit/test_api_config.py",
       "source_location": "L8",
       "id": "unit_test_api_config_test_get_settings_redacts_password_and_marks_set",
-      "community": 0,
+      "community": 36,
       "norm_label": "test_get_settings_redacts_password_and_marks_set()"
     },
     {
@@ -7696,7 +7759,7 @@
       "source_file": "tests/unit/test_api_config.py",
       "source_location": "L28",
       "id": "unit_test_api_config_test_update_settings_writes_mt5_fields",
-      "community": 0,
+      "community": 36,
       "norm_label": "test_update_settings_writes_mt5_fields()"
     },
     {
@@ -7705,7 +7768,7 @@
       "source_file": "tests/unit/test_api_config.py",
       "source_location": "L36",
       "id": "unit_test_api_config_test_update_settings_password_only_when_provided",
-      "community": 0,
+      "community": 36,
       "norm_label": "test_update_settings_password_only_when_provided()"
     },
     {
@@ -7714,7 +7777,7 @@
       "source_file": "tests/unit/test_api_config.py",
       "source_location": "L47",
       "id": "unit_test_api_config_test_update_settings_rejects_non_integer_account",
-      "community": 0,
+      "community": 36,
       "norm_label": "test_update_settings_rejects_non_integer_account()"
     },
     {
@@ -7723,7 +7786,7 @@
       "source_file": "tests/unit/test_api_config.py",
       "source_location": "L52",
       "id": "unit_test_api_config_test_update_settings_ignores_tv_target",
-      "community": 0,
+      "community": 36,
       "norm_label": "test_update_settings_ignores_tv_target()"
     },
     {
@@ -7732,7 +7795,7 @@
       "source_file": "tests/unit/test_api_config.py",
       "source_location": "L58",
       "id": "unit_test_api_config_test_symbols_roundtrip",
-      "community": 0,
+      "community": 36,
       "norm_label": "test_symbols_roundtrip()"
     },
     {
@@ -7741,7 +7804,7 @@
       "source_file": "tests/unit/test_api_config.py",
       "source_location": "L67",
       "id": "unit_test_api_config_test_symbols_defaults_when_unset",
-      "community": 0,
+      "community": 36,
       "norm_label": "test_symbols_defaults_when_unset()"
     },
     {
@@ -7750,7 +7813,7 @@
       "source_file": "tests/unit/test_api_config.py",
       "source_location": "L75",
       "id": "unit_test_api_config_test_update_symbols_rejects_non_dict_map",
-      "community": 0,
+      "community": 36,
       "norm_label": "test_update_symbols_rejects_non_dict_map()"
     },
     {
@@ -7786,7 +7849,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L1",
       "id": "tests_unit_test_api_server_py",
-      "community": 121,
+      "community": 37,
       "norm_label": "test_api_server.py"
     },
     {
@@ -7795,7 +7858,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L8",
       "id": "unit_test_api_server_test_query_trades_paging_filter_and_total",
-      "community": 102,
+      "community": 9,
       "norm_label": "test_query_trades_paging_filter_and_total()"
     },
     {
@@ -7804,7 +7867,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L46",
       "id": "unit_test_api_server_fakerunner",
-      "community": 145,
+      "community": 37,
       "norm_label": "_fakerunner"
     },
     {
@@ -7813,7 +7876,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L47",
       "id": "unit_test_api_server_fakerunner_init",
-      "community": 145,
+      "community": 37,
       "norm_label": ".__init__()"
     },
     {
@@ -7822,7 +7885,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L49",
       "id": "unit_test_api_server_fakerunner_serve",
-      "community": 145,
+      "community": 37,
       "norm_label": ".serve()"
     },
     {
@@ -7831,7 +7894,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L51",
       "id": "unit_test_api_server_fakerunner_shutdown",
-      "community": 145,
+      "community": 37,
       "norm_label": ".shutdown()"
     },
     {
@@ -7840,7 +7903,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L53",
       "id": "unit_test_api_server_fakerunner_mt5_connected",
-      "community": 145,
+      "community": 37,
       "norm_label": ".mt5_connected()"
     },
     {
@@ -7849,7 +7912,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L55",
       "id": "unit_test_api_server_fakerunner_tv_connected",
-      "community": 145,
+      "community": 37,
       "norm_label": ".tv_connected()"
     },
     {
@@ -7858,7 +7921,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L59",
       "id": "unit_test_api_server_client",
-      "community": 121,
+      "community": 37,
       "norm_label": "_client()"
     },
     {
@@ -7867,7 +7930,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L66",
       "id": "unit_test_api_server_test_status_endpoint",
-      "community": 121,
+      "community": 37,
       "norm_label": "test_status_endpoint()"
     },
     {
@@ -7876,7 +7939,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L73",
       "id": "unit_test_api_server_test_start_then_stop_endpoints",
-      "community": 121,
+      "community": 37,
       "norm_label": "test_start_then_stop_endpoints()"
     },
     {
@@ -7885,7 +7948,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L83",
       "id": "unit_test_api_server_test_start_returns_409_when_proxy_busy",
-      "community": 36,
+      "community": 37,
       "norm_label": "test_start_returns_409_when_proxy_busy()"
     },
     {
@@ -7894,7 +7957,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L99",
       "id": "unit_test_api_server_test_focus_endpoint_invokes_callback",
-      "community": 36,
+      "community": 37,
       "norm_label": "test_focus_endpoint_invokes_callback()"
     },
     {
@@ -7903,7 +7966,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L109",
       "id": "unit_test_api_server_test_index_is_served",
-      "community": 121,
+      "community": 37,
       "norm_label": "test_index_is_served()"
     },
     {
@@ -7912,7 +7975,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L117",
       "id": "unit_test_api_server_test_settings_get_redacts_and_put_writes",
-      "community": 121,
+      "community": 37,
       "norm_label": "test_settings_get_redacts_and_put_writes()"
     },
     {
@@ -7921,7 +7984,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L133",
       "id": "unit_test_api_server_test_settings_put_rejects_bad_account",
-      "community": 121,
+      "community": 37,
       "norm_label": "test_settings_put_rejects_bad_account()"
     },
     {
@@ -7930,7 +7993,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L139",
       "id": "unit_test_api_server_test_symbols_get_put",
-      "community": 121,
+      "community": 37,
       "norm_label": "test_symbols_get_put()"
     },
     {
@@ -7939,7 +8002,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L147",
       "id": "unit_test_api_server_test_symbols_put_rejects_bad_map",
-      "community": 121,
+      "community": 37,
       "norm_label": "test_symbols_put_rejects_bad_map()"
     },
     {
@@ -7948,7 +8011,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L153",
       "id": "unit_test_api_server_test_restart_endpoint",
-      "community": 121,
+      "community": 37,
       "norm_label": "test_restart_endpoint()"
     },
     {
@@ -7957,7 +8020,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L162",
       "id": "unit_test_api_server_test_index_has_all_tabs",
-      "community": 121,
+      "community": 37,
       "norm_label": "test_index_has_all_tabs()"
     },
     {
@@ -7966,7 +8029,7 @@
       "source_file": "tests/unit/test_api_server.py",
       "source_location": "L170",
       "id": "unit_test_api_server_test_dashboard_logos_referenced_and_served",
-      "community": 121,
+      "community": 37,
       "norm_label": "test_dashboard_logos_referenced_and_served()"
     },
     {
@@ -7984,7 +8047,7 @@
       "source_file": "tests/unit/test_api_wizard.py",
       "source_location": "L6",
       "id": "unit_test_api_wizard_fakerunner",
-      "community": 146,
+      "community": 58,
       "norm_label": "_fakerunner"
     },
     {
@@ -7993,7 +8056,7 @@
       "source_file": "tests/unit/test_api_wizard.py",
       "source_location": "L7",
       "id": "unit_test_api_wizard_fakerunner_init",
-      "community": 146,
+      "community": 58,
       "norm_label": ".__init__()"
     },
     {
@@ -8002,7 +8065,7 @@
       "source_file": "tests/unit/test_api_wizard.py",
       "source_location": "L9",
       "id": "unit_test_api_wizard_fakerunner_serve",
-      "community": 146,
+      "community": 58,
       "norm_label": ".serve()"
     },
     {
@@ -8011,7 +8074,7 @@
       "source_file": "tests/unit/test_api_wizard.py",
       "source_location": "L11",
       "id": "unit_test_api_wizard_fakerunner_shutdown",
-      "community": 146,
+      "community": 58,
       "norm_label": ".shutdown()"
     },
     {
@@ -8020,7 +8083,7 @@
       "source_file": "tests/unit/test_api_wizard.py",
       "source_location": "L13",
       "id": "unit_test_api_wizard_fakerunner_mt5_connected",
-      "community": 146,
+      "community": 58,
       "norm_label": ".mt5_connected()"
     },
     {
@@ -8029,7 +8092,7 @@
       "source_file": "tests/unit/test_api_wizard.py",
       "source_location": "L15",
       "id": "unit_test_api_wizard_fakerunner_tv_connected",
-      "community": 146,
+      "community": 58,
       "norm_label": ".tv_connected()"
     },
     {
@@ -8299,7 +8362,7 @@
       "source_file": "tests/unit/test_desktop_env.py",
       "source_location": "L1",
       "id": "tests_unit_test_desktop_env_py",
-      "community": 130,
+      "community": 1,
       "norm_label": "test_desktop_env.py"
     },
     {
@@ -8308,7 +8371,7 @@
       "source_file": "tests/unit/test_desktop_env.py",
       "source_location": "L8",
       "id": "unit_test_desktop_env_test_configure_webview_env_disables_gpu_by_default",
-      "community": 130,
+      "community": 1,
       "norm_label": "test_configure_webview_env_disables_gpu_by_default()"
     },
     {
@@ -8317,7 +8380,7 @@
       "source_file": "tests/unit/test_desktop_env.py",
       "source_location": "L16",
       "id": "unit_test_desktop_env_test_configure_webview_env_respects_user_override",
-      "community": 130,
+      "community": 1,
       "norm_label": "test_configure_webview_env_respects_user_override()"
     },
     {
@@ -8326,7 +8389,7 @@
       "source_file": "tests/unit/test_desktop_env.py",
       "source_location": "L1",
       "id": "unit_test_desktop_env_rationale_1",
-      "community": 130,
+      "community": 1,
       "norm_label": "regression guard: the desktop app must disable webview2 gpu acceleration by defa"
     },
     {
@@ -8335,7 +8398,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L1",
       "id": "tests_unit_test_engine_controller_py",
-      "community": 113,
+      "community": 37,
       "norm_label": "test_engine_controller.py"
     },
     {
@@ -8344,7 +8407,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L8",
       "id": "unit_test_engine_controller_test_initial_status_is_stopped",
-      "community": 113,
+      "community": 37,
       "norm_label": "test_initial_status_is_stopped()"
     },
     {
@@ -8353,7 +8416,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L20",
       "id": "unit_test_engine_controller_test_status_to_dict_is_json_friendly",
-      "community": 113,
+      "community": 37,
       "norm_label": "test_status_to_dict_is_json_friendly()"
     },
     {
@@ -8371,7 +8434,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L45",
       "id": "unit_test_engine_controller_fakerunner",
-      "community": 118,
+      "community": 37,
       "norm_label": "_fakerunner"
     },
     {
@@ -8380,7 +8443,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L48",
       "id": "unit_test_engine_controller_fakerunner_init",
-      "community": 118,
+      "community": 37,
       "norm_label": ".__init__()"
     },
     {
@@ -8389,7 +8452,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L53",
       "id": "unit_test_engine_controller_fakerunner_serve",
-      "community": 118,
+      "community": 37,
       "norm_label": ".serve()"
     },
     {
@@ -8398,7 +8461,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L57",
       "id": "unit_test_engine_controller_fakerunner_shutdown",
-      "community": 118,
+      "community": 37,
       "norm_label": ".shutdown()"
     },
     {
@@ -8407,7 +8470,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L61",
       "id": "unit_test_engine_controller_fakerunner_mt5_connected",
-      "community": 118,
+      "community": 37,
       "norm_label": ".mt5_connected()"
     },
     {
@@ -8416,7 +8479,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L64",
       "id": "unit_test_engine_controller_fakerunner_tv_connected",
-      "community": 118,
+      "community": 37,
       "norm_label": ".tv_connected()"
     },
     {
@@ -8425,7 +8488,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L68",
       "id": "unit_test_engine_controller_test_start_then_stop_transitions",
-      "community": 113,
+      "community": 37,
       "norm_label": "test_start_then_stop_transitions()"
     },
     {
@@ -8434,7 +8497,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L80",
       "id": "unit_test_engine_controller_test_start_is_idempotent_when_running",
-      "community": 113,
+      "community": 37,
       "norm_label": "test_start_is_idempotent_when_running()"
     },
     {
@@ -8443,7 +8506,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L88",
       "id": "unit_test_engine_controller_test_start_raises_when_proxy_port_busy",
-      "community": 113,
+      "community": 37,
       "norm_label": "test_start_raises_when_proxy_port_busy()"
     },
     {
@@ -8452,7 +8515,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L103",
       "id": "unit_test_engine_controller_test_error_is_reported_and_can_restart",
-      "community": 113,
+      "community": 37,
       "norm_label": "test_error_is_reported_and_can_restart()"
     },
     {
@@ -8461,7 +8524,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L132",
       "id": "unit_test_engine_controller_test_restart_cycles_to_running",
-      "community": 113,
+      "community": 37,
       "norm_label": "test_restart_cycles_to_running()"
     },
     {
@@ -8470,7 +8533,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L140",
       "id": "unit_test_engine_controller_test_restart_from_stopped_just_starts",
-      "community": 113,
+      "community": 37,
       "norm_label": "test_restart_from_stopped_just_starts()"
     },
     {
@@ -8479,7 +8542,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L147",
       "id": "unit_test_engine_controller_test_wait_for_port_free_returns_immediately_at_port_zero",
-      "community": 113,
+      "community": 37,
       "norm_label": "test_wait_for_port_free_returns_immediately_at_port_zero()"
     },
     {
@@ -8488,7 +8551,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L152",
       "id": "unit_test_engine_controller_test_wait_for_port_free_blocks_until_timeout_when_busy",
-      "community": 113,
+      "community": 37,
       "norm_label": "test_wait_for_port_free_blocks_until_timeout_when_busy()"
     },
     {
@@ -8497,7 +8560,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L167",
       "id": "unit_test_engine_controller_reconnectrunner",
-      "community": 118,
+      "community": 37,
       "norm_label": "_reconnectrunner"
     },
     {
@@ -8506,7 +8569,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L168",
       "id": "unit_test_engine_controller_reconnectrunner_init",
-      "community": 118,
+      "community": 37,
       "norm_label": ".__init__()"
     },
     {
@@ -8515,7 +8578,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L172",
       "id": "unit_test_engine_controller_reconnectrunner_reconnect_mt5",
-      "community": 118,
+      "community": 37,
       "norm_label": ".reconnect_mt5()"
     },
     {
@@ -8524,7 +8587,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L176",
       "id": "unit_test_engine_controller_test_apply_mt5_settings_reconnects_when_running",
-      "community": 113,
+      "community": 37,
       "norm_label": "test_apply_mt5_settings_reconnects_when_running()"
     },
     {
@@ -8533,7 +8596,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L184",
       "id": "unit_test_engine_controller_test_apply_mt5_settings_is_noop_when_stopped",
-      "community": 113,
+      "community": 37,
       "norm_label": "test_apply_mt5_settings_is_noop_when_stopped()"
     },
     {
@@ -8542,7 +8605,7 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L46",
       "id": "unit_test_engine_controller_rationale_46",
-      "community": 118,
+      "community": 37,
       "norm_label": "simulates the engine: serve() blocks until shutdown() is called."
     },
     {
@@ -8587,7 +8650,7 @@
       "source_file": "tests/unit/test_engine_factory.py",
       "source_location": "L35",
       "id": "unit_test_engine_factory_test_worker_inproc_init_uses_injected_queue_and_db",
-      "community": 16,
+      "community": 7,
       "norm_label": "test_worker_inproc_init_uses_injected_queue_and_db()"
     },
     {
@@ -8605,7 +8668,7 @@
       "source_file": "tests/unit/test_fusion_adapter.py",
       "source_location": "L4",
       "id": "unit_test_fusion_adapter_test_account_info_holds_target",
-      "community": 15,
+      "community": 0,
       "norm_label": "test_account_info_holds_target()"
     },
     {
@@ -8623,7 +8686,7 @@
       "source_file": "tests/unit/test_fusion_adapter.py",
       "source_location": "L19",
       "id": "unit_test_fusion_adapter_req",
-      "community": 15,
+      "community": 0,
       "norm_label": "_req"
     },
     {
@@ -8632,7 +8695,7 @@
       "source_file": "tests/unit/test_fusion_adapter.py",
       "source_location": "L20",
       "id": "unit_test_fusion_adapter_req_init",
-      "community": 15,
+      "community": 0,
       "norm_label": ".__init__()"
     },
     {
@@ -8650,7 +8713,7 @@
       "source_file": "tests/unit/test_fusion_adapter.py",
       "source_location": "L27",
       "id": "unit_test_fusion_adapter_flow_init",
-      "community": 15,
+      "community": 0,
       "norm_label": ".__init__()"
     },
     {
@@ -9032,12 +9095,120 @@
       "norm_label": "test_terminal_path_resolved_from_config_not_env()"
     },
     {
+      "label": "test_mt5_worker_reconnect.py",
+      "file_type": "code",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L1",
+      "id": "tests_unit_test_mt5_worker_reconnect_py",
+      "community": 57,
+      "norm_label": "test_mt5_worker_reconnect.py"
+    },
+    {
+      "label": "_FakeMT5Service",
+      "file_type": "code",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L17",
+      "id": "unit_test_mt5_worker_reconnect_fakemt5service",
+      "community": 57,
+      "norm_label": "_fakemt5service"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L21",
+      "id": "unit_test_mt5_worker_reconnect_fakemt5service_init",
+      "community": 57,
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": ".set_loop()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L28",
+      "id": "unit_test_mt5_worker_reconnect_fakemt5service_set_loop",
+      "community": 57,
+      "norm_label": ".set_loop()"
+    },
+    {
+      "label": ".cleanup()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L31",
+      "id": "unit_test_mt5_worker_reconnect_fakemt5service_cleanup",
+      "community": 57,
+      "norm_label": ".cleanup()"
+    },
+    {
+      "label": ".async_initialize()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L35",
+      "id": "unit_test_mt5_worker_reconnect_fakemt5service_async_initialize",
+      "community": 57,
+      "norm_label": ".async_initialize()"
+    },
+    {
+      "label": ".monitor_trailing_stops()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L38",
+      "id": "unit_test_mt5_worker_reconnect_fakemt5service_monitor_trailing_stops",
+      "community": 57,
+      "norm_label": ".monitor_trailing_stops()"
+    },
+    {
+      "label": "_make_worker()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L43",
+      "id": "unit_test_mt5_worker_reconnect_make_worker",
+      "community": 57,
+      "norm_label": "_make_worker()"
+    },
+    {
+      "label": "test_reconnect_rebuilds_service_and_resets_positions()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L56",
+      "id": "unit_test_mt5_worker_reconnect_test_reconnect_rebuilds_service_and_resets_positions",
+      "community": 57,
+      "norm_label": "test_reconnect_rebuilds_service_and_resets_positions()"
+    },
+    {
+      "label": "test_reconnect_waits_for_in_flight_trade()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L68",
+      "id": "unit_test_mt5_worker_reconnect_test_reconnect_waits_for_in_flight_trade",
+      "community": 57,
+      "norm_label": "test_reconnect_waits_for_in_flight_trade()"
+    },
+    {
+      "label": "Tests for the broker-profile hot-swap path in MT5Worker.reconnect_mt5.  The real",
+      "file_type": "rationale",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L1",
+      "id": "unit_test_mt5_worker_reconnect_rationale_1",
+      "community": 57,
+      "norm_label": "tests for the broker-profile hot-swap path in mt5worker.reconnect_mt5.  the real"
+    },
+    {
+      "label": "Stand-in for MT5Service: connects instantly, no real terminal.",
+      "file_type": "rationale",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L18",
+      "id": "unit_test_mt5_worker_reconnect_rationale_18",
+      "community": 57,
+      "norm_label": "stand-in for mt5service: connects instantly, no real terminal."
+    },
+    {
       "label": "test_number_format.py",
       "file_type": "code",
       "source_file": "tests/unit/test_number_format.py",
       "source_location": "L1",
       "id": "tests_unit_test_number_format_py",
-      "community": 17,
+      "community": 33,
       "norm_label": "test_number_format.py"
     },
     {
@@ -9046,7 +9217,7 @@
       "source_file": "tests/unit/test_number_format.py",
       "source_location": "L4",
       "id": "unit_test_number_format_test_strips_trailing_zeros",
-      "community": 17,
+      "community": 33,
       "norm_label": "test_strips_trailing_zeros()"
     },
     {
@@ -9055,7 +9226,7 @@
       "source_file": "tests/unit/test_number_format.py",
       "source_location": "L11",
       "id": "unit_test_number_format_test_keeps_meaningful_decimals",
-      "community": 17,
+      "community": 33,
       "norm_label": "test_keeps_meaningful_decimals()"
     },
     {
@@ -9064,7 +9235,7 @@
       "source_file": "tests/unit/test_number_format.py",
       "source_location": "L16",
       "id": "unit_test_number_format_test_no_scientific_notation_for_large_round_numbers",
-      "community": 17,
+      "community": 33,
       "norm_label": "test_no_scientific_notation_for_large_round_numbers()"
     },
     {
@@ -9073,7 +9244,7 @@
       "source_file": "tests/unit/test_number_format.py",
       "source_location": "L20",
       "id": "unit_test_number_format_test_accepts_numbers_and_decimals",
-      "community": 17,
+      "community": 33,
       "norm_label": "test_accepts_numbers_and_decimals()"
     },
     {
@@ -9082,7 +9253,7 @@
       "source_file": "tests/unit/test_number_format.py",
       "source_location": "L27",
       "id": "unit_test_number_format_test_zero_renders_as_zero_not_empty",
-      "community": 17,
+      "community": 33,
       "norm_label": "test_zero_renders_as_zero_not_empty()"
     },
     {
@@ -9091,7 +9262,7 @@
       "source_file": "tests/unit/test_number_format.py",
       "source_location": "L33",
       "id": "unit_test_number_format_test_empty_and_none_and_unparsable",
-      "community": 17,
+      "community": 33,
       "norm_label": "test_empty_and_none_and_unparsable()"
     },
     {
@@ -9239,6 +9410,42 @@
       "norm_label": "test_activate_with_empty_suffix_preserves_live_suffix()"
     },
     {
+      "label": "test_update_rejects_duplicate_name()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L123",
+      "id": "unit_test_profiles_test_update_rejects_duplicate_name",
+      "community": 48,
+      "norm_label": "test_update_rejects_duplicate_name()"
+    },
+    {
+      "label": "test_update_rejects_duplicate_broker()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L134",
+      "id": "unit_test_profiles_test_update_rejects_duplicate_broker",
+      "community": 48,
+      "norm_label": "test_update_rejects_duplicate_broker()"
+    },
+    {
+      "label": "test_update_same_profile_is_not_a_false_duplicate()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L145",
+      "id": "unit_test_profiles_test_update_same_profile_is_not_a_false_duplicate",
+      "community": 48,
+      "norm_label": "test_update_same_profile_is_not_a_false_duplicate()"
+    },
+    {
+      "label": "test_delete_active_clears_live_password()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L153",
+      "id": "unit_test_profiles_test_delete_active_clears_live_password",
+      "community": 48,
+      "norm_label": "test_delete_active_clears_live_password()"
+    },
+    {
       "label": "test_profiles_api.py",
       "file_type": "code",
       "source_file": "tests/unit/test_profiles_api.py",
@@ -9320,19 +9527,28 @@
       "norm_label": "test_update_and_update_unknown_404()"
     },
     {
-      "label": "test_activate_does_not_apply_when_engine_stopped()",
+      "label": "test_activate_succeeds_when_engine_stopped()",
       "file_type": "code",
       "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L74",
-      "id": "unit_test_profiles_api_test_activate_does_not_apply_when_engine_stopped",
+      "id": "unit_test_profiles_api_test_activate_succeeds_when_engine_stopped",
       "community": 144,
-      "norm_label": "test_activate_does_not_apply_when_engine_stopped()"
+      "norm_label": "test_activate_succeeds_when_engine_stopped()"
+    },
+    {
+      "label": "test_update_duplicate_name_returns_409()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_profiles_api.py",
+      "source_location": "L88",
+      "id": "unit_test_profiles_api_test_update_duplicate_name_returns_409",
+      "community": 144,
+      "norm_label": "test_update_duplicate_name_returns_409()"
     },
     {
       "label": "test_create_duplicate_returns_409()",
       "file_type": "code",
       "source_file": "tests/unit/test_profiles_api.py",
-      "source_location": "L87",
+      "source_location": "L99",
       "id": "unit_test_profiles_api_test_create_duplicate_returns_409",
       "community": 144,
       "norm_label": "test_create_duplicate_returns_409()"
@@ -9343,7 +9559,7 @@
       "source_file": "tests/unit/test_resources.py",
       "source_location": "L1",
       "id": "tests_unit_test_resources_py",
-      "community": 102,
+      "community": 118,
       "norm_label": "test_resources.py"
     },
     {
@@ -9352,7 +9568,7 @@
       "source_file": "tests/unit/test_resources.py",
       "source_location": "L7",
       "id": "unit_test_resources_test_resource_path_from_source_points_at_repo_root",
-      "community": 102,
+      "community": 118,
       "norm_label": "test_resource_path_from_source_points_at_repo_root()"
     },
     {
@@ -9361,7 +9577,7 @@
       "source_file": "tests/unit/test_resources.py",
       "source_location": "L15",
       "id": "unit_test_resources_test_resource_path_uses_meipass_when_frozen",
-      "community": 102,
+      "community": 118,
       "norm_label": "test_resource_path_uses_meipass_when_frozen()"
     },
     {
@@ -9532,7 +9748,7 @@
       "source_file": "tests/unit/test_singleton.py",
       "source_location": "L1",
       "id": "tests_unit_test_singleton_py",
-      "community": 14,
+      "community": 1,
       "norm_label": "test_singleton.py"
     },
     {
@@ -9541,7 +9757,7 @@
       "source_file": "tests/unit/test_singleton.py",
       "source_location": "L4",
       "id": "unit_test_singleton_test_acquire_returns_socket_then_blocks_second",
-      "community": 14,
+      "community": 1,
       "norm_label": "test_acquire_returns_socket_then_blocks_second()"
     },
     {
@@ -9550,7 +9766,7 @@
       "source_file": "tests/unit/test_singleton.py",
       "source_location": "L15",
       "id": "unit_test_singleton_test_no_instance_when_port_free",
-      "community": 14,
+      "community": 1,
       "norm_label": "test_no_instance_when_port_free()"
     },
     {
@@ -9568,7 +9784,7 @@
       "source_file": "tests/unit/test_sqlite_store.py",
       "source_location": "L7",
       "id": "unit_test_sqlite_store_test_db_path_honours_env_override",
-      "community": 102,
+      "community": 26,
       "norm_label": "test_db_path_honours_env_override()"
     },
     {
@@ -9604,7 +9820,7 @@
       "source_file": "tests/unit/test_sqlite_store.py",
       "source_location": "L52",
       "id": "unit_test_sqlite_store_test_database_handler_save_and_get",
-      "community": 102,
+      "community": 9,
       "norm_label": "test_database_handler_save_and_get()"
     },
     {
@@ -9613,7 +9829,7 @@
       "source_file": "tests/unit/test_sqlite_store.py",
       "source_location": "L85",
       "id": "unit_test_sqlite_store_test_update_trade_status_accepts_datetime_for_datetime_columns",
-      "community": 102,
+      "community": 7,
       "norm_label": "test_update_trade_status_accepts_datetime_for_datetime_columns()"
     },
     {
@@ -9622,7 +9838,7 @@
       "source_file": "tests/unit/test_sqlite_store.py",
       "source_location": "L86",
       "id": "unit_test_sqlite_store_rationale_86",
-      "community": 102,
+      "community": 7,
       "norm_label": "regression: close/closed_at status writes must pass datetime objects, not     is"
     },
     {
@@ -12884,6 +13100,195 @@
       "norm_label": "out of scope / follow-ups"
     },
     {
+      "label": "Apply MT5 config changes (e.g. switching broker profiles) by         reconnectin",
+      "file_type": "rationale",
+      "source_file": "app/engine_controller.py",
+      "source_location": "L175",
+      "community": 37,
+      "norm_label": "apply mt5 config changes (e.g. switching broker profiles) by         reconnectin",
+      "id": "app_engine_controller_rationale_175"
+    },
+    {
+      "label": "Stop (if running) then start \u2014 used to apply settings changes.          We give",
+      "file_type": "rationale",
+      "source_file": "app/engine_controller.py",
+      "source_location": "L187",
+      "community": 37,
+      "norm_label": "stop (if running) then start \u2014 used to apply settings changes.          we give",
+      "id": "app_engine_controller_rationale_187"
+    },
+    {
+      "label": "Copy the profile's values into the live config keys and mark it active.",
+      "file_type": "rationale",
+      "source_file": "app/storage/profiles.py",
+      "source_location": "L109",
+      "community": 6,
+      "norm_label": "copy the profile's values into the live config keys and mark it active.",
+      "id": "storage_profiles_rationale_109"
+    },
+    {
+      "label": "Initialize all services with shared event loop.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L32",
+      "community": 4,
+      "norm_label": "initialize all services with shared event loop.",
+      "id": "workers_mt5_worker_rationale_32"
+    },
+    {
+      "label": "Initialize the worker to share an existing event loop, queue, and db.          U",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L66",
+      "community": 2,
+      "norm_label": "initialize the worker to share an existing event loop, queue, and db.          u",
+      "id": "workers_mt5_worker_rationale_66"
+    },
+    {
+      "label": "Initialize open positions set on startup.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L89",
+      "community": 34,
+      "norm_label": "initialize open positions set on startup.",
+      "id": "workers_mt5_worker_rationale_89"
+    },
+    {
+      "label": "(Re)start the trailing-stop monitor, cancelling any previous one.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L100",
+      "community": 34,
+      "norm_label": "(re)start the trailing-stop monitor, cancelling any previous one.",
+      "id": "workers_mt5_worker_rationale_100"
+    },
+    {
+      "label": "Switch the MT5 connection to the current (active-profile) config WITHOUT",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L108",
+      "community": 34,
+      "norm_label": "switch the mt5 connection to the current (active-profile) config without",
+      "id": "workers_mt5_worker_rationale_108"
+    },
+    {
+      "label": "Handle messages from Redis channels asynchronously.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L136",
+      "community": 21,
+      "norm_label": "handle messages from redis channels asynchronously.",
+      "id": "workers_mt5_worker_rationale_136"
+    },
+    {
+      "label": "Process a single trade asynchronously.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L148",
+      "community": 21,
+      "norm_label": "process a single trade asynchronously.",
+      "id": "workers_mt5_worker_rationale_148"
+    },
+    {
+      "label": "Handle opening a new position.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L184",
+      "community": 21,
+      "norm_label": "handle opening a new position.",
+      "id": "workers_mt5_worker_rationale_184"
+    },
+    {
+      "label": "Handle closing an existing position.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L222",
+      "community": 21,
+      "norm_label": "handle closing an existing position.",
+      "id": "workers_mt5_worker_rationale_222"
+    },
+    {
+      "label": "Handle updating TP/SL for an existing position.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L282",
+      "community": 21,
+      "norm_label": "handle updating tp/sl for an existing position.",
+      "id": "workers_mt5_worker_rationale_282"
+    },
+    {
+      "label": "Monitor MT5 positions for manual closes asynchronously.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L338",
+      "community": 121,
+      "norm_label": "monitor mt5 positions for manual closes asynchronously.",
+      "id": "workers_mt5_worker_rationale_338"
+    },
+    {
+      "label": "Handle position closed in MT5 asynchronously.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L361",
+      "community": 121,
+      "norm_label": "handle position closed in mt5 asynchronously.",
+      "id": "workers_mt5_worker_rationale_361"
+    },
+    {
+      "label": "Run the worker service asynchronously.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L410",
+      "community": 34,
+      "norm_label": "run the worker service asynchronously.",
+      "id": "workers_mt5_worker_rationale_410"
+    },
+    {
+      "label": "Handle shutdown signals gracefully.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L437",
+      "community": 153,
+      "norm_label": "handle shutdown signals gracefully.",
+      "id": "workers_mt5_worker_rationale_437"
+    },
+    {
+      "label": "Perform async shutdown tasks.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L444",
+      "community": 34,
+      "norm_label": "perform async shutdown tasks.",
+      "id": "workers_mt5_worker_rationale_444"
+    },
+    {
+      "label": "Run the worker service with proper signal handling.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L456",
+      "community": 34,
+      "norm_label": "run the worker service with proper signal handling.",
+      "id": "workers_mt5_worker_rationale_456"
+    },
+    {
+      "label": "Cleanup resources in correct order.",
+      "file_type": "rationale",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L481",
+      "community": 34,
+      "norm_label": "cleanup resources in correct order.",
+      "id": "workers_mt5_worker_rationale_481"
+    },
+    {
+      "label": "test_activate_does_not_apply_when_engine_stopped()",
+      "file_type": "code",
+      "source_file": "tests/unit/test_profiles_api.py",
+      "source_location": "L74",
+      "community": 144,
+      "norm_label": "test_activate_does_not_apply_when_engine_stopped()",
+      "id": "unit_test_profiles_api_test_activate_does_not_apply_when_engine_stopped"
+    },
+    {
       "label": "Wire SQLite + settings store + queue + worker + broker adapter + interceptor ont",
       "file_type": "rationale",
       "source_file": "app/engine.py",
@@ -12906,7 +13311,7 @@
       "file_type": "rationale",
       "source_file": "app/storage/profiles.py",
       "source_location": "L97",
-      "community": 26,
+      "community": 6,
       "norm_label": "copy the profile's values into the live config keys and mark it active.",
       "id": "storage_profiles_rationale_97"
     },
@@ -12915,7 +13320,7 @@
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L31",
-      "community": 34,
+      "community": 4,
       "norm_label": "initialize all services with shared event loop.",
       "id": "workers_mt5_worker_rationale_31"
     },
@@ -12924,7 +13329,7 @@
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L65",
-      "community": 109,
+      "community": 2,
       "norm_label": "initialize the worker to share an existing event loop, queue, and db.          u",
       "id": "workers_mt5_worker_rationale_65"
     },
@@ -12987,7 +13392,7 @@
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L301",
-      "community": 34,
+      "community": 121,
       "norm_label": "monitor mt5 positions for manual closes asynchronously.",
       "id": "workers_mt5_worker_rationale_301"
     },
@@ -12996,7 +13401,7 @@
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L324",
-      "community": 21,
+      "community": 121,
       "norm_label": "handle position closed in mt5 asynchronously.",
       "id": "workers_mt5_worker_rationale_324"
     },
@@ -13014,7 +13419,7 @@
       "file_type": "rationale",
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L401",
-      "community": 16,
+      "community": 153,
       "norm_label": "handle shutdown signals gracefully.",
       "id": "workers_mt5_worker_rationale_401"
     },
@@ -13086,7 +13491,7 @@
       "file_type": "rationale",
       "source_file": "src/services/mt5_service.py",
       "source_location": "L67",
-      "community": 29,
+      "community": 130,
       "norm_label": "set the event loop for this service.",
       "id": "services_mt5_service_rationale_67"
     },
@@ -13131,7 +13536,7 @@
       "file_type": "rationale",
       "source_file": "src/services/mt5_service.py",
       "source_location": "L266",
-      "community": 4,
+      "community": 11,
       "norm_label": "execute market order on mt5 asynchronously.",
       "id": "services_mt5_service_rationale_266"
     },
@@ -13212,7 +13617,7 @@
       "file_type": "rationale",
       "source_file": "src/services/mt5_service.py",
       "source_location": "L657",
-      "community": 11,
+      "community": 152,
       "norm_label": "centralized position check with detailed response.",
       "id": "services_mt5_service_rationale_657"
     },
@@ -13248,7 +13653,7 @@
       "file_type": "rationale",
       "source_file": "app/paths.py",
       "source_location": "L9",
-      "community": 102,
+      "community": 26,
       "norm_label": "return the sqlite database file path.      honours the tv2mt5_db_path env overri",
       "id": "app_paths_rationale_9"
     },
@@ -13257,7 +13662,7 @@
       "file_type": "rationale",
       "source_file": "app/paths.py",
       "source_location": "L22",
-      "community": 102,
+      "community": 26,
       "norm_label": "return (and create) the directory that holds the sqlite db.",
       "id": "app_paths_rationale_22"
     },
@@ -13275,7 +13680,7 @@
       "file_type": "code",
       "source_file": "app/__main__.py",
       "source_location": "L9",
-      "community": 6,
+      "community": 145,
       "norm_label": "_force_utf8_console()",
       "id": "app_main_force_utf8_console"
     },
@@ -13284,7 +13689,7 @@
       "file_type": "rationale",
       "source_file": "app/__main__.py",
       "source_location": "L10",
-      "community": 6,
+      "community": 145,
       "norm_label": "make stdout/stderr utf-8.      the app logs emoji status lines. windows consoles",
       "id": "app_main_rationale_10"
     },
@@ -13302,7 +13707,7 @@
       "file_type": "rationale",
       "source_file": "src/core/interceptor.py",
       "source_location": "L20",
-      "community": 8,
+      "community": 16,
       "norm_label": "intercepts and handles tradingview requests.",
       "id": "core_interceptor_rationale_20"
     },
@@ -13311,7 +13716,7 @@
       "file_type": "rationale",
       "source_file": "src/core/interceptor.py",
       "source_location": "L49",
-      "community": 8,
+      "community": 14,
       "norm_label": "derived from the adapter so it never diverges from the live target.",
       "id": "core_interceptor_rationale_49"
     },
@@ -13320,7 +13725,7 @@
       "file_type": "rationale",
       "source_file": "src/core/interceptor.py",
       "source_location": "L53",
-      "community": 8,
+      "community": 16,
       "norm_label": "synchronously sync instruments.",
       "id": "core_interceptor_rationale_53"
     },
@@ -13356,7 +13761,7 @@
       "file_type": "rationale",
       "source_file": "src/core/interceptor.py",
       "source_location": "L150",
-      "community": 8,
+      "community": 14,
       "norm_label": "asynchronously process position close.",
       "id": "core_interceptor_rationale_150"
     },
@@ -13419,7 +13824,7 @@
       "file_type": "rationale",
       "source_file": "src/services/mt5_service.py",
       "source_location": "L62",
-      "community": 29,
+      "community": 130,
       "norm_label": "set the event loop for this service.",
       "id": "services_mt5_service_rationale_62"
     },
@@ -13446,7 +13851,7 @@
       "file_type": "rationale",
       "source_file": "src/services/mt5_service.py",
       "source_location": "L135",
-      "community": 29,
+      "community": 130,
       "norm_label": "initialize mt5 connection with cooldown asynchronously.",
       "id": "services_mt5_service_rationale_135"
     },
@@ -13473,7 +13878,7 @@
       "file_type": "rationale",
       "source_file": "src/services/mt5_service.py",
       "source_location": "L261",
-      "community": 4,
+      "community": 11,
       "norm_label": "execute market order on mt5 asynchronously.",
       "id": "services_mt5_service_rationale_261"
     },
@@ -13554,7 +13959,7 @@
       "file_type": "rationale",
       "source_file": "src/services/mt5_service.py",
       "source_location": "L652",
-      "community": 11,
+      "community": 152,
       "norm_label": "centralized position check with detailed response.",
       "id": "services_mt5_service_rationale_652"
     },
@@ -13589,7 +13994,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 126,
+      "community": 145,
       "norm_label": "runner.run_app",
       "id": "run_run_app"
     },
@@ -13758,7 +14163,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 23,
+      "community": 150,
       "norm_label": "enginecontroller.status",
       "id": "engine_controller_status"
     },
@@ -13771,7 +14176,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 23,
+      "community": 150,
       "norm_label": "get_mt5_config",
       "id": "config_accessors_get_mt5_config"
     },
@@ -13784,7 +14189,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 23,
+      "community": 150,
       "norm_label": "get_tv_target",
       "id": "config_accessors_get_tv_target"
     },
@@ -14096,7 +14501,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 44,
+      "community": 23,
       "norm_label": "desktop ui app.js",
       "id": "app_js_ui"
     },
@@ -14174,7 +14579,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 44,
+      "community": 23,
       "norm_label": "symbolmapper",
       "id": "mt5_symbol_config_SymbolMapper"
     },
@@ -14213,7 +14618,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 44,
+      "community": 23,
       "norm_label": "symbol_mappings.template.json",
       "id": "symbol_mappings_template"
     },
@@ -14252,7 +14657,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 3,
       "norm_label": "mt5service._execute_order",
       "id": "mt5_service_execute_order"
     },
@@ -14265,7 +14670,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 3,
       "norm_label": "mt5service._close_position",
       "id": "mt5_service_close_position"
     },
@@ -14278,7 +14683,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 3,
       "norm_label": "mt5service._update_position",
       "id": "mt5_service_update_position"
     },
@@ -14291,7 +14696,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 3,
       "norm_label": "mt5service.monitor_trailing_stops",
       "id": "mt5_service_monitor_trailing_stops"
     },
@@ -14304,7 +14709,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 3,
       "norm_label": "mt5service._retry_operation",
       "id": "mt5_service_retry_operation"
     },
@@ -14356,7 +14761,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 3,
       "norm_label": "mt5worker.process_trade",
       "id": "mt5_worker_process_trade"
     },
@@ -14369,7 +14774,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 3,
       "norm_label": "mt5worker._handle_new_position",
       "id": "mt5_worker_handle_new_position"
     },
@@ -14382,7 +14787,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 3,
       "norm_label": "mt5worker._handle_position_close",
       "id": "mt5_worker_handle_position_close"
     },
@@ -14395,7 +14800,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 3,
       "norm_label": "mt5worker._handle_position_update",
       "id": "mt5_worker_handle_position_update"
     },
@@ -14460,7 +14865,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 3,
       "norm_label": "instrumentmanager.calculate_trailing_distance",
       "id": "instrument_manager_calculate_trailing_distance"
     },
@@ -14473,7 +14878,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 3,
       "norm_label": "fmt_num",
       "id": "number_format_fmt_num"
     },
@@ -14759,7 +15164,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 23,
+      "community": 150,
       "norm_label": "test_config_accessors",
       "id": "test_config_accessors_tests"
     },
@@ -14772,7 +15177,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 23,
+      "community": 150,
       "norm_label": "get_symbol_settings",
       "id": "config_accessors_get_symbol_settings"
     },
@@ -14928,7 +15333,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 3,
       "norm_label": "test_number_format",
       "id": "test_number_format_tests"
     },
@@ -18370,9 +18775,9 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L70",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "app_engine_controller_py_float",
-      "target": "app_engine_mitmenginerunner",
-      "confidence_score": 0.5
+      "target": "app_engine_mitmenginerunner"
     },
     {
       "relation": "uses",
@@ -18430,9 +18835,9 @@
       "source_file": "app/engine.py",
       "source_location": "L117",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_engine_mitmenginerunner",
-      "target": "app_engine_mitmenginerunner_reconnect_mt5",
-      "confidence_score": 1.0
+      "target": "app_engine_mitmenginerunner_reconnect_mt5"
     },
     {
       "relation": "method",
@@ -18628,9 +19033,9 @@
       "source_file": "app/engine.py",
       "source_location": "L118",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_engine_rationale_118",
-      "target": "app_engine_mitmenginerunner_reconnect_mt5",
-      "confidence_score": 1.0
+      "target": "app_engine_mitmenginerunner_reconnect_mt5"
     },
     {
       "relation": "references",
@@ -18740,9 +19145,9 @@
       "source_file": "app/engine.py",
       "source_location": "L137",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_engine_rationale_137",
-      "target": "app_engine_run_engine",
-      "confidence_score": 1.0
+      "target": "app_engine_run_engine"
     },
     {
       "relation": "calls",
@@ -18916,9 +19321,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L5",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "unit_test_engine_controller_reconnectrunner",
-      "target": "app_engine_controller_enginestate",
-      "confidence_score": 0.5
+      "target": "app_engine_controller_enginestate"
     },
     {
       "relation": "references",
@@ -18949,9 +19354,9 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L174",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_engine_controller_enginecontroller_apply_mt5_settings",
-      "target": "app_engine_controller_status",
-      "confidence_score": 1.0
+      "target": "app_engine_controller_status"
     },
     {
       "relation": "references",
@@ -19148,9 +19553,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L5",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "unit_test_engine_controller_reconnectrunner",
-      "target": "app_engine_controller_proxyportinuseerror",
-      "confidence_score": 0.5
+      "target": "app_engine_controller_proxyportinuseerror"
     },
     {
       "relation": "uses",
@@ -19191,9 +19596,9 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L169",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_engine_controller_enginecontroller_wait_for_port_free",
-      "target": "app_engine_controller_port_free",
-      "confidence_score": 1.0
+      "target": "app_engine_controller_port_free"
     },
     {
       "relation": "references",
@@ -19267,9 +19672,9 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L96",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_engine_controller_enginecontroller_start",
-      "target": "app_engine_controller_py_bool",
-      "confidence_score": 1.0
+      "target": "app_engine_controller_py_bool"
     },
     {
       "relation": "imports",
@@ -19339,9 +19744,9 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L174",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_engine_controller_enginecontroller",
-      "target": "app_engine_controller_enginecontroller_apply_mt5_settings",
-      "confidence_score": 1.0
+      "target": "app_engine_controller_enginecontroller_apply_mt5_settings"
     },
     {
       "relation": "method",
@@ -19409,9 +19814,9 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L155",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_engine_controller_enginecontroller",
-      "target": "app_engine_controller_enginecontroller_wait_for_port_free",
-      "confidence_score": 1.0
+      "target": "app_engine_controller_enginecontroller_wait_for_port_free"
     },
     {
       "relation": "uses",
@@ -19536,9 +19941,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L5",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "unit_test_engine_controller_reconnectrunner",
-      "target": "app_engine_controller_enginecontroller",
-      "confidence_score": 0.5
+      "target": "app_engine_controller_enginecontroller"
     },
     {
       "relation": "calls",
@@ -19547,9 +19952,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L185",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_engine_controller_test_apply_mt5_settings_is_noop_when_stopped",
-      "target": "app_engine_controller_enginecontroller",
-      "confidence_score": 1.0
+      "target": "app_engine_controller_enginecontroller"
     },
     {
       "relation": "calls",
@@ -19558,9 +19963,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L177",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_engine_controller_test_apply_mt5_settings_reconnects_when_running",
-      "target": "app_engine_controller_enginecontroller",
-      "confidence_score": 1.0
+      "target": "app_engine_controller_enginecontroller"
     },
     {
       "relation": "calls",
@@ -19657,9 +20062,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L157",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_engine_controller_test_wait_for_port_free_blocks_until_timeout_when_busy",
-      "target": "app_engine_controller_enginecontroller",
-      "confidence_score": 1.0
+      "target": "app_engine_controller_enginecontroller"
     },
     {
       "relation": "calls",
@@ -19668,9 +20073,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L148",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_engine_controller_test_wait_for_port_free_returns_immediately_at_port_zero",
-      "target": "app_engine_controller_enginecontroller",
-      "confidence_score": 1.0
+      "target": "app_engine_controller_enginecontroller"
     },
     {
       "relation": "calls",
@@ -19679,9 +20084,9 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L184",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_engine_controller_enginecontroller_apply_mt5_settings",
-      "target": "app_engine_controller_enginecontroller_status",
-      "confidence_score": 1.0
+      "target": "app_engine_controller_enginecontroller_status"
     },
     {
       "relation": "calls",
@@ -19745,9 +20150,9 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L197",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_engine_controller_enginecontroller_restart",
-      "target": "app_engine_controller_enginecontroller_wait_for_port_free",
-      "confidence_score": 1.0
+      "target": "app_engine_controller_enginecontroller_wait_for_port_free"
     },
     {
       "relation": "references",
@@ -19756,9 +20161,9 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L155",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_engine_controller_enginecontroller_wait_for_port_free",
-      "target": "app_engine_controller_py_float",
-      "confidence_score": 1.0
+      "target": "app_engine_controller_py_float"
     },
     {
       "relation": "rationale_for",
@@ -19766,8 +20171,18 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L156",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_engine_controller_rationale_156",
-      "target": "app_engine_controller_enginecontroller_wait_for_port_free",
+      "target": "app_engine_controller_enginecontroller_wait_for_port_free"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "app/engine_controller.py",
+      "source_location": "L174",
+      "weight": 1.0,
+      "source": "app_engine_controller_rationale_174",
+      "target": "app_engine_controller_enginecontroller_apply_mt5_settings",
       "confidence_score": 1.0
     },
     {
@@ -19776,9 +20191,9 @@
       "source_file": "app/engine_controller.py",
       "source_location": "L175",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_engine_controller_rationale_175",
-      "target": "app_engine_controller_enginecontroller_apply_mt5_settings",
-      "confidence_score": 1.0
+      "target": "app_engine_controller_enginecontroller_apply_mt5_settings"
     },
     {
       "relation": "rationale_for",
@@ -19794,11 +20209,21 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "app/engine_controller.py",
-      "source_location": "L187",
+      "source_location": "L186",
       "weight": 1.0,
-      "source": "app_engine_controller_rationale_187",
+      "source": "app_engine_controller_rationale_186",
       "target": "app_engine_controller_enginecontroller_restart",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "app/engine_controller.py",
+      "source_location": "L187",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app_engine_controller_rationale_187",
+      "target": "app_engine_controller_enginecontroller_restart"
     },
     {
       "relation": "contains",
@@ -22018,9 +22443,9 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "storage_profiles_duplicateprofileerror",
-      "target": "valueerror",
-      "confidence_score": 1.0
+      "target": "valueerror"
     },
     {
       "relation": "calls",
@@ -23671,6 +24096,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/storage/profiles.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "app_storage_profiles_py",
+      "target": "storage_profiles_assert_unique",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/storage/profiles.py",
       "source_location": "L56",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -23693,9 +24128,9 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_storage_profiles_py",
-      "target": "storage_profiles_duplicateprofileerror",
-      "confidence_score": 1.0
+      "target": "storage_profiles_duplicateprofileerror"
     },
     {
       "relation": "contains",
@@ -23783,11 +24218,22 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/storage/profiles.py",
-      "source_location": "L66",
+      "source_location": "L65",
       "weight": 1.0,
-      "source": "storage_profiles_create_profile",
+      "source": "storage_profiles_assert_unique",
       "target": "storage_profiles_duplicateprofileerror",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/storage/profiles.py",
+      "source_location": "L66",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "storage_profiles_create_profile",
+      "target": "storage_profiles_duplicateprofileerror"
     },
     {
       "relation": "uses",
@@ -23795,9 +24241,9 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L12",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "storage_profiles_duplicateprofileerror",
-      "target": "storage_settings_store_settingsstore",
-      "confidence_score": 0.5
+      "target": "storage_settings_store_settingsstore"
     },
     {
       "relation": "rationale_for",
@@ -23805,9 +24251,9 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "storage_profiles_rationale_19",
-      "target": "storage_profiles_duplicateprofileerror",
-      "confidence_score": 1.0
+      "target": "storage_profiles_duplicateprofileerror"
     },
     {
       "relation": "calls",
@@ -23895,6 +24341,17 @@
       "confidence_score": 1.0,
       "source": "storage_profiles_activate_profile",
       "target": "app_storage_profiles_py_str"
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "app/storage/profiles.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "storage_profiles_assert_unique",
+      "target": "app_storage_profiles_py_str",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -24120,6 +24577,38 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/storage/profiles.py",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "storage_profiles_create_profile",
+      "target": "storage_profiles_assert_unique",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "app/storage/profiles.py",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "storage_profiles_rationale_52",
+      "target": "storage_profiles_assert_unique",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/storage/profiles.py",
+      "source_location": "L104",
+      "weight": 1.0,
+      "source": "storage_profiles_update_profile",
+      "target": "storage_profiles_assert_unique",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/storage/profiles.py",
       "source_location": "L48",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -24176,7 +24665,17 @@
       "source_file": "app/storage/profiles.py",
       "source_location": "L109",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "storage_profiles_rationale_109",
+      "target": "storage_profiles_activate_profile"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "app/storage/profiles.py",
+      "source_location": "L127",
+      "weight": 1.0,
+      "source": "storage_profiles_rationale_127",
       "target": "storage_profiles_activate_profile",
       "confidence_score": 1.0
     },
@@ -24822,9 +25321,9 @@
       "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L76",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_profiles_api_test_activate_does_not_apply_when_engine_stopped",
-      "target": "storage_settings_store_settingsstore",
-      "confidence_score": 1.0
+      "target": "storage_settings_store_settingsstore"
     },
     {
       "relation": "calls",
@@ -24836,6 +25335,17 @@
       "confidence_score": 1.0,
       "source": "unit_test_profiles_api_test_activate_returns_409_when_restart_port_in_use",
       "target": "storage_settings_store_settingsstore"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles_api.py",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "unit_test_profiles_api_test_activate_succeeds_when_engine_stopped",
+      "target": "storage_settings_store_settingsstore",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -24855,9 +25365,9 @@
       "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L89",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_profiles_api_test_create_duplicate_returns_409",
-      "target": "storage_settings_store_settingsstore",
-      "confidence_score": 1.0
+      "target": "storage_settings_store_settingsstore"
     },
     {
       "relation": "calls",
@@ -24866,9 +25376,9 @@
       "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L31",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_profiles_api_test_create_list_activate_applies_when_running",
-      "target": "storage_settings_store_settingsstore",
-      "confidence_score": 1.0
+      "target": "storage_settings_store_settingsstore"
     },
     {
       "relation": "calls",
@@ -24891,6 +25401,17 @@
       "confidence_score": 1.0,
       "source": "unit_test_profiles_api_test_update_and_update_unknown_404",
       "target": "storage_settings_store_settingsstore"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles_api.py",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "unit_test_profiles_api_test_update_duplicate_name_returns_409",
+      "target": "storage_settings_store_settingsstore",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -24932,9 +25453,9 @@
       "source_file": "tests/unit/test_profiles.py",
       "source_location": "L112",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_profiles_test_activate_with_empty_suffix_preserves_live_suffix",
-      "target": "storage_settings_store_settingsstore",
-      "confidence_score": 1.0
+      "target": "storage_settings_store_settingsstore"
     },
     {
       "relation": "calls",
@@ -24943,9 +25464,9 @@
       "source_file": "tests/unit/test_profiles.py",
       "source_location": "L101",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_profiles_test_create_rejects_duplicate_broker_account",
-      "target": "storage_settings_store_settingsstore",
-      "confidence_score": 1.0
+      "target": "storage_settings_store_settingsstore"
     },
     {
       "relation": "calls",
@@ -24954,9 +25475,9 @@
       "source_file": "tests/unit/test_profiles.py",
       "source_location": "L90",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_profiles_test_create_rejects_duplicate_name",
-      "target": "storage_settings_store_settingsstore",
-      "confidence_score": 1.0
+      "target": "storage_settings_store_settingsstore"
     },
     {
       "relation": "calls",
@@ -24985,6 +25506,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L154",
+      "weight": 1.0,
+      "source": "unit_test_profiles_test_delete_active_clears_live_password",
+      "target": "storage_settings_store_settingsstore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles.py",
       "source_location": "L26",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -25001,6 +25533,39 @@
       "confidence_score": 1.0,
       "source": "unit_test_profiles_test_update_and_delete",
       "target": "storage_settings_store_settingsstore"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L135",
+      "weight": 1.0,
+      "source": "unit_test_profiles_test_update_rejects_duplicate_broker",
+      "target": "storage_settings_store_settingsstore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L124",
+      "weight": 1.0,
+      "source": "unit_test_profiles_test_update_rejects_duplicate_name",
+      "target": "storage_settings_store_settingsstore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L146",
+      "weight": 1.0,
+      "source": "unit_test_profiles_test_update_same_profile_is_not_a_false_duplicate",
+      "target": "storage_settings_store_settingsstore",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -25549,6 +26114,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/ui/app.js",
+      "source_location": "L256",
+      "weight": 1.0,
+      "source": "app_ui_app_js",
+      "target": "ui_app_bannermessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/ui/app.js",
       "source_location": "L264",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -25711,9 +26286,9 @@
       "source_file": "app/ui/app.js",
       "source_location": "L256",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_ui_app_js",
-      "target": "ui_app_showprofilesbanner",
-      "confidence_score": 1.0
+      "target": "ui_app_showprofilesbanner"
     },
     {
       "relation": "contains",
@@ -25751,9 +26326,9 @@
       "source_file": "app/ui/app.js",
       "source_location": "L289",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_ui_app_js",
-      "target": "ui_app_updateprofilesavestate",
-      "confidence_score": 1.0
+      "target": "ui_app_updateprofilesavestate"
     },
     {
       "relation": "contains",
@@ -26015,9 +26590,9 @@
       "source_file": "app/ui/app.js",
       "source_location": "L257",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ui_app_showprofilesbanner",
-      "target": "ui_app",
-      "confidence_score": 1.0
+      "target": "ui_app"
     },
     {
       "relation": "calls",
@@ -26037,9 +26612,9 @@
       "source_file": "app/ui/app.js",
       "source_location": "L290",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ui_app_updateprofilesavestate",
-      "target": "ui_app",
-      "confidence_score": 1.0
+      "target": "ui_app"
     },
     {
       "relation": "calls",
@@ -26277,11 +26852,22 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/ui/app.js",
+      "source_location": "L265",
+      "weight": 1.0,
+      "source": "ui_app_showprofilesbanner",
+      "target": "ui_app_bannermessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/ui/app.js",
       "source_location": "L266",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ui_app_activateprofile",
-      "target": "ui_app_showprofilesbanner",
-      "confidence_score": 1.0
+      "target": "ui_app_showprofilesbanner"
     },
     {
       "relation": "calls",
@@ -26290,9 +26876,9 @@
       "source_file": "app/ui/app.js",
       "source_location": "L283",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ui_app_deleteprofile",
-      "target": "ui_app_showprofilesbanner",
-      "confidence_score": 1.0
+      "target": "ui_app_showprofilesbanner"
     },
     {
       "relation": "calls",
@@ -34126,6 +34712,17 @@
       "target": "workers_mt5_worker_mt5worker"
     },
     {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "tests_unit_test_mt5_worker_reconnect_py",
+      "target": "workers_mt5_worker_mt5worker",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "tests/unit/test_engine_factory.py",
@@ -34147,6 +34744,27 @@
       "target": "workers_mt5_worker_mt5worker"
     },
     {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L14",
+      "weight": 0.8,
+      "source": "unit_test_mt5_worker_reconnect_fakemt5service",
+      "target": "workers_mt5_worker_mt5worker",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "unit_test_mt5_worker_reconnect_make_worker",
+      "target": "workers_mt5_worker_mt5worker",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/workers/mt5_worker.py",
@@ -34155,6 +34773,16 @@
       "confidence_score": 1.0,
       "source": "workers_mt5_worker_mt5worker",
       "target": "workers_mt5_worker_mt5worker_check_mt5_positions"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L368",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_mt5worker",
+      "target": "workers_mt5_worker_mt5worker_check_mt5_positions_locked",
+      "confidence_score": 1.0
     },
     {
       "relation": "method",
@@ -34280,11 +34908,21 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/workers/mt5_worker.py",
-      "source_location": "L107",
+      "source_location": "L174",
       "weight": 1.0,
       "source": "workers_mt5_worker_mt5worker",
-      "target": "workers_mt5_worker_mt5worker_reconnect_mt5",
+      "target": "workers_mt5_worker_mt5worker_process_trade_locked",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L107",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "workers_mt5_worker_mt5worker",
+      "target": "workers_mt5_worker_mt5worker_reconnect_mt5"
     },
     {
       "relation": "method",
@@ -34322,8 +34960,18 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L99",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_mt5worker",
-      "target": "workers_mt5_worker_mt5worker_start_trailing_monitor",
+      "target": "workers_mt5_worker_mt5worker_start_trailing_monitor"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L108",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_mt5worker",
+      "target": "workers_mt5_worker_mt5worker_stop_trailing_monitor",
       "confidence_score": 1.0
     },
     {
@@ -34353,7 +35001,17 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_32",
+      "target": "workers_mt5_worker_mt5worker_initialize"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_36",
       "target": "workers_mt5_worker_mt5worker_initialize",
       "confidence_score": 1.0
     },
@@ -34373,7 +35031,17 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L66",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_66",
+      "target": "workers_mt5_worker_mt5worker_init_inproc"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_70",
       "target": "workers_mt5_worker_mt5worker_init_inproc",
       "confidence_score": 1.0
     },
@@ -34384,9 +35052,9 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L132",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_mt5worker_reconnect_mt5",
-      "target": "workers_mt5_worker_mt5worker_initialize_positions",
-      "confidence_score": 1.0
+      "target": "workers_mt5_worker_mt5worker_initialize_positions"
     },
     {
       "relation": "calls",
@@ -34415,7 +35083,17 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L89",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_89",
+      "target": "workers_mt5_worker_mt5worker_initialize_positions"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L93",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_93",
       "target": "workers_mt5_worker_mt5worker_initialize_positions",
       "confidence_score": 1.0
     },
@@ -34426,9 +35104,9 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L133",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_mt5worker_reconnect_mt5",
-      "target": "workers_mt5_worker_mt5worker_start_trailing_monitor",
-      "confidence_score": 1.0
+      "target": "workers_mt5_worker_mt5worker_start_trailing_monitor"
     },
     {
       "relation": "calls",
@@ -34437,9 +35115,9 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L419",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_mt5worker_run_async",
-      "target": "workers_mt5_worker_mt5worker_start_trailing_monitor",
-      "confidence_score": 1.0
+      "target": "workers_mt5_worker_mt5worker_start_trailing_monitor"
     },
     {
       "relation": "rationale_for",
@@ -34447,8 +35125,39 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L100",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_100",
+      "target": "workers_mt5_worker_mt5worker_start_trailing_monitor"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L104",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_104",
       "target": "workers_mt5_worker_mt5worker_start_trailing_monitor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L138",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_mt5worker_reconnect_mt5",
+      "target": "workers_mt5_worker_mt5worker_stop_trailing_monitor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L109",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_109",
+      "target": "workers_mt5_worker_mt5worker_stop_trailing_monitor",
       "confidence_score": 1.0
     },
     {
@@ -34458,9 +35167,9 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L119",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_mt5worker_reconnect_mt5",
-      "target": "workers_mt5_worker_mt5worker_cleanup",
-      "confidence_score": 1.0
+      "target": "workers_mt5_worker_mt5worker_cleanup"
     },
     {
       "relation": "rationale_for",
@@ -34468,7 +35177,17 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L108",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_108",
+      "target": "workers_mt5_worker_mt5worker_reconnect_mt5"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L123",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_123",
       "target": "workers_mt5_worker_mt5worker_reconnect_mt5",
       "confidence_score": 1.0
     },
@@ -34511,7 +35230,17 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L136",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_136",
+      "target": "workers_mt5_worker_mt5worker_handle_message"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L158",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_158",
       "target": "workers_mt5_worker_mt5worker_handle_message",
       "confidence_score": 1.0
     },
@@ -34585,6 +35314,17 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L174",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_mt5worker_process_trade_locked",
+      "target": "src_workers_mt5_worker_py_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
       "source_location": "L146",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -34625,6 +35365,17 @@
       "target": "src_workers_mt5_worker_py_any"
     },
     {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L174",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_mt5worker_process_trade_locked",
+      "target": "src_workers_mt5_worker_py_any",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -34658,6 +35409,17 @@
       "target": "workers_mt5_worker_mt5worker_handle_position_update"
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L172",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_mt5worker_process_trade",
+      "target": "workers_mt5_worker_mt5worker_process_trade_locked",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "src/workers/mt5_worker.py",
@@ -34673,8 +35435,51 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L148",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_148",
+      "target": "workers_mt5_worker_mt5worker_process_trade"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L170",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_170",
       "target": "workers_mt5_worker_mt5worker_process_trade",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L195",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_mt5worker_process_trade_locked",
+      "target": "workers_mt5_worker_mt5worker_handle_new_position",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L191",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_mt5worker_process_trade_locked",
+      "target": "workers_mt5_worker_mt5worker_handle_position_close",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L186",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_mt5worker_process_trade_locked",
+      "target": "workers_mt5_worker_mt5worker_handle_position_update",
       "confidence_score": 1.0
     },
     {
@@ -34704,7 +35509,17 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L184",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_184",
+      "target": "workers_mt5_worker_mt5worker_handle_new_position"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L210",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_210",
       "target": "workers_mt5_worker_mt5worker_handle_new_position",
       "confidence_score": 1.0
     },
@@ -34746,7 +35561,17 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L222",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_222",
+      "target": "workers_mt5_worker_mt5worker_handle_position_close"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L248",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_248",
       "target": "workers_mt5_worker_mt5worker_handle_position_close",
       "confidence_score": 1.0
     },
@@ -34766,8 +35591,29 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L282",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_282",
+      "target": "workers_mt5_worker_mt5worker_handle_position_update"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L308",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_308",
       "target": "workers_mt5_worker_mt5worker_handle_position_update",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L366",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_mt5worker_check_mt5_positions",
+      "target": "workers_mt5_worker_mt5worker_check_mt5_positions_locked",
       "confidence_score": 1.0
     },
     {
@@ -34808,8 +35654,29 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L338",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_338",
+      "target": "workers_mt5_worker_mt5worker_check_mt5_positions"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L364",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_364",
       "target": "workers_mt5_worker_mt5worker_check_mt5_positions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L382",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_mt5worker_check_mt5_positions_locked",
+      "target": "workers_mt5_worker_mt5worker_handle_mt5_close",
       "confidence_score": 1.0
     },
     {
@@ -34828,7 +35695,17 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L361",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_361",
+      "target": "workers_mt5_worker_mt5worker_handle_mt5_close"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L391",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_391",
       "target": "workers_mt5_worker_mt5worker_handle_mt5_close",
       "confidence_score": 1.0
     },
@@ -34859,7 +35736,17 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L410",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_410",
+      "target": "workers_mt5_worker_mt5worker_run_async"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L440",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_440",
       "target": "workers_mt5_worker_mt5worker_run_async",
       "confidence_score": 1.0
     },
@@ -34879,7 +35766,17 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L437",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_437",
+      "target": "workers_mt5_worker_mt5worker_handle_shutdown"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L467",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_467",
       "target": "workers_mt5_worker_mt5worker_handle_shutdown",
       "confidence_score": 1.0
     },
@@ -34921,7 +35818,17 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L444",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_444",
+      "target": "workers_mt5_worker_mt5worker_shutdown"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L474",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_474",
       "target": "workers_mt5_worker_mt5worker_shutdown",
       "confidence_score": 1.0
     },
@@ -34941,7 +35848,17 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L456",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_456",
+      "target": "workers_mt5_worker_mt5worker_run"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L486",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_486",
       "target": "workers_mt5_worker_mt5worker_run",
       "confidence_score": 1.0
     },
@@ -34961,7 +35878,17 @@
       "source_file": "src/workers/mt5_worker.py",
       "source_location": "L481",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workers_mt5_worker_rationale_481",
+      "target": "workers_mt5_worker_mt5worker_cleanup"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/workers/mt5_worker.py",
+      "source_location": "L511",
+      "weight": 1.0,
+      "source": "workers_mt5_worker_rationale_511",
       "target": "workers_mt5_worker_mt5worker_cleanup",
       "confidence_score": 1.0
     },
@@ -36227,9 +37154,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L167",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_unit_test_engine_controller_py",
-      "target": "unit_test_engine_controller_reconnectrunner",
-      "confidence_score": 1.0
+      "target": "unit_test_engine_controller_reconnectrunner"
     },
     {
       "relation": "contains",
@@ -36237,9 +37164,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L184",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_unit_test_engine_controller_py",
-      "target": "unit_test_engine_controller_test_apply_mt5_settings_is_noop_when_stopped",
-      "confidence_score": 1.0
+      "target": "unit_test_engine_controller_test_apply_mt5_settings_is_noop_when_stopped"
     },
     {
       "relation": "contains",
@@ -36247,9 +37174,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L176",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_unit_test_engine_controller_py",
-      "target": "unit_test_engine_controller_test_apply_mt5_settings_reconnects_when_running",
-      "confidence_score": 1.0
+      "target": "unit_test_engine_controller_test_apply_mt5_settings_reconnects_when_running"
     },
     {
       "relation": "contains",
@@ -36347,9 +37274,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L152",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_unit_test_engine_controller_py",
-      "target": "unit_test_engine_controller_test_wait_for_port_free_blocks_until_timeout_when_busy",
-      "confidence_score": 1.0
+      "target": "unit_test_engine_controller_test_wait_for_port_free_blocks_until_timeout_when_busy"
     },
     {
       "relation": "contains",
@@ -36357,9 +37284,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L147",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_unit_test_engine_controller_py",
-      "target": "unit_test_engine_controller_test_wait_for_port_free_returns_immediately_at_port_zero",
-      "confidence_score": 1.0
+      "target": "unit_test_engine_controller_test_wait_for_port_free_returns_immediately_at_port_zero"
     },
     {
       "relation": "method",
@@ -36427,9 +37354,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L167",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_engine_controller_reconnectrunner",
-      "target": "unit_test_engine_controller_fakerunner",
-      "confidence_score": 1.0
+      "target": "unit_test_engine_controller_fakerunner"
     },
     {
       "relation": "method",
@@ -36437,9 +37364,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L168",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_engine_controller_reconnectrunner",
-      "target": "unit_test_engine_controller_reconnectrunner_init",
-      "confidence_score": 1.0
+      "target": "unit_test_engine_controller_reconnectrunner_init"
     },
     {
       "relation": "method",
@@ -36447,9 +37374,9 @@
       "source_file": "tests/unit/test_engine_controller.py",
       "source_location": "L172",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_engine_controller_reconnectrunner",
-      "target": "unit_test_engine_controller_reconnectrunner_reconnect_mt5",
-      "confidence_score": 1.0
+      "target": "unit_test_engine_controller_reconnectrunner_reconnect_mt5"
     },
     {
       "relation": "contains",
@@ -37200,6 +38127,149 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "tests_unit_test_mt5_worker_reconnect_py",
+      "target": "unit_test_mt5_worker_reconnect_fakemt5service",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "tests_unit_test_mt5_worker_reconnect_py",
+      "target": "unit_test_mt5_worker_reconnect_make_worker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L56",
+      "weight": 1.0,
+      "source": "tests_unit_test_mt5_worker_reconnect_py",
+      "target": "unit_test_mt5_worker_reconnect_test_reconnect_rebuilds_service_and_resets_positions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "tests_unit_test_mt5_worker_reconnect_py",
+      "target": "unit_test_mt5_worker_reconnect_test_reconnect_waits_for_in_flight_trade",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "unit_test_mt5_worker_reconnect_rationale_1",
+      "target": "tests_unit_test_mt5_worker_reconnect_py",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "unit_test_mt5_worker_reconnect_fakemt5service",
+      "target": "unit_test_mt5_worker_reconnect_fakemt5service_async_initialize",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "unit_test_mt5_worker_reconnect_fakemt5service",
+      "target": "unit_test_mt5_worker_reconnect_fakemt5service_cleanup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "unit_test_mt5_worker_reconnect_fakemt5service",
+      "target": "unit_test_mt5_worker_reconnect_fakemt5service_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "unit_test_mt5_worker_reconnect_fakemt5service",
+      "target": "unit_test_mt5_worker_reconnect_fakemt5service_monitor_trailing_stops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "unit_test_mt5_worker_reconnect_fakemt5service",
+      "target": "unit_test_mt5_worker_reconnect_fakemt5service_set_loop",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "unit_test_mt5_worker_reconnect_make_worker",
+      "target": "unit_test_mt5_worker_reconnect_fakemt5service",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "unit_test_mt5_worker_reconnect_rationale_18",
+      "target": "unit_test_mt5_worker_reconnect_fakemt5service",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L57",
+      "weight": 1.0,
+      "source": "unit_test_mt5_worker_reconnect_test_reconnect_rebuilds_service_and_resets_positions",
+      "target": "unit_test_mt5_worker_reconnect_make_worker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_mt5_worker_reconnect.py",
+      "source_location": "L69",
+      "weight": 1.0,
+      "source": "unit_test_mt5_worker_reconnect_test_reconnect_waits_for_in_flight_trade",
+      "target": "unit_test_mt5_worker_reconnect_make_worker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "tests/unit/test_number_format.py",
       "source_location": "L20",
       "weight": 1.0,
@@ -37333,9 +38403,9 @@
       "source_file": "tests/unit/test_profiles.py",
       "source_location": "L111",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_unit_test_profiles_py",
-      "target": "unit_test_profiles_test_activate_with_empty_suffix_preserves_live_suffix",
-      "confidence_score": 1.0
+      "target": "unit_test_profiles_test_activate_with_empty_suffix_preserves_live_suffix"
     },
     {
       "relation": "contains",
@@ -37343,9 +38413,9 @@
       "source_file": "tests/unit/test_profiles.py",
       "source_location": "L100",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_unit_test_profiles_py",
-      "target": "unit_test_profiles_test_create_rejects_duplicate_broker_account",
-      "confidence_score": 1.0
+      "target": "unit_test_profiles_test_create_rejects_duplicate_broker_account"
     },
     {
       "relation": "contains",
@@ -37353,9 +38423,9 @@
       "source_file": "tests/unit/test_profiles.py",
       "source_location": "L89",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_unit_test_profiles_py",
-      "target": "unit_test_profiles_test_create_rejects_duplicate_name",
-      "confidence_score": 1.0
+      "target": "unit_test_profiles_test_create_rejects_duplicate_name"
     },
     {
       "relation": "contains",
@@ -37381,6 +38451,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L153",
+      "weight": 1.0,
+      "source": "tests_unit_test_profiles_py",
+      "target": "unit_test_profiles_test_delete_active_clears_live_password",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles.py",
       "source_location": "L25",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -37396,6 +38476,36 @@
       "confidence_score": 1.0,
       "source": "tests_unit_test_profiles_py",
       "target": "unit_test_profiles_test_update_and_delete"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L134",
+      "weight": 1.0,
+      "source": "tests_unit_test_profiles_py",
+      "target": "unit_test_profiles_test_update_rejects_duplicate_broker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L123",
+      "weight": 1.0,
+      "source": "tests_unit_test_profiles_py",
+      "target": "unit_test_profiles_test_update_rejects_duplicate_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L145",
+      "weight": 1.0,
+      "source": "tests_unit_test_profiles_py",
+      "target": "unit_test_profiles_test_update_same_profile_is_not_a_false_duplicate",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -37435,6 +38545,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L155",
+      "weight": 1.0,
+      "source": "unit_test_profiles_test_delete_active_clears_live_password",
+      "target": "unit_test_profiles_data",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles.py",
       "source_location": "L27",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -37451,6 +38572,17 @@
       "confidence_score": 1.0,
       "source": "unit_test_profiles_test_update_and_delete",
       "target": "unit_test_profiles_data"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles.py",
+      "source_location": "L147",
+      "weight": 1.0,
+      "source": "unit_test_profiles_test_update_same_profile_is_not_a_false_duplicate",
+      "target": "unit_test_profiles_data",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -37489,9 +38621,9 @@
       "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L74",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_unit_test_profiles_api_py",
-      "target": "unit_test_profiles_api_test_activate_does_not_apply_when_engine_stopped",
-      "confidence_score": 1.0
+      "target": "unit_test_profiles_api_test_activate_does_not_apply_when_engine_stopped"
     },
     {
       "relation": "contains",
@@ -37502,6 +38634,16 @@
       "confidence_score": 1.0,
       "source": "tests_unit_test_profiles_api_py",
       "target": "unit_test_profiles_api_test_activate_returns_409_when_restart_port_in_use"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles_api.py",
+      "source_location": "L74",
+      "weight": 1.0,
+      "source": "tests_unit_test_profiles_api_py",
+      "target": "unit_test_profiles_api_test_activate_succeeds_when_engine_stopped",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -37519,9 +38661,9 @@
       "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L87",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_unit_test_profiles_api_py",
-      "target": "unit_test_profiles_api_test_create_duplicate_returns_409",
-      "confidence_score": 1.0
+      "target": "unit_test_profiles_api_test_create_duplicate_returns_409"
     },
     {
       "relation": "contains",
@@ -37529,9 +38671,9 @@
       "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_unit_test_profiles_api_py",
-      "target": "unit_test_profiles_api_test_create_list_activate_applies_when_running",
-      "confidence_score": 1.0
+      "target": "unit_test_profiles_api_test_create_list_activate_applies_when_running"
     },
     {
       "relation": "contains",
@@ -37554,14 +38696,24 @@
       "target": "unit_test_profiles_api_test_update_and_update_unknown_404"
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles_api.py",
+      "source_location": "L88",
+      "weight": 1.0,
+      "source": "tests_unit_test_profiles_api_py",
+      "target": "unit_test_profiles_api_test_update_duplicate_name_returns_409",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_profiles_api_fakecontroller",
-      "target": "unit_test_profiles_api_fakecontroller_apply_mt5_settings",
-      "confidence_score": 1.0
+      "target": "unit_test_profiles_api_fakecontroller_apply_mt5_settings"
     },
     {
       "relation": "method",
@@ -37600,7 +38752,18 @@
       "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L77",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_profiles_api_test_activate_does_not_apply_when_engine_stopped",
+      "target": "unit_test_profiles_api_fakecontroller"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles_api.py",
+      "source_location": "L77",
+      "weight": 1.0,
+      "source": "unit_test_profiles_api_test_activate_succeeds_when_engine_stopped",
       "target": "unit_test_profiles_api_fakecontroller",
       "confidence_score": 1.0
     },
@@ -37622,9 +38785,9 @@
       "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L90",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_profiles_api_test_create_duplicate_returns_409",
-      "target": "unit_test_profiles_api_fakecontroller",
-      "confidence_score": 1.0
+      "target": "unit_test_profiles_api_fakecontroller"
     },
     {
       "relation": "calls",
@@ -37633,9 +38796,9 @@
       "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L33",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_profiles_api_test_create_list_activate_applies_when_running",
-      "target": "unit_test_profiles_api_fakecontroller",
-      "confidence_score": 1.0
+      "target": "unit_test_profiles_api_fakecontroller"
     },
     {
       "relation": "calls",
@@ -37664,11 +38827,22 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/test_profiles_api.py",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "unit_test_profiles_api_test_update_duplicate_name_returns_409",
+      "target": "unit_test_profiles_api_fakecontroller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L78",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_profiles_api_test_activate_does_not_apply_when_engine_stopped",
-      "target": "unit_test_profiles_api_client",
-      "confidence_score": 1.0
+      "target": "unit_test_profiles_api_client"
     },
     {
       "relation": "calls",
@@ -37680,6 +38854,17 @@
       "confidence_score": 1.0,
       "source": "unit_test_profiles_api_test_activate_returns_409_when_restart_port_in_use",
       "target": "unit_test_profiles_api_client"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles_api.py",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "unit_test_profiles_api_test_activate_succeeds_when_engine_stopped",
+      "target": "unit_test_profiles_api_client",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -37699,9 +38884,9 @@
       "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L91",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_profiles_api_test_create_duplicate_returns_409",
-      "target": "unit_test_profiles_api_client",
-      "confidence_score": 1.0
+      "target": "unit_test_profiles_api_client"
     },
     {
       "relation": "calls",
@@ -37710,9 +38895,9 @@
       "source_file": "tests/unit/test_profiles_api.py",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "unit_test_profiles_api_test_create_list_activate_applies_when_running",
-      "target": "unit_test_profiles_api_client",
-      "confidence_score": 1.0
+      "target": "unit_test_profiles_api_client"
     },
     {
       "relation": "calls",
@@ -37735,6 +38920,17 @@
       "confidence_score": 1.0,
       "source": "unit_test_profiles_api_test_update_and_update_unknown_404",
       "target": "unit_test_profiles_api_client"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/test_profiles_api.py",
+      "source_location": "L92",
+      "weight": 1.0,
+      "source": "unit_test_profiles_api_test_update_duplicate_name_returns_409",
+      "target": "unit_test_profiles_api_client",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -44294,5 +45490,5 @@
       "source_file": "docs/assets/system-architecture-diagram.png"
     }
   ],
-  "built_at_commit": "643b86d49d0adf51b10d5b26e8561bb3010bce6b"
+  "built_at_commit": "b52ecfdb66045705cd857cb9a873ae64278c8ca3"
 }

@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\app\\engine_controller.py": {
-    "mtime": 1781616574.268108,
-    "ast_hash": "beba3206967a885b751dc81b0c5686c7",
+    "mtime": 1781618317.654492,
+    "ast_hash": "ed52f0854bc68079159c2c6eecb381e0",
     "semantic_hash": ""
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\app\\logging_setup.py": {
@@ -130,8 +130,8 @@
     "semantic_hash": "5f29b2a273eb3e72a4544a8f1522b1d6"
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\app\\ui\\app.js": {
-    "mtime": 1781616615.8981402,
-    "ast_hash": "5ae83783252c79ac86e6a6452f52a478",
+    "mtime": 1781618154.7006435,
+    "ast_hash": "99ae4e8f48af01aff4615ee5c7382fd4",
     "semantic_hash": ""
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\backup\\instrument_sync.py": {
@@ -315,8 +315,8 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\src\\workers\\mt5_worker.py": {
-    "mtime": 1781616556.3672118,
-    "ast_hash": "31c26eecb01343a4ecbf94dea1913bfe",
+    "mtime": 1781618005.5066607,
+    "ast_hash": "9fa641791f0663f79c5ce6655ecfecbf",
     "semantic_hash": ""
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\src\\workers\\__init__.py": {
@@ -610,8 +610,8 @@
     "semantic_hash": ""
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\app\\wizard\\state.py": {
-    "mtime": 1781607894.2891464,
-    "ast_hash": "3ecb3467b6a8410e4cdd642fec9f57e3",
+    "mtime": 1781618079.361875,
+    "ast_hash": "67101bf49104959a1bc721f42774c901",
     "semantic_hash": ""
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\app\\wizard\\_cert_admin.py": {
@@ -725,13 +725,13 @@
     "semantic_hash": ""
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\app\\api\\profiles_api.py": {
-    "mtime": 1781616587.9348884,
-    "ast_hash": "d573f4a6d3fef71f92b1ddf41cfb8545",
+    "mtime": 1781618064.286459,
+    "ast_hash": "a5dcc58c4371cca52f2a02e9d8f916a8",
     "semantic_hash": ""
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\app\\storage\\profiles.py": {
-    "mtime": 1781613875.061865,
-    "ast_hash": "3237a16ac16f235e5248327e19c895ce",
+    "mtime": 1781618055.4862378,
+    "ast_hash": "7db41609d5ef2fa1ce0e1cd319161da2",
     "semantic_hash": ""
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\tests\\unit\\test_mt5_api.py": {
@@ -745,13 +745,13 @@
     "semantic_hash": ""
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\tests\\unit\\test_profiles.py": {
-    "mtime": 1781613893.745039,
-    "ast_hash": "051b1efd809631bd9faf920ed7438989",
+    "mtime": 1781618223.193108,
+    "ast_hash": "596b15a064ec6953aa956f156471fa8f",
     "semantic_hash": ""
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\tests\\unit\\test_profiles_api.py": {
-    "mtime": 1781616664.4734447,
-    "ast_hash": "807d7bcb7753278ce65d682e8e574ecd",
+    "mtime": 1781618202.6332233,
+    "ast_hash": "987a561ab13db748d8cfc48fa0a0b678",
     "semantic_hash": ""
   },
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\tests\\unit\\test_settings_delete.py": {
@@ -762,6 +762,11 @@
   "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\tests\\unit\\test_wizard_default_profile.py": {
     "mtime": 1781607900.0496087,
     "ast_hash": "4be59183053d7b91da22796181194afa",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\abhid\\Documents\\Projects\\tradingview-to-metatrader5\\tests\\unit\\test_mt5_worker_reconnect.py": {
+    "mtime": 1781618255.9429657,
+    "ast_hash": "66d9b579a99622e6cc5232673aa90f22",
     "semantic_hash": ""
   }
 }

@@ -71,17 +71,29 @@ def test_update_and_update_unknown_404(temp_db_path, monkeypatch):
     assert c.put("/api/profiles/nope", json={"name": "X"}).status_code == 404
 
 
-def test_activate_does_not_apply_when_engine_stopped(temp_db_path, monkeypatch):
+def test_activate_succeeds_when_engine_stopped(temp_db_path, monkeypatch):
     from app.storage.settings_store import SettingsStore
     store = SettingsStore()
     ctrl = FakeController(running=False)
     c = _client(ctrl, monkeypatch, store)
     pid = c.post("/api/profiles", json={"name": "A", "mt5": {"account": "1", "server": "S",
                  "terminal_path": "C:/t.exe"}, "symbols": {}}).json()["id"]
-    # apply_mt5_settings is still called; the controller decides it's a no-op when
-    # stopped. The route must succeed and mark the profile active regardless.
+    # The route always calls apply_mt5_settings; the controller makes it a no-op
+    # when stopped. The route must succeed and mark the profile active regardless.
     assert c.post(f"/api/profiles/{pid}/activate").status_code == 200
+    assert ctrl.applied is True
     assert c.get("/api/profiles").json()["active"] == pid
+
+
+def test_update_duplicate_name_returns_409(temp_db_path, monkeypatch):
+    from app.storage.settings_store import SettingsStore
+    store = SettingsStore()
+    ctrl = FakeController(running=False)
+    c = _client(ctrl, monkeypatch, store)
+    c.post("/api/profiles", json={"name": "A", "mt5": {"account": "1", "server": "S"}, "symbols": {}})
+    bid = c.post("/api/profiles", json={"name": "B", "mt5": {"account": "2", "server": "S"}, "symbols": {}}).json()["id"]
+    # renaming B to A collides with the existing A
+    assert c.put(f"/api/profiles/{bid}", json={"name": "A"}).status_code == 409
 
 
 def test_create_duplicate_returns_409(temp_db_path, monkeypatch):

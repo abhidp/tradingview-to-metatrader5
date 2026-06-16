@@ -48,27 +48,40 @@ def _shape(data: dict) -> dict:
     }
 
 
+def _assert_unique(items: list, profile: dict, exclude_id: Optional[str] = None) -> None:
+    """Enforce unique profile name and one profile per (account, server).
+
+    Uses defensive .get lookups so a hand-edited/garbled stored row yields a
+    clean DuplicateProfileError path rather than a KeyError 500.
+    """
+    name = (profile.get("name") or "").strip().lower()
+    acct = str((profile.get("mt5") or {}).get("account") or "").strip()
+    srv = str((profile.get("mt5") or {}).get("server") or "").strip().lower()
+    for p in items:
+        if exclude_id is not None and p.get("id") == exclude_id:
+            continue
+        pm = p.get("mt5") or {}
+        if (p.get("name") or "").strip().lower() == name:
+            raise DuplicateProfileError(f"A profile named '{profile.get('name')}' already exists.")
+        if acct and str(pm.get("account") or "").strip() == acct \
+                and str(pm.get("server") or "").strip().lower() == srv:
+            raise DuplicateProfileError("A profile for this broker account already exists.")
+
+
 def list_profiles(store: Optional[SettingsStore] = None) -> dict:
     store = store or SettingsStore()
     items = _load(store)
-    out = []
-    for p in items:
-        out.append({**p, "password_set": bool(store.get_secret(_pw_key(p["id"])))})
-    return {"profiles": out, "active": store.get(ACTIVE_KEY) or ""}
+    # One bulk read instead of a get_secret() round-trip per profile.
+    rows = store.all(redact_secrets=False)
+    out = [{**p, "password_set": bool(rows.get(_pw_key(p["id"])))} for p in items]
+    return {"profiles": out, "active": rows.get(ACTIVE_KEY) or ""}
 
 
 def create_profile(data: dict, store: Optional[SettingsStore] = None) -> dict:
     store = store or SettingsStore()
     items = _load(store)
     profile = {"id": uuid.uuid4().hex[:8], **_shape(data)}
-    name = profile["name"].strip().lower()
-    if any(p["name"].strip().lower() == name for p in items):
-        raise DuplicateProfileError(f"A profile named '{profile['name']}' already exists.")
-    acct = profile["mt5"]["account"].strip()
-    srv = profile["mt5"]["server"].strip().lower()
-    if acct and any(p["mt5"]["account"].strip() == acct
-                    and p["mt5"]["server"].strip().lower() == srv for p in items):
-        raise DuplicateProfileError("A profile for this broker account already exists.")
+    _assert_unique(items, profile)
     pid = profile["id"]
     password = (data.get("mt5") or {}).get("password")
     if password:
@@ -87,6 +100,8 @@ def update_profile(pid: str, data: dict, store: Optional[SettingsStore] = None) 
                              "mt5": {**p["mt5"], **(data.get("mt5") or {})},
                              "symbols": {**p["symbols"], **(data.get("symbols") or {})}})
             merged = {"id": pid, **shaped}
+            # Same uniqueness invariant create_profile enforces, ignoring self.
+            _assert_unique(items, merged, exclude_id=pid)
             items[i] = merged
             password = (data.get("mt5") or {}).get("password")
             if password:
@@ -103,6 +118,9 @@ def delete_profile(pid: str, store: Optional[SettingsStore] = None) -> None:
     store.delete(_pw_key(pid))
     if store.get(ACTIVE_KEY) == pid:
         store.delete(ACTIVE_KEY)
+        # The deleted profile was active — clear the live broker credential too so
+        # the deleted account's password isn't left as the engine's live secret.
+        store.delete("mt5.password")
 
 
 def activate_profile(pid: str, store: Optional[SettingsStore] = None) -> dict:

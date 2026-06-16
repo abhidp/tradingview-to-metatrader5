@@ -21,6 +21,8 @@ def add_profile_routes(app: FastAPI, controller: EngineController) -> None:
     def update(pid: str, payload: dict = Body(...)):
         try:
             return profiles.update_profile(pid, payload)
+        except profiles.DuplicateProfileError as e:
+            raise HTTPException(status_code=409, detail=str(e))
         except KeyError:
             raise HTTPException(status_code=404, detail="Profile not found")
 

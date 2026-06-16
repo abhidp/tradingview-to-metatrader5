@@ -1,16 +1,16 @@
 # Graph Report - tradingview-to-metatrader5  (2026-06-16)
 
 ## Corpus Check
-- 144 files · ~153,056 words
+- 145 files · ~153,970 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1695 nodes · 2671 edges · 150 communities (125 shown, 25 thin omitted)
-- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 244 edges (avg confidence: 0.58)
+- 1740 nodes · 2747 edges · 154 communities (130 shown, 24 thin omitted)
+- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 245 edges (avg confidence: 0.58)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `643b86d4`
+- Built from commit: `b52ecfdb`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -142,15 +142,19 @@
 - [[_COMMUNITY_Community 147|Community 147]]
 - [[_COMMUNITY_Community 148|Community 148]]
 - [[_COMMUNITY_Community 149|Community 149]]
+- [[_COMMUNITY_Community 150|Community 150]]
+- [[_COMMUNITY_Community 151|Community 151]]
+- [[_COMMUNITY_Community 152|Community 152]]
+- [[_COMMUNITY_Community 153|Community 153]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `SettingsStore` - 129 edges
+1. `SettingsStore` - 135 edges
 2. `DatabaseHandler` - 54 edges
 3. `EngineController` - 43 edges
-4. `InProcQueue` - 38 edges
-5. `MT5Service` - 36 edges
-6. `FusionMarketsAdapter` - 35 edges
-7. `MT5Worker` - 35 edges
+4. `MT5Worker` - 41 edges
+5. `InProcQueue` - 38 edges
+6. `MT5Service` - 36 edges
+7. `FusionMarketsAdapter` - 35 edges
 8. `TradingViewInterceptor` - 33 edges
 9. `TradeHandler` - 26 edges
 10. `MitmEngineRunner` - 24 edges
@@ -160,12 +164,12 @@
   src/core/interceptor.py → backup/instrument_sync.py
 - `v2 Runtime Dependencies` --semantically_similar_to--> `v1 Dependencies (Postgres/Redis)`  [INFERRED] [semantically similar]
   requirements.txt → backup/requirements.txt
-- `str` --uses--> `TradingViewInterceptor`  [INFERRED]
-  app/engine.py → src/core/interceptor.py
 - `str` --uses--> `TradeHandler`  [INFERRED]
   app/engine.py → src/core/trade_handler.py
 - `str` --uses--> `DatabaseHandler`  [INFERRED]
   app/engine.py → src/utils/database_handler.py
+- `str` --uses--> `MT5Worker`  [INFERRED]
+  app/engine.py → src/workers/mt5_worker.py
 
 ## Hyperedges (group relationships)
 - **Single-process engine wiring (proxy + worker + adapter + store)** — engine_serve, fusion_markets_FusionMarketsAdapter, settings_store_SettingsStore, engine_build_master [INFERRED 0.85]
@@ -187,55 +191,55 @@
 - **Worker Service Layer** — systemarchitecturediagram_worker_service_layer, systemarchitecturediagram_mt5_python_api, systemarchitecturediagram_mt5_worker [INFERRED 0.85]
 - **MetaTrader5 Platform** — systemarchitecturediagram_metatrader5_platform, systemarchitecturediagram_mt5_account, systemarchitecturediagram_mt5_webtrader, systemarchitecturediagram_mt5_mobile, systemarchitecturediagram_mt5_desktop [INFERRED 0.85]
 
-## Communities (150 total, 25 thin omitted)
+## Communities (154 total, 24 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.21
-Nodes (15): get_settings(), get_symbols(), Read/write helpers for the Settings and Symbols tabs (Plan 3b).  All values live, Apply editable MT5 settings. Ignores the (read-only) TV target.      Password is, Write the default suffix + the TV->MT5 symbol map. Raises on a bad map., update_settings(), update_symbols(), test_get_settings_redacts_password_and_marks_set() (+7 more)
+Cohesion: 0.14
+Nodes (10): AccountInfo, BrokerAdapter, BrokerAdapter seam.  Thin by design (Plan 2): adapters own flow *matching* and *, Return True if this flow belongs to our broker and is processable., Extract broker_url/account_id from broker-panel traffic, or None., bool, SettingsStore, Protocol (+2 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.16
-Nodes (12): int, main(), MitmCertInstaller, Re-run the script with admin privileges if needed, Generate the mitmproxy CA in-process if missing (no mitmdump subprocess)., Generate mitmproxy certificate if it doesn't exist, Install mitmproxy certificate in Windows certificate store, Install mitmproxy certificate in Windows certificate store (+4 more)
+Cohesion: 0.06
+Nodes (42): _configure_webview_env(), _install_console_ctrl_handler(), main(), _pick_terminal_file(), EngineController, _quit(), Desktop entrypoint: window (main thread) + API/engine loop (thread) + tray (thre, Open a native file dialog to choose terminal64.exe; return the path or None. (+34 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.09
-Nodes (29): get_mt5_config(), get_symbol_settings(), get_tv_target(), SettingsStore, str, Store-backed configuration accessors (replace import-time os.getenv reads).  The, Return MT5 connection config: account, password, server, terminal_path., Return (broker_url, account_id) for the TradingView broker panel. (+21 more)
+Cohesion: 0.07
+Nodes (30): get_mt5_config(), get_symbol_settings(), get_tv_target(), SettingsStore, str, Store-backed configuration accessors (replace import-time os.getenv reads).  The, Return MT5 connection config: account, password, server, terminal_path., Return (broker_url, account_id) for the TradingView broker panel. (+22 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.11
-Nodes (21): temp_db_path fixture, DatabaseHandler, execution_stats.main, InstrumentManager, manage_symbols.main, get_mt5_config, MT5Service, find_mt5_terminals (+13 more)
+Cohesion: 0.07
+Nodes (33): temp_db_path fixture, DatabaseHandler, execution_stats.main, InstrumentManager, InstrumentManager.calculate_trailing_distance, manage_symbols.main, get_mt5_config, MT5Service (+25 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.14
-Nodes (13): MT5Service, Map TradingView symbol to MT5 symbol., Get appropriate filling type for symbol., Map TradingView symbol to MT5 symbol., Get appropriate filling type for symbol., Map TradingView symbol to MT5 symbol., Get appropriate filling type for symbol., Execute market order on MT5 asynchronously. (+5 more)
+Nodes (13): MT5Service, Map TradingView symbol to MT5 symbol., Get appropriate filling type for symbol., Map TradingView symbol to MT5 symbol., Get appropriate filling type for symbol., Map TradingView symbol to MT5 symbol., Get appropriate filling type for symbol., Synchronous internal method for position closing. (+5 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.10
+Cohesion: 0.11
 Nodes (16): bool, str, Load existing mappings or initialize from MT5., Initialize symbol mappings from MT5., Maps TradingView symbols to MT5 symbols with caching., Save mappings to file., Convert TradingView symbol to MT5 symbol., Convert MT5 symbol to TradingView symbol. (+8 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.07
-Nodes (23): _DropConnectionResetNoise, _force_utf8_streams(), get_log_dir(), bool, int, Path, Console + rotating-file logging for the TV2MT5 app.  Captures BOTH logging recor, Drop the benign Windows Proactor 'ConnectionResetError [WinError 10054]'.      W (+15 more)
+Nodes (39): _DropConnectionResetNoise, _force_utf8_streams(), get_log_dir(), bool, int, Path, Console + rotating-file logging for the TV2MT5 app.  Captures BOTH logging recor, Drop the benign Windows Proactor 'ConnectionResetError [WinError 10054]'.      W (+31 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.11
-Nodes (15): Any, int, str, InProcQueue, In-process asyncio queue that mirrors the RedisQueue public API.  RedisQueue del, Enqueue a trade for the worker. Returns the trade id., Synchronous enqueue helper (schedules onto the running loop)., Register the message handler and start the consumer task. (+7 more)
+Cohesion: 0.09
+Nodes (20): Any, int, str, init_db(), Initialize database tables., InProcQueue, In-process asyncio queue that mirrors the RedisQueue public API.  RedisQueue del, Enqueue a trade for the worker. Returns the trade id. (+12 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.06
-Nodes (27): InstrumentSynchronizer, str, Fetch instruments from TradingView., Sync instruments from TradingView to local config., Delegate flow matching to the broker adapter., Delegate flow matching to the broker adapter., Asynchronously process order., Asynchronously process order. (+19 more)
+Cohesion: 0.12
+Nodes (12): Delegate flow matching to the broker adapter., Delegate flow matching to the broker adapter., Asynchronously process order., Asynchronously process order., Asynchronously process position update., Asynchronously process position update., Asynchronously process execution., Asynchronously process execution. (+4 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.11
-Nodes (16): main(), Any, str, DatabaseHandler, Get trade by ID with enhanced error handling., Release this handler's scoped session; the engine is process-shared., Save trade to database asynchronously., Update trade status asynchronously. (+8 more)
+Nodes (18): main(), Any, str, test_query_trades_paging_filter_and_total(), test_database_handler_save_and_get(), DatabaseHandler, Get trade by ID with enhanced error handling., Release this handler's scoped session; the engine is process-shared. (+10 more)
 
 ### Community 10 - "Community 10"
 Cohesion: 0.12
 Nodes (19): Map TradingView symbol to MT5 symbol., Add a custom symbol mapping., Remove a custom symbol mapping., Get all custom symbol mappings., SymbolMapper, get_mt5_symbols(), get_trade_mode(), initialize_mt5() (+11 more)
 
 ### Community 11 - "Community 11"
-Cohesion: 0.13
-Nodes (14): Retry an operation with exponential backoff., Retry an operation with exponential backoff., Retry an operation with exponential backoff., Close an existing position asynchronously., Close an existing position asynchronously., Close an existing position asynchronously., Async wrapper to update position TP/SL in MT5., Async wrapper to update position TP/SL in MT5. (+6 more)
+Cohesion: 0.14
+Nodes (13): Retry an operation with exponential backoff., Retry an operation with exponential backoff., Retry an operation with exponential backoff., Execute market order on MT5 asynchronously., Execute market order on MT5 asynchronously., Execute market order on MT5 asynchronously., Close an existing position asynchronously., Close an existing position asynchronously. (+5 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.13
@@ -246,20 +250,20 @@ Cohesion: 0.11
 Nodes (11): main(), Run all infrastructure tests., Runner class for managing TradingView Copier operations., Start the Token Monitor., Start the TradingView proxy server., Main entry point for the CLI., Start the MT5 worker., Update requirements.txt. (+3 more)
 
 ### Community 14 - "Community 14"
-Cohesion: 0.24
-Nodes (13): acquire_single_instance(), focus_running_instance(), is_another_instance_running(), bool, int, str, Single-instance guard for the desktop app.  The app binds one TCP port (CONTROL_, Bind and return the control socket, or None if already bound (another instance). (+5 more)
+Cohesion: 0.14
+Nodes (10): InstrumentSynchronizer, str, Fetch instruments from TradingView., Sync instruments from TradingView to local config., Asynchronously process position close., Asynchronously process position close., Derived from the adapter so it never diverges from the live target., Derived from the adapter so it never diverges from the live target. (+2 more)
 
 ### Community 15 - "Community 15"
-Cohesion: 0.08
-Nodes (33): AccountInfo, AccountInfo, BrokerAdapter, BrokerAdapter seam.  Thin by design (Plan 2): adapters own flow *matching* and *, Return True if this flow belongs to our broker and is processable., Extract broker_url/account_id from broker-panel traffic, or None., FusionMarketsAdapter, _is_tradingview() (+25 more)
+Cohesion: 0.30
+Nodes (15): FusionMarketsAdapter, _adapter_with_target(), _Flow, test_detect_account_from_origin_only_header(), test_detect_account_from_tradingview_flow(), test_detect_account_ignores_non_tradingview_origin(), test_detect_account_returns_none_on_unmatched_url(), test_does_not_match_other_urls() (+7 more)
 
 ### Community 16 - "Community 16"
-Cohesion: 0.10
-Nodes (22): build_master(), MitmEngineRunner, bool, int, str, quiet_proxy_noise(), Single-process supervisor: embeds mitmproxy + the MT5 worker on one loop., Reconnect the MT5 worker to the active profile's broker, leaving the         pro (+14 more)
+Cohesion: 0.09
+Nodes (23): build_master(), MitmEngineRunner, bool, int, str, quiet_proxy_noise(), Single-process supervisor: embeds mitmproxy + the MT5 worker on one loop., Reconnect the MT5 worker to the active profile's broker, leaving the         pro (+15 more)
 
 ### Community 17 - "Community 17"
-Cohesion: 0.11
-Nodes (18): Process position close request from TradingView asynchronously., Process position update from TradingView asynchronously., Process new order from TradingView asynchronously., Process deletion of TP or SL level., Process execution update from TradingView asynchronously., TradeHandler, Any, str (+10 more)
+Cohesion: 0.18
+Nodes (8): Process position close request from TradingView asynchronously., Process position update from TradingView asynchronously., Process new order from TradingView asynchronously., Process deletion of TP or SL level., Process execution update from TradingView asynchronously., TradeHandler, Any, str
 
 ### Community 18 - "Community 18"
 Cohesion: 0.17
@@ -275,7 +279,7 @@ Nodes (16): v1 Dependencies (Postgres/Redis), Infra Collapse (SQLite + in-proc q
 
 ### Community 21 - "Community 21"
 Cohesion: 0.14
-Nodes (15): Any, int, str, Process a single trade asynchronously., Handle messages from Redis channels asynchronously., Handle opening a new position., Process a single trade asynchronously., Handle opening a new position. (+7 more)
+Nodes (19): Any, int, str, MT5Worker, Process a single trade asynchronously., Handle messages from Redis channels asynchronously., Handle opening a new position., Process a single trade asynchronously. (+11 more)
 
 ### Community 22 - "Community 22"
 Cohesion: 0.06
@@ -283,7 +287,7 @@ Nodes (35): For --cluster-only, For git commit hook, For /graphify add, For /gra
 
 ### Community 23 - "Community 23"
 Cohesion: 0.16
-Nodes (20): get_mt5_config, get_symbol_settings, get_tv_target, SettingsValidationError, get_settings, get_symbols, update_settings, update_symbols (+12 more)
+Nodes (17): Desktop UI app.js, SettingsValidationError, get_settings, get_symbols, update_settings, update_symbols, get_engine / SQLite config, desktop._quit (+9 more)
 
 ### Community 24 - "Community 24"
 Cohesion: 0.19
@@ -291,11 +295,11 @@ Nodes (10): main(), Run all infrastructure tests., Run all infrastructure tests 
 
 ### Community 25 - "Community 25"
 Cohesion: 0.14
-Nodes (33): $(), activateProfile(), deleteProfile(), dot(), enterWizard(), esc(), exitWizard(), flashBanner() (+25 more)
+Nodes (34): $(), activateProfile(), bannerMessage(), deleteProfile(), dot(), enterWizard(), esc(), exitWizard() (+26 more)
 
 ### Community 26 - "Community 26"
-Cohesion: 0.30
-Nodes (16): SettingsStore, str, activate_profile(), create_profile(), delete_profile(), DuplicateProfileError, list_profiles(), _load() (+8 more)
+Cohesion: 0.20
+Nodes (12): get_data_dir(), get_db_path(), Path, Resolve where TV2MT5 stores its data (SQLite DB, logs)., Return the SQLite database file path.      Honours the TV2MT5_DB_PATH env overri, Return (and create) the directory that holds the SQLite DB., Return (and create) the directory that holds the SQLite DB., Return the SQLite database file path.      Honours the TV2MT5_DB_PATH env overri (+4 more)
 
 ### Community 27 - "Community 27"
 Cohesion: 0.16
@@ -306,8 +310,8 @@ Cohesion: 0.23
 Nodes (12): generate_requirements(), get_core_packages(), get_dependency_tree(), get_imported_packages(), get_installed_packages(), get_project_root(), Get list of installed packages with versions., Define core packages that must be included. (+4 more)
 
 ### Community 29 - "Community 29"
-Cohesion: 0.14
-Nodes (13): AbstractEventLoop, DatabaseHandler, Initialize MT5 connection with cooldown asynchronously., Set the event loop for this service., Internal method for MT5 initialization., Initialize MT5 connection with cooldown asynchronously., Set the event loop for this service., Internal method for MT5 initialization. (+5 more)
+Cohesion: 0.17
+Nodes (12): DatabaseHandler, Internal method for MT5 initialization., Internal method for MT5 initialization., Internal method for MT5 initialization., bool, int, float, str (+4 more)
 
 ### Community 30 - "Community 30"
 Cohesion: 0.19
@@ -322,24 +326,24 @@ Cohesion: 0.29
 Nodes (8): get_engine, _DropConnectionResetNoise, get_log_dir, setup_logging, get_data_dir, get_db_path, test_logging_setup, test_sqlite_store
 
 ### Community 33 - "Community 33"
-Cohesion: 0.17
-Nodes (12): _install_console_ctrl_handler(), main(), _pick_terminal_file(), EngineController, _quit(), Desktop entrypoint: window (main thread) + API/engine loop (thread) + tray (thre, Open a native file dialog to choose terminal64.exe; return the path or None., Stop the engine cleanly, remove the tray icon, and terminate the process.      S (+4 more)
+Cohesion: 0.23
+Nodes (10): str, test_accepts_numbers_and_decimals(), test_empty_and_none_and_unparsable(), test_keeps_meaningful_decimals(), test_no_scientific_notation_for_large_round_numbers(), test_strips_trailing_zeros(), test_zero_renders_as_zero_not_empty(), fmt_num() (+2 more)
 
 ### Community 34 - "Community 34"
-Cohesion: 0.09
-Nodes (16): (Re)start the trailing-stop monitor, cancelling any previous one., Switch the MT5 connection to the current (active-profile) config WITHOUT, Monitor MT5 positions for manual closes asynchronously., Initialize all services with shared event loop., Initialize all services with shared event loop., Monitor MT5 positions for manual closes asynchronously., Run the worker service asynchronously., Perform async shutdown tasks. (+8 more)
+Cohesion: 0.08
+Nodes (20): (Re)start the trailing-stop monitor, cancelling any previous one., Start the trailing-stop monitor (assumes any previous one was stopped)., Switch the MT5 connection to the current (active-profile) config WITHOUT, Cancel the trailing-stop monitor and WAIT for it to finish, so it can't, Switch the MT5 connection to the current (active-profile) config WITHOUT, Run the worker service asynchronously., Perform async shutdown tasks., Run the worker service asynchronously. (+12 more)
 
 ### Community 35 - "Community 35"
 Cohesion: 0.24
 Nodes (8): Cursor-based tail of the rotating log file for the Logs view., Return (new_lines, new_cursor) for bytes after the given offset.      `after` is, read_log_tail(), int, Path, str, test_missing_file_is_empty(), test_read_from_start_returns_all_then_advances()
 
 ### Community 36 - "Community 36"
-Cohesion: 0.16
-Nodes (19): Raised on invalid settings/symbols input (maps to HTTP 400)., SettingsValidationError, add_profile_routes(), Broker-profile CRUD + activate routes. Activate restarts the engine if running., create_app(), FastAPI app: JSON API + static UI for the desktop shell., add_wizard_routes(), Wizard API routes (Plan 4a). Registered onto the app by create_app(). (+11 more)
+Cohesion: 0.12
+Nodes (32): get_settings(), get_symbols(), Read/write helpers for the Settings and Symbols tabs (Plan 3b).  All values live, Raised on invalid settings/symbols input (maps to HTTP 400)., Apply editable MT5 settings. Ignores the (read-only) TV target.      Password is, Write the default suffix + the TV->MT5 symbol map. Raises on a bad map., SettingsValidationError, update_settings() (+24 more)
 
 ### Community 37 - "Community 37"
-Cohesion: 0.13
-Nodes (12): _port_free(), bool, float, int, Stop (if running) then start — used to apply settings changes.          stop() f, Poll until our proxy port is bindable again (or timeout).          After we stop, Apply MT5 config changes (e.g. switching broker profiles) by         reconnectin, Stop (if running) then start — used to apply settings changes.          We give (+4 more)
+Cohesion: 0.05
+Nodes (47): EngineController, EngineState, _port_free(), bool, float, int, Engine lifecycle controller: start/stop the engine task and report status.  The, Stop (if running) then start — used to apply settings changes.          stop() f (+39 more)
 
 ### Community 38 - "Community 38"
 Cohesion: 0.29
@@ -366,8 +370,8 @@ Cohesion: 0.22
 Nodes (9): Monetization Seams (License/Updater/Telemetry/ErrorReporter), Onboarding Wizard (first run), Open-Source Distribution (v2-desktop branch), Proxy Manager (TV app-level / system proxy), PyInstaller + Inno Setup Packaging, Single-Click Windows Desktop App Goal, Single-Process Model (proxy+worker+UI+tray), TV2MT5 Desktop Design Spec (+1 more)
 
 ### Community 44 - "Community 44"
-Cohesion: 0.21
-Nodes (12): Desktop UI app.js, engine.build_master, InProcQueue, InstrumentSynchronizer (backup), data/instruments.json, TradingViewInterceptor, mitmproxy addons / main, SymbolMapper (+4 more)
+Cohesion: 0.29
+Nodes (10): engine.build_master, InProcQueue, InstrumentSynchronizer (backup), data/instruments.json, TradingViewInterceptor, mitmproxy addons / main, InstrumentSynchronizer (sync_tv), test_engine_factory (+2 more)
 
 ### Community 45 - "Community 45"
 Cohesion: 0.28
@@ -382,8 +386,8 @@ Cohesion: 0.09
 Nodes (21): Account Setup Strategy, Benefits, Building the Windows installer (v2 desktop), Common Challenges, Cryptocurrency Donations, Developer Contact: abhi358@gmail.com, Flexible Implementation, Key Features (+13 more)
 
 ### Community 48 - "Community 48"
-Cohesion: 0.14
-Nodes (25): SettingsStore, _data(), test_activate_copies_values_into_live_keys(), test_activate_unknown_raises(), test_activate_with_empty_map_preserves_live_symbols_map(), test_activate_with_empty_suffix_preserves_live_suffix(), test_create_rejects_duplicate_broker_account(), test_create_rejects_duplicate_name() (+17 more)
+Cohesion: 0.12
+Nodes (29): SettingsStore, _data(), test_activate_copies_values_into_live_keys(), test_activate_unknown_raises(), test_activate_with_empty_map_preserves_live_symbols_map(), test_activate_with_empty_suffix_preserves_live_suffix(), test_create_rejects_duplicate_broker_account(), test_create_rejects_duplicate_name() (+21 more)
 
 ### Community 49 - "Community 49"
 Cohesion: 0.24
@@ -418,12 +422,12 @@ Cohesion: 0.48
 Nodes (7): TV_ACCOUNT_ID, TV_BROKER_URL, Browser DevTools Network Tab, Fusion Markets Broker Connection, Broker API Request URL (accounts/{id}), TradingView Chart with Connected Broker, TradingView Account ID Lookup Screenshot
 
 ### Community 57 - "Community 57"
-Cohesion: 0.18
-Nodes (12): InstrumentManager.calculate_trailing_distance, MT5Service._close_position, MT5Service._execute_order, MT5Service.monitor_trailing_stops, MT5Service._retry_operation, MT5Service._update_position, MT5Worker._handle_new_position, MT5Worker._handle_position_close (+4 more)
+Cohesion: 0.21
+Nodes (6): _FakeMT5Service, _make_worker(), Tests for the broker-profile hot-swap path in MT5Worker.reconnect_mt5.  The real, Stand-in for MT5Service: connects instantly, no real terminal., test_reconnect_rebuilds_service_and_resets_positions(), test_reconnect_waits_for_in_flight_trade()
 
 ### Community 58 - "Community 58"
-Cohesion: 0.29
-Nodes (12): _client(), test_index_contains_wizard_markup(), test_wizard_cert_install_pending(), test_wizard_cert_status(), test_wizard_complete_sets_flag(), test_wizard_mt5_detect(), test_wizard_mt5_test_failure_does_not_persist(), test_wizard_mt5_test_success_persists() (+4 more)
+Cohesion: 0.17
+Nodes (13): _client(), _FakeRunner, test_index_contains_wizard_markup(), test_wizard_cert_install_pending(), test_wizard_cert_status(), test_wizard_complete_sets_flag(), test_wizard_mt5_detect(), test_wizard_mt5_test_failure_does_not_persist() (+5 more)
 
 ### Community 59 - "Community 59"
 Cohesion: 0.11
@@ -466,8 +470,8 @@ Cohesion: 0.12
 Nodes (15): File Structure, Self-Review (completed during planning), Task 10: Worker in-process init path, Task 11: Unified engine entrypoint, Task 12: Update run.py and remove Docker/Redis/Postgres artifacts, Task 1: Dev dependencies and test scaffolding, Task 2: App data path resolver, Task 3: SQLite database config + shared engine (+7 more)
 
 ### Community 102 - "Community 102"
-Cohesion: 0.05
-Nodes (49): query_trades(), Trade-history reads for the dashboard preview + the Trades tab (Plan 3b)., Return (rows, total) — trades newest-first, paged, optionally status-filtered., _serialize(), int, str, get_data_dir(), get_data_file() (+41 more)
+Cohesion: 0.15
+Nodes (13): Base, get_engine(), get_session_factory(), Return the process-wide SQLite engine, creating it on first use., Return a sessionmaker bound to the shared SQLite engine., Engine, Trade, SecretBox (+5 more)
 
 ### Community 103 - "Community 103"
 Cohesion: 0.13
@@ -494,12 +498,12 @@ Cohesion: 0.14
 Nodes (13): Backend, Components, Engine lifecycle nuance, Error handling, Frontend, Goal, Hosting & triggering, Out of scope (Plan 4a) (+5 more)
 
 ### Community 109 - "Community 109"
-Cohesion: 0.17
-Nodes (10): Service to interact with TradingView API., Synchronous version of close_position for compatibility., Get a valid token, refreshing if necessary., Close a position on TradingView asynchronously., TradingViewService, Any, str, TokenManager (+2 more)
+Cohesion: 0.20
+Nodes (7): AccountInfo, _is_tradingview(), FusionMarkets adapter: TradingView broker-panel traffic.  `matches` reproduces t, True if the flow looks TradingView-originated.      Gates broker-target auto-det, Learn broker_url/account_id from TradingView-originated traffic., Persist a detected target if it differs from the current one.          Returns T, bool
 
 ### Community 110 - "Community 110"
-Cohesion: 0.19
-Nodes (6): bool, int, str, Import .env values into the store on first run only.          Returns True if it, Import .env values into the store on first run only.          Returns True if it, Remove a key if present (idempotent).
+Cohesion: 0.16
+Nodes (8): bool, int, str, SettingsBase, Import .env values into the store on first run only.          Returns True if it, Import .env values into the store on first run only.          Returns True if it, Remove a key if present (idempotent)., Settings
 
 ### Community 111 - "Community 111"
 Cohesion: 0.15
@@ -510,8 +514,8 @@ Cohesion: 0.17
 Nodes (11): Architecture / Changes, Error Handling / Risks, Goal, Key Decisions, Non-Goals (deferred, consistent with parent spec), Out of scope / follow-ups, Plan 6a — Freeze, Plan 6b — Installer (+3 more)
 
 ### Community 113 - "Community 113"
-Cohesion: 0.27
-Nodes (13): EngineController, test_apply_mt5_settings_is_noop_when_stopped(), test_apply_mt5_settings_reconnects_when_running(), test_error_is_reported_and_can_restart(), test_initial_status_is_stopped(), test_restart_cycles_to_running(), test_restart_from_stopped_just_starts(), test_start_is_idempotent_when_running() (+5 more)
+Cohesion: 0.31
+Nodes (10): bool, int, SettingsStore, complete_onboarding(), get_step(), is_onboarding_complete(), Onboarding wizard state: the first-run completion flag + resume step.  Stored in, Mark onboarding complete and seed a 'Default' broker profile if none exist. (+2 more)
 
 ### Community 114 - "Community 114"
 Cohesion: 0.24
@@ -530,8 +534,8 @@ Cohesion: 0.27
 Nodes (4): _R, test_is_cert_trusted_false_on_echoed_search_term(), test_is_cert_trusted_false_when_absent(), test_is_cert_trusted_true()
 
 ### Community 118 - "Community 118"
-Cohesion: 0.16
-Nodes (6): EngineState, Engine lifecycle controller: start/stop the engine task and report status.  The, Enum, _FakeRunner, Simulates the engine: serve() blocks until shutdown() is called., _ReconnectRunner
+Cohesion: 0.28
+Nodes (7): Path, str, Resolve read-only bundled resources in both source and PyInstaller-frozen runs., Return the absolute path to a bundled resource given a repo-root-relative path., resource_path(), test_resource_path_from_source_points_at_repo_root(), test_resource_path_uses_meipass_when_frozen()
 
 ### Community 119 - "Community 119"
 Cohesion: 0.25
@@ -542,8 +546,8 @@ Cohesion: 0.22
 Nodes (8): File Structure, Self-Review notes (addressed), Task 1: Inno Setup script, Task 2: One-command build script, Task 3: Ignore installer output, Task 4: Document the build + cert-removal note, Task 5: Installer acceptance (manual), TV2MT5 Plan 6b — Inno Setup Installer Implementation Plan
 
 ### Community 121 - "Community 121"
-Cohesion: 0.32
-Nodes (11): _client(), test_dashboard_logos_referenced_and_served(), test_index_has_all_tabs(), test_index_is_served(), test_restart_endpoint(), test_settings_get_redacts_and_put_writes(), test_settings_put_rejects_bad_account(), test_start_then_stop_endpoints() (+3 more)
+Cohesion: 0.25
+Nodes (6): Monitor MT5 positions for manual closes asynchronously., Handle position closed in MT5 asynchronously., Monitor MT5 positions for manual closes asynchronously., Handle position closed in MT5 asynchronously., Monitor MT5 positions for manual closes, serialised against reconnects., Handle position closed in MT5 asynchronously.
 
 ### Community 122 - "Community 122"
 Cohesion: 0.25
@@ -558,8 +562,8 @@ Cohesion: 0.43
 Nodes (4): _FakeShell, _patch_shell(), test_reexec_uses_argv_sentinel_when_frozen(), test_reexec_uses_module_flag_when_not_frozen()
 
 ### Community 126 - "Community 126"
-Cohesion: 0.27
-Nodes (10): main(), AccountInfo, BrokerAdapter Protocol, MitmEngineRunner, EngineController.start, engine.run_engine, MitmEngineRunner.serve, FusionMarketsAdapter (+2 more)
+Cohesion: 0.36
+Nodes (8): AccountInfo, BrokerAdapter Protocol, MitmEngineRunner, EngineController.start, engine.run_engine, MitmEngineRunner.serve, FusionMarketsAdapter, test_fusion_adapter
 
 ### Community 127 - "Community 127"
 Cohesion: 0.33
@@ -574,16 +578,24 @@ Cohesion: 0.40
 Nodes (4): Build order rationale, Carry-forward note for Plan 3/4, Development workflow (from Plan 3 onward), TV2MT5 Desktop — Plan Roadmap
 
 ### Community 130 - "Community 130"
-Cohesion: 0.47
-Nodes (5): _configure_webview_env(), Disable WebView2 GPU acceleration by default.      On some Windows GPU drivers,, Regression guard: the desktop app must disable WebView2 GPU acceleration by defa, test_configure_webview_env_disables_gpu_by_default(), test_configure_webview_env_respects_user_override()
+Cohesion: 0.25
+Nodes (6): AbstractEventLoop, Initialize MT5 connection with cooldown asynchronously., Set the event loop for this service., Initialize MT5 connection with cooldown asynchronously., Set the event loop for this service., Set the event loop for this service.
 
 ### Community 143 - "Community 143"
-Cohesion: 0.47
-Nodes (4): float, str, Get pip size for a symbol., Calculate trailing distance for a symbol.
+Cohesion: 0.33
+Nodes (6): query_trades(), Trade-history reads for the dashboard preview + the Trades tab (Plan 3b)., Return (rows, total) — trades newest-first, paged, optionally status-filtered., _serialize(), int, str
 
 ### Community 144 - "Community 144"
-Cohesion: 0.29
-Nodes (9): _client(), FakeController, test_activate_does_not_apply_when_engine_stopped(), test_activate_returns_409_when_restart_port_in_use(), test_activate_unknown_404(), test_create_duplicate_returns_409(), test_create_list_activate_applies_when_running(), test_create_list_activate_restarts_when_running() (+1 more)
+Cohesion: 0.27
+Nodes (11): _client(), FakeController, test_activate_does_not_apply_when_engine_stopped(), test_activate_returns_409_when_restart_port_in_use(), test_activate_succeeds_when_engine_stopped(), test_activate_unknown_404(), test_create_duplicate_returns_409(), test_create_list_activate_applies_when_running() (+3 more)
+
+### Community 145 - "Community 145"
+Cohesion: 0.33
+Nodes (5): _force_utf8_console(), main(), `python -m app` — launch the single-process TV2MT5 engine., Make stdout/stderr UTF-8.      The app logs emoji status lines. Windows consoles, Runner.run_app
+
+### Community 146 - "Community 146"
+Cohesion: 0.40
+Nodes (3): get_data_file(), str, Return the path to a mutable data file under %APPDATA%/TV2MT5/data/<name>.
 
 ### Community 147 - "Community 147"
 Cohesion: 0.60
@@ -597,25 +609,37 @@ Nodes (5): _make_terminal(), test_discover_labels_from_parent_folder(), test_dis
 Cohesion: 0.60
 Nodes (4): add_mt5_routes(), _current_terminal(), FastAPI, str
 
+### Community 150 - "Community 150"
+Cohesion: 0.50
+Nodes (5): get_mt5_config, get_symbol_settings, get_tv_target, EngineController.status, test_config_accessors
+
+### Community 152 - "Community 152"
+Cohesion: 0.50
+Nodes (3): Centralized position check with detailed response., Centralized position check with detailed response., Centralized position check with detailed response.
+
+### Community 153 - "Community 153"
+Cohesion: 0.50
+Nodes (3): Handle shutdown signals gracefully., Handle shutdown signals gracefully., Handle shutdown signals gracefully.
+
 ## Knowledge Gaps
 - **372 isolated node(s):** `PreToolUse`, `LogRecord`, `bool`, `int`, `str` (+367 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **25 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **24 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `DatabaseHandler` connect `Community 9` to `Community 128`, `Community 4`, `Community 102`, `Community 7`, `Community 11`, `Community 16`, `Community 17`, `Community 145`, `Community 51`, `Community 21`, `Community 24`, `Community 121`, `Community 29`?**
-  _High betweenness centrality (0.100) - this node is a cross-community bridge._
-- **Why does `SettingsStore` connect `Community 48` to `Community 0`, `Community 2`, `Community 36`, `Community 58`, `Community 102`, `Community 110`, `Community 15`, `Community 16`, `Community 144`, `Community 145`, `Community 146`, `Community 149`, `Community 119`, `Community 121`, `Community 26`, `Community 123`?**
-  _High betweenness centrality (0.093) - this node is a cross-community bridge._
-- **Why does `MT5Service` connect `Community 4` to `Community 128`, `Community 34`, `Community 68`, `Community 5`, `Community 9`, `Community 10`, `Community 11`, `Community 109`, `Community 16`, `Community 51`, `Community 21`, `Community 24`, `Community 29`, `Community 62`?**
-  _High betweenness centrality (0.086) - this node is a cross-community bridge._
+- **Why does `DatabaseHandler` connect `Community 9` to `Community 128`, `Community 33`, `Community 130`, `Community 4`, `Community 37`, `Community 102`, `Community 7`, `Community 11`, `Community 16`, `Community 17`, `Community 51`, `Community 21`, `Community 24`, `Community 29`?**
+  _High betweenness centrality (0.091) - this node is a cross-community bridge._
+- **Why does `SettingsStore` connect `Community 48` to `Community 0`, `Community 2`, `Community 36`, `Community 37`, `Community 6`, `Community 102`, `Community 109`, `Community 110`, `Community 15`, `Community 16`, `Community 113`, `Community 144`, `Community 119`, `Community 149`, `Community 151`, `Community 58`, `Community 123`?**
+  _High betweenness centrality (0.087) - this node is a cross-community bridge._
+- **Why does `MT5Service` connect `Community 4` to `Community 128`, `Community 33`, `Community 130`, `Community 2`, `Community 68`, `Community 5`, `Community 34`, `Community 9`, `Community 10`, `Community 11`, `Community 29`, `Community 51`, `Community 146`, `Community 21`, `Community 24`, `Community 152`, `Community 62`?**
+  _High betweenness centrality (0.081) - this node is a cross-community bridge._
 - **Are the 29 inferred relationships involving `SettingsStore` (e.g. with `AccountInfo` and `FusionMarketsAdapter`) actually correct?**
   _`SettingsStore` has 29 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 23 inferred relationships involving `DatabaseHandler` (e.g. with `AbstractEventLoop` and `MitmEngineRunner`) actually correct?**
   _`DatabaseHandler` has 23 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 11 inferred relationships involving `EngineController` (e.g. with `EngineController` and `FastAPI`) actually correct?**
   _`EngineController` has 11 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 13 inferred relationships involving `InProcQueue` (e.g. with `MitmEngineRunner` and `bool`) actually correct?**
-  _`InProcQueue` has 13 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 11 inferred relationships involving `MT5Worker` (e.g. with `MitmEngineRunner` and `bool`) actually correct?**
+  _`MT5Worker` has 11 INFERRED edges - model-reasoned connections that need verification._

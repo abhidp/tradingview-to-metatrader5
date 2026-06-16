@@ -27,6 +27,10 @@ class MT5Worker:
         self.mt5 = None
         self.tv_service = None
         self._monitor_task = None
+        # Serialises MT5 access: trade execution, the position-check loop, and a
+        # broker-profile hot-swap (reconnect_mt5) all drive the process-global
+        # MetaTrader5 connection, so they must never overlap across awaits.
+        self._mt5_lock = asyncio.Lock()
 
     def initialize(self):
         """Initialize all services with shared event loop."""
@@ -97,12 +101,23 @@ class MT5Worker:
             logger.error(f"❌ Error initializing positions: {e}")
 
     def _start_trailing_monitor(self) -> None:
-        """(Re)start the trailing-stop monitor, cancelling any previous one."""
-        if self._monitor_task is not None:
-            self._monitor_task.cancel()
-            self._monitor_task = None
+        """Start the trailing-stop monitor (assumes any previous one was stopped)."""
         if self.mt5 and self.mt5.initialized:
             self._monitor_task = self.loop.create_task(self.mt5.monitor_trailing_stops())
+
+    async def _stop_trailing_monitor(self) -> None:
+        """Cancel the trailing-stop monitor and WAIT for it to finish, so it can't
+        still be mid-call against the global MT5 connection when we swap it out."""
+        task = self._monitor_task
+        self._monitor_task = None
+        if task is not None:
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+            except Exception as e:  # noqa: BLE001
+                logger.error(f"❌ Trailing monitor error during shutdown: {e}")
 
     async def reconnect_mt5(self) -> None:
         """Switch the MT5 connection to the current (active-profile) config WITHOUT
@@ -112,25 +127,32 @@ class MT5Worker:
         (account/server/terminal/password), so we close the existing MT5 session
         and rebuild MT5Service from the latest settings. The proxy on its port keeps
         running untouched, avoiding a Windows port-rebind failure.
+
+        Held under _mt5_lock so an in-flight trade or the position-check loop can't
+        interleave with the teardown/rebuild of the shared global MT5 connection.
         """
-        print("\n🔄 Switching MT5 connection to the active profile…")
-        try:
-            if self.mt5 is not None:
-                self.mt5.cleanup()
-        except Exception as e:
-            logger.error(f"❌ Error closing previous MT5 connection: {e}")
-        mt5_config = get_mt5_config()
-        self.mt5 = MT5Service(
-            account=mt5_config['account'],
-            password=mt5_config['password'],
-            server=mt5_config['server'],
-            db_handler=self.db,
-        )
-        self.mt5.set_loop(self.loop)
-        # Positions belong to the new broker — reset and re-read.
-        self.open_positions = set()
-        await self._initialize_positions()
-        self._start_trailing_monitor()
+        logger.info("🔄 Switching MT5 connection to the active profile…")
+        async with self._mt5_lock:
+            # Stop the old monitor first and wait for it, so it isn't mid-call on
+            # the connection we're about to shut down.
+            await self._stop_trailing_monitor()
+            try:
+                if self.mt5 is not None:
+                    self.mt5.cleanup()
+            except Exception as e:
+                logger.error(f"❌ Error closing previous MT5 connection: {e}")
+            mt5_config = get_mt5_config()
+            self.mt5 = MT5Service(
+                account=mt5_config['account'],
+                password=mt5_config['password'],
+                server=mt5_config['server'],
+                db_handler=self.db,
+            )
+            self.mt5.set_loop(self.loop)
+            # Positions belong to the new broker — reset and re-read.
+            self.open_positions = set()
+            await self._initialize_positions()
+            self._start_trailing_monitor()
 
     async def handle_message(self, msg_type: str, data: Dict[str, Any]) -> None:
         """Handle messages from Redis channels asynchronously."""
@@ -145,7 +167,11 @@ class MT5Worker:
             logger.error(f"❌ Error handling message: {e}")
 
     async def process_trade(self, trade_data: Dict[str, Any]) -> None:
-        """Process a single trade asynchronously."""
+        """Process a single trade, serialised against MT5 reconnects/position checks."""
+        async with self._mt5_lock:
+            await self._process_trade_locked(trade_data)
+
+    async def _process_trade_locked(self, trade_data: Dict[str, Any]) -> None:
         try:
             trade_id = trade_data['trade_id']
             start_time = int(time.time() * 1000)
@@ -335,7 +361,11 @@ class MT5Worker:
             )
 
     async def check_mt5_positions(self) -> None:
-        """Monitor MT5 positions for manual closes asynchronously."""
+        """Monitor MT5 positions for manual closes, serialised against reconnects."""
+        async with self._mt5_lock:
+            await self._check_mt5_positions_locked()
+
+    async def _check_mt5_positions_locked(self) -> None:
         try:
             if not await self.mt5.async_initialize():
                 return

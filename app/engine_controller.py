@@ -153,14 +153,13 @@ class EngineController:
         return self.status()
 
     async def _wait_for_port_free(self, timeout: float = 3.0) -> None:
-        """Poll until our proxy port is bindable again (or timeout).
+        """Best-effort wait for our proxy port to become bindable again.
 
         After we stop our own engine the OS can take a moment to release the
-        listening socket (notably on Windows). _port_free() uses SO_REUSEADDR=0,
-        so an immediate re-start can briefly see the port we just freed as "in
-        use" and raise ProxyPortInUseError. Waiting here lets the genuine
-        same-engine restart succeed while still surfacing a real cross-process
-        conflict (the port never frees, so start() raises after the timeout).
+        listening socket (notably on Windows). This gives it that moment before
+        restart() re-binds. It returns once the port looks free OR the timeout
+        elapses — it never raises; restart() calls start(check_port=False) and
+        lets the proxy's own bind surface any genuine conflict via _serve().
         """
         if self.listen_port == 0:
             return

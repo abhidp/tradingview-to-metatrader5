@@ -42,22 +42,22 @@ def complete_onboarding(store: Optional[SettingsStore] = None) -> None:
     Onboarding completion is the contract; Default-profile seeding is best-effort —
     a seeding failure is logged but does not fail completion.
     """
-    from app.config_accessors import get_mt5_config, get_symbol_settings
     from app.storage import profiles
     s = store or SettingsStore()
     set_onboarding_complete(True, store=s)
     if profiles.list_profiles(store=s)["profiles"]:
         return
     try:
-        cfg = get_mt5_config()
-        suffix, mapping = get_symbol_settings()
+        # Read live config from the SAME injected store (not config_accessors,
+        # which would construct its own SettingsStore and ignore `store`).
         created = profiles.create_profile({
             "name": "Default",
-            "mt5": {"terminal_path": cfg.get("terminal_path") or "",
-                    "account": cfg.get("account") or "",
-                    "server": cfg.get("server") or "",
-                    "password": cfg.get("password") or ""},
-            "symbols": {"default_suffix": suffix or "", "map": mapping or {}},
+            "mt5": {"terminal_path": s.get("mt5.terminal_path") or "",
+                    "account": s.get("mt5.account") or "",
+                    "server": s.get("mt5.server") or "",
+                    "password": s.get_secret("mt5.password") or ""},
+            "symbols": {"default_suffix": s.get("symbols.default_suffix") or "",
+                        "map": s.get_json("symbols.map", {}) or {}},
         }, store=s)
         profiles.activate_profile(created["id"], store=s)
     except Exception:

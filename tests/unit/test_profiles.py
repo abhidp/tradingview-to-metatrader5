@@ -118,3 +118,42 @@ def test_activate_with_empty_suffix_preserves_live_suffix(temp_db_path):
     )
     profiles.activate_profile(p["id"], store=s)
     assert s.get("symbols.default_suffix") == ".r"  # not clobbered to ""
+
+
+def test_update_rejects_duplicate_name(temp_db_path):
+    s = SettingsStore()
+    profiles.create_profile({"name": "Alpha", "mt5": {"account": "1", "server": "X"}, "symbols": {}}, store=s)
+    b = profiles.create_profile({"name": "Beta", "mt5": {"account": "2", "server": "Y"}, "symbols": {}}, store=s)
+    try:
+        profiles.update_profile(b["id"], {"name": "alpha"}, store=s)  # case-insensitive collision
+        assert False, "expected DuplicateProfileError"
+    except profiles.DuplicateProfileError:
+        pass
+
+
+def test_update_rejects_duplicate_broker(temp_db_path):
+    s = SettingsStore()
+    profiles.create_profile({"name": "Alpha", "mt5": {"account": "111", "server": "Srv"}, "symbols": {}}, store=s)
+    b = profiles.create_profile({"name": "Beta", "mt5": {"account": "222", "server": "Srv"}, "symbols": {}}, store=s)
+    try:
+        profiles.update_profile(b["id"], {"mt5": {"account": "111"}}, store=s)  # now collides with Alpha
+        assert False, "expected DuplicateProfileError"
+    except profiles.DuplicateProfileError:
+        pass
+
+
+def test_update_same_profile_is_not_a_false_duplicate(temp_db_path):
+    s = SettingsStore()
+    p = profiles.create_profile(_data(), store=s)
+    # editing the profile without changing identity must not trip the self-check
+    profiles.update_profile(p["id"], {"name": "Fusion"}, store=s)
+    assert profiles.list_profiles(store=s)["profiles"][0]["name"] == "Fusion"
+
+
+def test_delete_active_clears_live_password(temp_db_path):
+    s = SettingsStore()
+    p = profiles.create_profile(_data(), store=s)  # carries password "secret-pw"
+    profiles.activate_profile(p["id"], store=s)
+    assert s.get_secret("mt5.password") == "secret-pw"
+    profiles.delete_profile(p["id"], store=s)
+    assert s.get_secret("mt5.password") is None  # live broker credential cleared

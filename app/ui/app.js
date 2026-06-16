@@ -251,15 +251,18 @@ async function loadProfiles() {
   }
 }
 
-// Show a profiles banner and auto-dismiss it after a few seconds.
-let _profilesBannerTimer = null;
-function showProfilesBanner(text, ok, { sticky = false } = {}) {
-  const banner = $('profiles-banner');
+// Set a banner's text/style and auto-dismiss after a few seconds (unless sticky).
+// Timer lives on the element so each banner manages its own dismissal.
+function bannerMessage(banner, text, ok, { sticky = false, ms = 4000 } = {}) {
   banner.className = ok ? 'banner ok' : 'banner';
   banner.classList.remove('hidden');
   banner.textContent = text;
-  if (_profilesBannerTimer) { clearTimeout(_profilesBannerTimer); _profilesBannerTimer = null; }
-  if (!sticky) _profilesBannerTimer = setTimeout(() => banner.classList.add('hidden'), 4000);
+  if (banner._hideTimer) { clearTimeout(banner._hideTimer); banner._hideTimer = null; }
+  if (!sticky) banner._hideTimer = setTimeout(() => banner.classList.add('hidden'), ms);
+}
+
+function showProfilesBanner(text, ok, opts = {}) {
+  bannerMessage($('profiles-banner'), text, ok, opts);
 }
 
 async function activateProfile(id) {
@@ -270,8 +273,16 @@ async function activateProfile(id) {
       const j = await r.json().catch(() => ({}));
       throw new Error(j.detail || `HTTP ${r.status}`);
     }
-    showProfilesBanner('Profile activated.', true);
-    loadSettings(); loadProfiles(); refreshStatus();
+    const data = await r.json().catch(() => ({}));
+    const st = data.status || {};
+    if (st.engine === 'running' && st.mt5 && st.mt5.connected === false) {
+      // Profile is active, but the new broker didn't connect — say so plainly.
+      showProfilesBanner('Profile activated, but MT5 isn’t connected — check the account, password, and terminal path.', false, { sticky: true });
+    } else {
+      showProfilesBanner('Profile activated.', true);
+    }
+    // loadSettings() also re-renders the profiles list, so don't call loadProfiles() again.
+    loadSettings(); refreshStatus();
   } catch (e) {
     showProfilesBanner(`Activation failed: ${e.message}`, false);
   }
@@ -376,9 +387,9 @@ async function showSaveResult(banner, resp, reload) {
     $('restart-now').addEventListener('click', async () => {
       banner.textContent = 'Applying…';
       // Hot-swap MT5 in place (no proxy restart / port rebind).
-      await fetch('/api/engine/apply', { method: 'POST' });
+      const ar = await fetch('/api/engine/apply', { method: 'POST' }).catch(() => null);
       refreshStatus();
-      banner.textContent = 'Applied to engine.';
+      banner.textContent = (ar && ar.ok) ? 'Applied to engine.' : 'Apply failed — check status.';
     });
   } else {
     banner.textContent = `Saved at ${time}.`;
