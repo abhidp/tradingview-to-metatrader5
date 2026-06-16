@@ -118,7 +118,12 @@ def activate_profile(pid: str, store: Optional[SettingsStore] = None) -> dict:
     pw = store.get_secret(_pw_key(pid))
     if pw:
         store.set_secret("mt5.password", pw)
-    store.set("symbols.default_suffix", sym.get("default_suffix", ""))
+    # Only apply symbol settings the profile actually carries — never clobber the
+    # live suffix/map with empties, which would break symbol resolution (e.g. a
+    # broker that needs a ".r" suffix). Profiles that DO carry them still switch.
+    suffix = sym.get("default_suffix") or ""
+    if suffix:
+        store.set("symbols.default_suffix", suffix)
     sym_map = sym.get("map") or {}
     if sym_map:
         store.set("symbols.map", json.dumps(sym_map))

@@ -305,6 +305,14 @@ $('profile-save').addEventListener('click', async () => {
   // Save the CURRENT Settings-form values as a new profile. Name + password are
   // both required (the Save button is disabled until they're present); the
   // backend enforces unique profile names and one profile per broker account.
+  // Snapshot the CURRENT live symbol settings (suffix + map) so the profile
+  // carries the broker's real symbol config — not the possibly-empty Symbols-tab
+  // input. Activating the profile later restores exactly these.
+  let symbols = { default_suffix: '', map: {} };
+  try {
+    const s = await (await fetch('/api/symbols')).json();
+    symbols = { default_suffix: s.default_suffix || '', map: s.map || {} };
+  } catch (e) {}
   const body = {
     name: $('profile-name').value.trim(),
     mt5: {
@@ -313,7 +321,7 @@ $('profile-save').addEventListener('click', async () => {
       server: $('set-server').value.trim(),
       password: $('profile-password').value,
     },
-    symbols: { default_suffix: $('sym-suffix') ? $('sym-suffix').value.trim() : '' },
+    symbols,
   };
   const r = await fetch('/api/profiles', { method: 'POST',
     headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });

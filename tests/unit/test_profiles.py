@@ -106,3 +106,15 @@ def test_create_rejects_duplicate_broker_account(temp_db_path):
         assert False, "expected DuplicateProfileError"
     except profiles.DuplicateProfileError:
         pass
+
+
+def test_activate_with_empty_suffix_preserves_live_suffix(temp_db_path):
+    s = SettingsStore()
+    s.set("symbols.default_suffix", ".r")
+    # profile carries no symbol suffix (e.g. captured before symbols were set)
+    p = profiles.create_profile(
+        {"name": "NoSuffix", "mt5": {"account": "1", "server": "S"}, "symbols": {}},
+        store=s,
+    )
+    profiles.activate_profile(p["id"], store=s)
+    assert s.get("symbols.default_suffix") == ".r"  # not clobbered to ""
