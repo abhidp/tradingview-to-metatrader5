@@ -15,6 +15,12 @@ def test_complete_creates_default_profile_when_none(temp_db_path):
     assert out["profiles"][0]["name"] == "Default"
     assert out["active"] == out["profiles"][0]["id"]
 
+    prof = out["profiles"][0]
+    assert prof["mt5"]["account"] == "111"
+    assert prof["mt5"]["server"] == "Srv"
+    assert prof["mt5"]["terminal_path"] == "C:/t.exe"
+    assert prof["symbols"]["default_suffix"] == ".r"
+
 
 def test_complete_does_not_duplicate_default(temp_db_path):
     from app.storage.settings_store import SettingsStore
