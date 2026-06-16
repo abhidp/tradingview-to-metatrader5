@@ -101,6 +101,7 @@ class EngineController:
                 f"Proxy port {self.listen_port} is in use — another copier may be running."
             )
             self._state = EngineState.STOPPED
+            logger.error("Engine start aborted: %s", self._error)
             raise ProxyPortInUseError(self._error)
 
         self._error = None
@@ -121,6 +122,7 @@ class EngineController:
                 exc = self._task.exception()
                 self._state = EngineState.ERROR
                 self._error = str(exc) if exc else "engine exited during startup"
+                logger.error("Engine exited during startup: %s", self._error)
         else:
             self._state = EngineState.RUNNING
         return self.status()
