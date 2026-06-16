@@ -2,7 +2,7 @@
 from fastapi import Body, FastAPI, HTTPException
 
 from app.storage import profiles
-from app.engine_controller import EngineController
+from app.engine_controller import EngineController, ProxyPortInUseError
 
 
 def add_profile_routes(app: FastAPI, controller: EngineController) -> None:
@@ -33,5 +33,8 @@ def add_profile_routes(app: FastAPI, controller: EngineController) -> None:
         except KeyError:
             raise HTTPException(status_code=404, detail="Profile not found")
         if controller.status().to_dict()["engine"] == "running":
-            await controller.restart()
+            try:
+                await controller.restart()
+            except ProxyPortInUseError as e:
+                raise HTTPException(status_code=409, detail=str(e))
         return {"ok": True, "status": controller.status().to_dict()}

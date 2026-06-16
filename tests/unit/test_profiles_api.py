@@ -52,3 +52,20 @@ def test_activate_unknown_404(temp_db_path, monkeypatch):
     ctrl = FakeController(running=False)
     c = _client(ctrl, monkeypatch, store)
     assert c.post("/api/profiles/nope/activate").status_code == 404
+
+
+def test_activate_returns_409_when_restart_port_in_use(temp_db_path, monkeypatch):
+    from app.storage.settings_store import SettingsStore
+    from app.engine_controller import ProxyPortInUseError
+    store = SettingsStore()
+
+    class PortBusyController(FakeController):
+        async def restart(self):
+            raise ProxyPortInUseError("proxy port 8080 in use")
+
+    ctrl = PortBusyController(running=True)
+    c = _client(ctrl, monkeypatch, store)
+    r = c.post("/api/profiles", json={"name": "A", "mt5": {"account": "1", "server": "S",
+               "terminal_path": "C:/t.exe"}, "symbols": {}})
+    pid = r.json()["id"]
+    assert c.post(f"/api/profiles/{pid}/activate").status_code == 409
