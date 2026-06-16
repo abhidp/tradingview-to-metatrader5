@@ -76,6 +76,20 @@ class SettingsStore:
         finally:
             session.close()
 
+    def delete(self, key: str) -> None:
+        """Remove a key if present (idempotent)."""
+        session = self._Session()
+        try:
+            row = session.get(Settings, key)
+            if row is not None:
+                session.delete(row)
+                session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+
     # --- typed accessors ---
 
     def get_int(self, key: str, default: Optional[int] = None) -> Optional[int]:
