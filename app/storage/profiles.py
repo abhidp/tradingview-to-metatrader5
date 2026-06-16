@@ -71,10 +71,10 @@ def update_profile(pid: str, data: dict, store: Optional[SettingsStore] = None) 
     items = _load(store)
     for i, p in enumerate(items):
         if p["id"] == pid:
-            merged = {**p, **_shape({**p, **data,
-                                     "mt5": {**p["mt5"], **(data.get("mt5") or {})},
-                                     "symbols": {**p["symbols"], **(data.get("symbols") or {})}})}
-            merged["id"] = pid
+            shaped = _shape({**p, **data,
+                             "mt5": {**p["mt5"], **(data.get("mt5") or {})},
+                             "symbols": {**p["symbols"], **(data.get("symbols") or {})}})
+            merged = {"id": pid, **shaped}
             items[i] = merged
             password = (data.get("mt5") or {}).get("password")
             if password:
