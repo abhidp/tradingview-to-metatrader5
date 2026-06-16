@@ -129,7 +129,7 @@ def _pick_terminal_file():
         result = _window.create_file_dialog(
             webview.OPEN_DIALOG,
             allow_multiple=False,
-            file_types=("MetaTrader terminal (terminal64.exe)", "Executable (*.exe)"),
+            file_types=("Executable (*.exe)", "All files (*.*)"),
         )
     except Exception as e:  # noqa: BLE001 - dialog failure must not crash the API
         logger.info("file dialog failed: %s", e)
