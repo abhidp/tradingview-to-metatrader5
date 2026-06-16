@@ -48,14 +48,14 @@
 
           <div class="wiz-pane hidden" data-pane="3">
             <h2>MT5 account</h2>
-            <label class="field">Terminal
+            <label class="field">MT5 Terminal Path
               <select id="wiz-mt5-terminal-select"></select>
             </label>
             <div class="row">
               <input id="wiz-mt5-terminal" type="text" placeholder="terminal64.exe path" />
-              <button id="wiz-mt5-terminal-browse" type="button" class="btn">Browse…</button>
+              <button id="wiz-mt5-terminal-browse" type="button" class="btn ghost">Browse…</button>
             </div>
-            <label class="field">Account <input id="wiz-mt5-account" type="number" /></label>
+            <label class="field">MT5 Account Number <input id="wiz-mt5-account" type="text" inputmode="numeric" /></label>
             <label class="field">Password <input id="wiz-mt5-password" type="password" /></label>
             <label class="field">Server <input id="wiz-mt5-server" type="text" /></label>
             <button id="wiz-mt5-test" class="btn start" disabled>Test connection</button>
@@ -154,8 +154,8 @@ No username / password</pre>
       <section id="view-settings" class="view hidden">
         <div class="lab">SETTINGS</div>
         <div id="settings-banner" class="banner hidden"></div>
-        <label class="field">MT5 account
-          <input id="set-account" type="number" />
+        <label class="field">MT5 Account Number
+          <input id="set-account" type="text" inputmode="numeric" />
         </label>
         <label class="field">MT5 password
           <input id="set-password" type="password" placeholder="•••••• (unchanged)" />
@@ -163,12 +163,12 @@ No username / password</pre>
         <label class="field">MT5 server
           <input id="set-server" type="text" />
         </label>
-        <label class="field">Terminal
+        <label class="field">MT5 Terminal Path
           <select id="set-terminal-select"></select>
         </label>
         <div class="row">
           <input id="set-terminal" type="text" placeholder="terminal64.exe path" />
-          <button id="set-terminal-browse" type="button" class="btn">Browse…</button>
+          <button id="set-terminal-browse" type="button" class="btn ghost">Browse…</button>
         </div>
         <label class="field">TradingView broker (auto-detected)
           <input id="set-tv-broker" type="text" disabled />
