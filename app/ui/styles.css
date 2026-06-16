@@ -42,6 +42,8 @@ body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; color: #1f2430
 .profiles { list-style: none; margin: 0 0 12px; padding: 0; }
 .profiles li { display: flex; align-items: center; gap: 14px; padding: 8px 0; border-bottom: 1px solid #e8ecf2; }
 .profiles li span { flex: 1; }
+#profile-form.hidden { display: none; }
+#profile-form { margin: 10px 0; }
 /* Flipped greens: the active profile is the BRIGHTEST green; the clickable
    Activate buttons on inactive profiles are faded. */
 .btn.prof-active, .btn.prof-active:disabled { background: #16a34a; opacity: 1; cursor: default; }

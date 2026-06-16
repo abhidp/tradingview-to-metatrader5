@@ -251,24 +251,37 @@ async function loadProfiles() {
   }
 }
 
-async function activateProfile(id) {
+// Show a profiles banner and auto-dismiss it after a few seconds.
+let _profilesBannerTimer = null;
+function showProfilesBanner(text, ok, { sticky = false } = {}) {
   const banner = $('profiles-banner');
-  banner.className = 'banner ok'; banner.textContent = 'Activating…';
+  banner.className = ok ? 'banner ok' : 'banner';
+  banner.classList.remove('hidden');
+  banner.textContent = text;
+  if (_profilesBannerTimer) { clearTimeout(_profilesBannerTimer); _profilesBannerTimer = null; }
+  if (!sticky) _profilesBannerTimer = setTimeout(() => banner.classList.add('hidden'), 4000);
+}
+
+async function activateProfile(id) {
+  showProfilesBanner('Activating…', true, { sticky: true });
   try {
     const r = await fetch(`/api/profiles/${id}/activate`, { method: 'POST' });
-    if (!r.ok) throw new Error(r.status);
-    banner.textContent = 'Profile activated.';
+    if (!r.ok) {
+      const j = await r.json().catch(() => ({}));
+      throw new Error(j.detail || `HTTP ${r.status}`);
+    }
+    showProfilesBanner('Profile activated.', true);
     loadSettings(); loadProfiles(); refreshStatus();
-  } catch (e) { banner.className = 'banner'; banner.textContent = 'Activation failed'; }
+  } catch (e) {
+    showProfilesBanner(`Activation failed: ${e.message}`, false);
+  }
 }
 
 async function deleteProfile(id, name) {
-  const banner = $('profiles-banner');
   if (!confirm(`Delete profile "${name}"?`)) return;
   const r = await fetch(`/api/profiles/${id}`, { method: 'DELETE' });
-  banner.className = r.ok ? 'banner ok' : 'banner';
-  banner.textContent = r.ok ? 'Profile deleted.' : 'Delete failed.';
-  if (r.ok) loadProfiles();
+  if (r.ok) { showProfilesBanner('Profile deleted.', true); loadProfiles(); }
+  else { showProfilesBanner('Delete failed.', false); }
 }
 
 // Save profile requires both a name and a password — keep the button disabled

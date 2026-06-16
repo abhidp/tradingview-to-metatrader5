@@ -150,11 +150,31 @@ class EngineController:
             self._state = EngineState.STOPPED
         return self.status()
 
+    async def _wait_for_port_free(self, timeout: float = 3.0) -> None:
+        """Poll until our proxy port is bindable again (or timeout).
+
+        After we stop our own engine the OS can take a moment to release the
+        listening socket (notably on Windows). _port_free() uses SO_REUSEADDR=0,
+        so an immediate re-start can briefly see the port we just freed as "in
+        use" and raise ProxyPortInUseError. Waiting here lets the genuine
+        same-engine restart succeed while still surfacing a real cross-process
+        conflict (the port never frees, so start() raises after the timeout).
+        """
+        if self.listen_port == 0:
+            return
+        loop = asyncio.get_event_loop()
+        deadline = loop.time() + timeout
+        while not _port_free(self.listen_host, self.listen_port):
+            if loop.time() >= deadline:
+                return
+            await asyncio.sleep(0.1)
+
     async def restart(self) -> Status:
         """Stop (if running) then start — used to apply settings changes.
 
-        stop() fully releases the proxy port before start() re-checks it, so this
-        avoids a client-side stop/start race.
+        stop() releases the proxy port, then we wait for the OS to actually free
+        it before start() re-checks it, avoiding a self-inflicted stop/start race.
         """
         await self.stop()
+        await self._wait_for_port_free()
         return await self.start()
