@@ -171,6 +171,18 @@ class EngineController:
                 return
             await asyncio.sleep(0.1)
 
+    async def apply_mt5_settings(self) -> Status:
+        """Apply MT5 config changes (e.g. switching broker profiles) by
+        reconnecting the worker in place — the proxy keeps running, so there is no
+        port rebind. No-op when the engine isn't running (the next start picks up
+        the new config). Preferred over restart() for MT5-only changes.
+        """
+        if self._state == EngineState.RUNNING and self._runner is not None:
+            reconnect = getattr(self._runner, "reconnect_mt5", None)
+            if reconnect is not None:
+                await reconnect()
+        return self.status()
+
     async def restart(self) -> Status:
         """Stop (if running) then start — used to apply settings changes.
 

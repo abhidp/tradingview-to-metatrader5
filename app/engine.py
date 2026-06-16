@@ -114,6 +114,12 @@ class MitmEngineRunner:
         if self._master is not None:
             self._master.shutdown()
 
+    async def reconnect_mt5(self) -> None:
+        """Reconnect the MT5 worker to the active profile's broker, leaving the
+        proxy (and its port) untouched. No-op if the worker isn't wired yet."""
+        if self._worker is not None:
+            await self._worker.reconnect_mt5()
+
     def mt5_connected(self) -> bool:
         return bool(self._worker is not None and getattr(self._worker, "mt5", None) is not None
                     and getattr(self._worker.mt5, "connected", False))

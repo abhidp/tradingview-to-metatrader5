@@ -26,6 +26,7 @@ class MT5Worker:
         self.db = None
         self.mt5 = None
         self.tv_service = None
+        self._monitor_task = None
 
     def initialize(self):
         """Initialize all services with shared event loop."""
@@ -94,6 +95,42 @@ class MT5Worker:
                     print(f"\n📊 Initialized {len(self.open_positions)} open positions\n")
         except Exception as e:
             logger.error(f"❌ Error initializing positions: {e}")
+
+    def _start_trailing_monitor(self) -> None:
+        """(Re)start the trailing-stop monitor, cancelling any previous one."""
+        if self._monitor_task is not None:
+            self._monitor_task.cancel()
+            self._monitor_task = None
+        if self.mt5 and self.mt5.initialized:
+            self._monitor_task = self.loop.create_task(self.mt5.monitor_trailing_stops())
+
+    async def reconnect_mt5(self) -> None:
+        """Switch the MT5 connection to the current (active-profile) config WITHOUT
+        restarting the proxy.
+
+        Used when a broker profile is activated: only the MT5 side needs to change
+        (account/server/terminal/password), so we close the existing MT5 session
+        and rebuild MT5Service from the latest settings. The proxy on its port keeps
+        running untouched, avoiding a Windows port-rebind failure.
+        """
+        print("\n🔄 Switching MT5 connection to the active profile…")
+        try:
+            if self.mt5 is not None:
+                self.mt5.cleanup()
+        except Exception as e:
+            logger.error(f"❌ Error closing previous MT5 connection: {e}")
+        mt5_config = get_mt5_config()
+        self.mt5 = MT5Service(
+            account=mt5_config['account'],
+            password=mt5_config['password'],
+            server=mt5_config['server'],
+            db_handler=self.db,
+        )
+        self.mt5.set_loop(self.loop)
+        # Positions belong to the new broker — reset and re-read.
+        self.open_positions = set()
+        await self._initialize_positions()
+        self._start_trailing_monitor()
 
     async def handle_message(self, msg_type: str, data: Dict[str, Any]) -> None:
         """Handle messages from Redis channels asynchronously."""
@@ -377,11 +414,10 @@ class MT5Worker:
         try:
             # Initialize positions
             await self._initialize_positions()
-            
+
             # Start trailing stop monitor as a task
-            if self.mt5.initialized:
-                self.loop.create_task(self.mt5.monitor_trailing_stops())
-            
+            self._start_trailing_monitor()
+
             # Main loop for position checking
             while self.running:
                 try:

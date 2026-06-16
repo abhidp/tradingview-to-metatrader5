@@ -162,3 +162,26 @@ async def test_wait_for_port_free_blocks_until_timeout_when_busy(temp_db_path):
         assert loop.time() - t0 >= 0.3
     finally:
         s.close()
+
+
+class _ReconnectRunner(_FakeRunner):
+    def __init__(self, listen_host="127.0.0.1", listen_port=8080):
+        super().__init__(listen_host, listen_port)
+        self.reconnects = 0
+
+    async def reconnect_mt5(self):
+        self.reconnects += 1
+
+
+async def test_apply_mt5_settings_reconnects_when_running(temp_db_path):
+    c = EngineController(runner_factory=_ReconnectRunner, listen_port=0)
+    await c.start()
+    await c.apply_mt5_settings()
+    assert c._runner.reconnects == 1  # reconnected in place, no restart
+    await c.stop()
+
+
+async def test_apply_mt5_settings_is_noop_when_stopped(temp_db_path):
+    c = EngineController(runner_factory=_ReconnectRunner, listen_port=0)
+    s = await c.apply_mt5_settings()  # never started
+    assert s.engine == EngineState.STOPPED

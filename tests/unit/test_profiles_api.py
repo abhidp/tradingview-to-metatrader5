@@ -7,7 +7,7 @@ import app.api.profiles_api as papi
 class FakeController:
     def __init__(self, running):
         self._running = running
-        self.restarted = False
+        self.applied = False
 
     def status(self):
         class S:
@@ -15,8 +15,8 @@ class FakeController:
                 return {"engine": "running" if self._running else "stopped"}
         return S()
 
-    async def restart(self):
-        self.restarted = True
+    async def apply_mt5_settings(self):
+        self.applied = True
 
 
 def _client(controller, monkeypatch, store):
@@ -26,7 +26,7 @@ def _client(controller, monkeypatch, store):
     return TestClient(app)
 
 
-def test_create_list_activate_restarts_when_running(temp_db_path, monkeypatch):
+def test_create_list_activate_applies_when_running(temp_db_path, monkeypatch):
     from app.storage.settings_store import SettingsStore
     store = SettingsStore()
 
@@ -42,7 +42,8 @@ def test_create_list_activate_restarts_when_running(temp_db_path, monkeypatch):
 
     r = c.post(f"/api/profiles/{pid}/activate")
     assert r.status_code == 200
-    assert ctrl.restarted is True
+    # activation reconnects MT5 in place (no proxy restart)
+    assert ctrl.applied is True
     assert c.get("/api/profiles").json()["active"] == pid
 
 
@@ -70,21 +71,17 @@ def test_update_and_update_unknown_404(temp_db_path, monkeypatch):
     assert c.put("/api/profiles/nope", json={"name": "X"}).status_code == 404
 
 
-def test_activate_returns_409_when_restart_port_in_use(temp_db_path, monkeypatch):
+def test_activate_does_not_apply_when_engine_stopped(temp_db_path, monkeypatch):
     from app.storage.settings_store import SettingsStore
-    from app.engine_controller import ProxyPortInUseError
     store = SettingsStore()
-
-    class PortBusyController(FakeController):
-        async def restart(self):
-            raise ProxyPortInUseError("proxy port 8080 in use")
-
-    ctrl = PortBusyController(running=True)
+    ctrl = FakeController(running=False)
     c = _client(ctrl, monkeypatch, store)
-    r = c.post("/api/profiles", json={"name": "A", "mt5": {"account": "1", "server": "S",
-               "terminal_path": "C:/t.exe"}, "symbols": {}})
-    pid = r.json()["id"]
-    assert c.post(f"/api/profiles/{pid}/activate").status_code == 409
+    pid = c.post("/api/profiles", json={"name": "A", "mt5": {"account": "1", "server": "S",
+                 "terminal_path": "C:/t.exe"}, "symbols": {}}).json()["id"]
+    # apply_mt5_settings is still called; the controller decides it's a no-op when
+    # stopped. The route must succeed and mark the profile active regardless.
+    assert c.post(f"/api/profiles/{pid}/activate").status_code == 200
+    assert c.get("/api/profiles").json()["active"] == pid
 
 
 def test_create_duplicate_returns_409(temp_db_path, monkeypatch):

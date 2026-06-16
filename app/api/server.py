@@ -51,6 +51,12 @@ def create_app(controller: EngineController, focus_callback: Optional[Callable] 
             raise HTTPException(status_code=409, detail=str(e))
         return status.to_dict()
 
+    @app.post("/api/engine/apply")
+    async def apply_engine_settings():
+        # Apply MT5/profile changes by reconnecting the worker in place — keeps the
+        # proxy running (no port rebind). Use this instead of restart for MT5 config.
+        return (await controller.apply_mt5_settings()).to_dict()
+
     @app.get("/api/settings")
     def read_settings():
         return get_settings()

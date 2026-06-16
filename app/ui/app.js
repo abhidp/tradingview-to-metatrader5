@@ -371,13 +371,14 @@ async function showSaveResult(banner, resp, reload) {
   const time = new Date().toLocaleTimeString();
   if (window._engineRunning) {
     // Engine running → keep the actionable Restart button (don't auto-hide).
-    banner.innerHTML = `Saved at ${time} — restart the engine to apply. <button id="restart-now" class="btn start">Restart engine</button>`;
+    banner.innerHTML = `Saved at ${time} — apply to the running engine. <button id="restart-now" class="btn start">Apply to engine</button>`;
     banner.className = 'banner ok';
     $('restart-now').addEventListener('click', async () => {
-      banner.textContent = 'Restarting…';
-      await fetch('/api/engine/restart', { method: 'POST' });
+      banner.textContent = 'Applying…';
+      // Hot-swap MT5 in place (no proxy restart / port rebind).
+      await fetch('/api/engine/apply', { method: 'POST' });
       refreshStatus();
-      banner.textContent = 'Engine restarted.';
+      banner.textContent = 'Applied to engine.';
     });
   } else {
     banner.textContent = `Saved at ${time}.`;
